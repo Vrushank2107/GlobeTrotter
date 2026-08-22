@@ -60,7 +60,7 @@ export default function RegisterPage() {
           (window as any).google.accounts.id.renderButton(btnDiv, {
             theme: 'outline',
             size: 'large',
-            width: 400,
+            width: window.innerWidth < 768 ? 300 : 400,
             text: 'continue_with',
             shape: 'rectangular',
           });
@@ -160,6 +160,18 @@ export default function RegisterPage() {
         .animate-fade-in-up {
           animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
+        @media (max-width: 768px) {
+          .hero-section { display: flex !important; grid-column: span 12 !important; }
+          .register-card-section { grid-column: span 12 !important; }
+          .main-grid { display: flex !important; flex-direction: column !important; gap: 32px !important; }
+          .register-card-padding { padding: 24px !important; }
+        }
+        @media (min-width: 769px) {
+          .hero-section { display: flex !important; grid-column: span 6 !important; }
+          .register-card-section { grid-column: 8 / span 5 !important; }
+          .register-card-padding { padding: 32px !important; }
+        }
       `}</style>
 
       <main style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
@@ -193,52 +205,37 @@ export default function RegisterPage() {
           {/* Top Navigation Bar */}
           <header style={{
             position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20,
-            padding: '24px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             maxWidth: '1280px', margin: '0 auto', width: '100%', pointerEvents: 'auto'
           }}>
             <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', cursor: 'pointer' }}>
-              <span className="material-symbols-outlined" style={{ color: '#006591', fontSize: '28px' }}>explore</span>
-              <span style={{ fontSize: '20px', fontWeight: 700, color: '#191c1e', letterSpacing: '-0.02em' }}>GlobeTrotter</span>
+              <span className="material-symbols-outlined" style={{ color: '#006591', fontSize: '24px' }}>explore</span>
+              <span style={{ fontSize: '18px', fontWeight: 700, color: '#191c1e', letterSpacing: '-0.02em' }}>GlobeTrotter</span>
             </Link>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Link href="/login" style={{
-                padding: '8px 16px', borderRadius: '8px', fontSize: '14px', fontWeight: 600,
+                padding: '8px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
                 color: '#006591', textDecoration: 'none', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)',
                 border: '1px solid #006591', cursor: 'pointer', display: 'inline-block', transition: 'all 0.2s',
               }}>Sign In</Link>
-              <button
-                type="button"
-                onClick={() => {
-                  const nameEl = document.getElementById('name');
-                  if (nameEl) nameEl.focus();
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                style={{
-                  padding: '8px 20px', borderRadius: '8px', fontSize: '14px', fontWeight: 600,
-                  color: '#ffffff', background: '#006591', border: 'none',
-                  boxShadow: '0 2px 8px rgba(0,101,145,0.25)', transition: 'all 0.2s', cursor: 'pointer'
-                }}
-              >
-                Sign Up
-              </button>
             </div>
           </header>
 
           {/* Main content grid */}
           <div style={{
             position: 'relative', zIndex: 10, width: '100%', maxWidth: '1280px',
-            margin: '0 auto', padding: '96px 16px 32px 16px', minHeight: '100vh',
+            margin: '0 auto', padding: '80px 16px 32px 16px', minHeight: '100vh',
             display: 'flex', alignItems: 'center',
           }}>
-            <div style={{
+            <div className="main-grid" style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(12, 1fr)',
               gap: '24px',
               width: '100%',
             }}>
 
-              {/* Left: Hero copy */}
-              <div className="animate-fade-in-up" style={{ gridColumn: 'span 6', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              {/* Left: Hero copy - Shows first on mobile */}
+              <div className="animate-fade-in-up hero-section" style={{ gridColumn: 'span 6', flexDirection: 'column', justifyContent: 'center' }}>
                 {/* Badge */}
                 <div style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -254,7 +251,7 @@ export default function RegisterPage() {
 
                 {/* Headline */}
                 <h1 style={{
-                  fontSize: '48px', lineHeight: '56px', fontWeight: 700, letterSpacing: '-0.02em',
+                  fontSize: 'clamp(28px, 5vw, 48px)', lineHeight: 'clamp(32px, 6vw, 56px)', fontWeight: 700, letterSpacing: '-0.02em',
                   color: '#191c1e', marginBottom: '16px', maxWidth: '560px',
                 }}>
                   Join thousands of{' '}
@@ -266,7 +263,7 @@ export default function RegisterPage() {
 
                 {/* Subtext */}
                 <p style={{
-                  fontSize: '18px', lineHeight: '28px', color: '#45464d',
+                  fontSize: 'clamp(14px, 2.5vw, 18px)', lineHeight: 'clamp(20px, 4vw, 28px)', color: '#45464d',
                   marginBottom: '32px', maxWidth: '448px',
                 }}>
                   Create your account to start crafting custom travel routes, managing group budgets, and discovering hidden gems worldwide.
@@ -305,11 +302,11 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* Right: Register card */}
-              <div style={{ gridColumn: '8 / span 5', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div style={{
+              {/* Right: Register card - Full width on mobile */}
+              <div className="register-card-section" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div className="register-card-padding" style={{
                   background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(24px)',
-                  borderRadius: '16px', padding: '32px', boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
+                  borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
                   position: 'relative', overflow: 'hidden',
                 }}>
                   <h2 style={{ fontSize: '24px', fontWeight: 600, color: '#191c1e', marginBottom: '8px' }}>Create an Account</h2>
