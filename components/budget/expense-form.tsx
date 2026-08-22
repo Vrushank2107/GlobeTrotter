@@ -1,6 +1,21 @@
-export default function ExpenseForm({ onSubmit }: { onSubmit: (expense: any) => void }) {
+import { Expense } from '@/types';
+
+export default function ExpenseForm({ onSubmit }: { onSubmit?: (expense: Omit<Expense, 'id'>) => void }) {
   return (
-    <form className="space-y-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (onSubmit) {
+          onSubmit({
+            title: 'Sample Expense',
+            category: 'Accommodation',
+            amount: 100,
+            date: new Date().toISOString().split('T')[0],
+          });
+        }
+      }}
+      className="space-y-4"
+    >
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Expense Name</label>
         <input type="text" className="w-full p-2 border rounded" placeholder="Enter expense name" />
@@ -12,8 +27,7 @@ export default function ExpenseForm({ onSubmit }: { onSubmit: (expense: any) => 
           <option>Transport</option>
           <option>Food</option>
           <option>Activities</option>
-          <option>Shopping</option>
-          <option>Other</option>
+          <option>Misc</option>
         </select>
       </div>
       <div>
