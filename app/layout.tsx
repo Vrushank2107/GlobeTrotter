@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { TripProvider } from '@/context/TripContext';
 import { ConfirmDialogProvider } from '@/context/ConfirmDialogContext';
-import MobileNav from '@/components/layout/mobile-nav';
+import ConditionalMobileNav from '@/components/layout/ConditionalMobileNav';
 
 export const metadata: Metadata = {
   title: 'GlobeTrotter | Plan smarter. Travel better.',
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ConfirmDialogProvider>
           <TripProvider>
             {children}
-            <MobileNav />
+            <ConditionalMobileNav />
           </TripProvider>
         </ConfirmDialogProvider>
       </body>
