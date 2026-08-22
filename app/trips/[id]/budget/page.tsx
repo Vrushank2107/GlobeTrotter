@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
+import { Expense } from '@/types';
 import { expenseSchema } from '@/lib/validations/trip';
 import {
   PieChart as RePieChart,
