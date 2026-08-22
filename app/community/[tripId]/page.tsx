@@ -24,10 +24,12 @@ export default function CommunityTripDetailPage() {
     );
   }
 
-  const handleCopyTrip = () => {
-    const newTripId = cloneCommunityTrip(trip);
-    alert(`"${trip.title}" copied to your trips! Redirecting to builder...`);
-    router.push(`/trips/${newTripId}/builder`);
+  const handleCopyTrip = async () => {
+    const newTripId = await cloneCommunityTrip(trip);
+    if (newTripId) {
+      alert(`"${trip.title}" copied to your trips! Redirecting to builder...`);
+      router.push(`/trips/${newTripId}/builder`);
+    }
   };
 
   return (

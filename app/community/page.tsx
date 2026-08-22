@@ -23,10 +23,12 @@ export default function CommunityPage() {
     return matchesTag && matchesSearch;
   });
 
-  const handleCopyTrip = (trip: Trip) => {
-    const newTripId = cloneCommunityTrip(trip);
-    alert(`"${trip.title}" copied to your trips! Redirecting to builder...`);
-    router.push(`/trips/${newTripId}/builder`);
+  const handleCopyTrip = async (trip: Trip) => {
+    const newTripId = await cloneCommunityTrip(trip);
+    if (newTripId) {
+      alert(`"${trip.title}" copied to your trips! Redirecting to builder...`);
+      router.push(`/trips/${newTripId}/builder`);
+    }
   };
 
   return (

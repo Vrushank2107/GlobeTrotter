@@ -22,11 +22,12 @@ export default function WelcomePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
-      if (data.success) {
+      const contentType = res.headers.get('content-type');
+      const data = contentType && contentType.includes('application/json') ? await res.json() : null;
+      if (data?.success) {
         router.push('/dashboard');
       } else {
-        setErrorMsg(data.message || 'Authentication failed');
+        setErrorMsg(data?.message || 'Authentication failed');
         // Fallback for hackathon demo
         router.push('/dashboard');
       }

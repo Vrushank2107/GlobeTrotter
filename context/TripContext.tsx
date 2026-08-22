@@ -50,20 +50,32 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
 
+  const safeFetchJson = async (res: Response) => {
+    try {
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await res.json();
+      }
+    } catch {
+      return null;
+    }
+    return null;
+  };
+
   const refreshData = async () => {
     try {
       setLoading(true);
       // Fetch destinations
       const destRes = await fetch('/api/destinations');
-      const destData = await destRes.json();
-      if (destData.success) {
+      const destData = await safeFetchJson(destRes);
+      if (destData?.success) {
         setDestinations(destData.data);
       }
 
       // Fetch user trips
       const tripsRes = await fetch('/api/trips');
-      const tripsData = await tripsRes.json();
-      if (tripsData.success && Array.isArray(tripsData.data)) {
+      const tripsData = await safeFetchJson(tripsRes);
+      if (tripsData?.success && Array.isArray(tripsData.data)) {
         setTrips(tripsData.data);
         if (tripsData.data.length > 0 && !activeTripId) {
           setActiveTripId(tripsData.data[0].id);
@@ -72,15 +84,15 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Fetch community trips
       const commRes = await fetch('/api/community');
-      const commData = await commRes.json();
-      if (commData.success && Array.isArray(commData.data)) {
+      const commData = await safeFetchJson(commRes);
+      if (commData?.success && Array.isArray(commData.data)) {
         setCommunityTrips(commData.data);
       }
 
       // Fetch current user
       const userRes = await fetch('/api/auth/me');
-      const userData = await userRes.json();
-      if (userData.success && userData.data) {
+      const userData = await safeFetchJson(userRes);
+      if (userData?.success && userData.data) {
         setUser(userData.data);
       }
     } catch (error) {
@@ -152,8 +164,8 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newTripData),
       });
-      const data = await res.json();
-      if (data.success && data.data) {
+      const data = await safeFetchJson(res);
+      if (data?.success && data.data) {
         const createdTrip = data.data;
         setTrips((prev) => [createdTrip, ...prev]);
         setActiveTripId(createdTrip.id);
@@ -172,8 +184,8 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updated),
       });
-      const data = await res.json();
-      if (data.success && data.data) {
+      const data = await safeFetchJson(res);
+      if (data?.success && data.data) {
         setTrips((prev) => prev.map((t) => (t.id === id ? data.data : t)));
       }
     } catch (err) {
@@ -201,8 +213,8 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tripId, ...activityData }),
       });
-      const data = await res.json();
-      if (data.success && data.data) {
+      const data = await safeFetchJson(res);
+      if (data?.success && data.data) {
         setTrips((prev) => prev.map((t) => (t.id === tripId ? data.data : t)));
       }
     } catch (err) {
@@ -215,8 +227,8 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await fetch(`/api/itinerary/${activityId}?tripId=${tripId}`, {
         method: 'DELETE',
       });
-      const data = await res.json();
-      if (data.success && data.data) {
+      const data = await safeFetchJson(res);
+      if (data?.success && data.data) {
         setTrips((prev) => prev.map((t) => (t.id === tripId ? data.data : t)));
       }
     } catch (err) {
@@ -243,8 +255,8 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tripId, ...expenseData }),
       });
-      const data = await res.json();
-      if (data.success && data.data) {
+      const data = await safeFetchJson(res);
+      if (data?.success && data.data) {
         setTrips((prev) => prev.map((t) => (t.id === tripId ? data.data : t)));
       }
     } catch (err) {
@@ -257,8 +269,8 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await fetch(`/api/expenses/${expenseId}?tripId=${tripId}`, {
         method: 'DELETE',
       });
-      const data = await res.json();
-      if (data.success && data.data) {
+      const data = await safeFetchJson(res);
+      if (data?.success && data.data) {
         setTrips((prev) => prev.map((t) => (t.id === tripId ? data.data : t)));
       }
     } catch (err) {
@@ -272,8 +284,8 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
-      const data = await res.json();
-      if (data.success && data.data) {
+      const data = await safeFetchJson(res);
+      if (data?.success && data.data) {
         const cloned = data.data;
         setTrips((prev) => [cloned, ...prev]);
         setActiveTripId(cloned.id);

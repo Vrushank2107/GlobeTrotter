@@ -43,7 +43,7 @@ export default function NewTripPage() {
     setStep(2);
   };
 
-  const handleCreateTrip = (e: React.FormEvent) => {
+  const handleCreateTrip = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
 
@@ -71,7 +71,7 @@ export default function NewTripPage() {
       estimatedCost: d!.avgCostPerDay * 3,
     }));
 
-    const newTripId = addTrip({
+    const newTripId = await addTrip({
       title: formData.title,
       description: formData.description,
       startDate: formData.startDate,
@@ -84,7 +84,9 @@ export default function NewTripPage() {
       status: 'Planning',
     });
 
-    router.push(`/trips/${newTripId}/builder`);
+    if (newTripId) {
+      router.push(`/trips/${newTripId}/builder`);
+    }
   };
 
   const availableTags = ['Beach', 'Culture', 'Food', 'Adventure', 'Nature', 'City', 'Romance', 'Relaxation'];
