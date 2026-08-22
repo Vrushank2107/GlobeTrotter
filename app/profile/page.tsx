@@ -361,22 +361,15 @@ export default function ProfilePage() {
                       alt="Preview"
                       className="w-14 h-14 rounded-full object-cover ring-2 ring-sky-100 shrink-0 shadow-xs"
                     />
-                    <div className="flex-1 space-y-2">
+                    <div className="flex-1">
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-4 py-2 rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer border border-slate-200"
+                        className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer border border-slate-200"
                       >
                         <Upload className="w-3.5 h-3.5 text-sky-600" />
                         <span>Upload Image File...</span>
                       </button>
-                      <input
-                        type="text"
-                        value={profileForm.avatar}
-                        onChange={(e) => setProfileForm({ ...profileForm, avatar: e.target.value })}
-                        placeholder="Or paste image URL"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-medium outline-none focus:border-sky-500"
-                      />
                     </div>
                   </div>
                 </div>
