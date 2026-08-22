@@ -23,6 +23,8 @@ import {
   CheckCircle2,
   Camera,
   Upload,
+  Loader2,
+  LogOut,
 } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -33,6 +35,9 @@ export default function ProfilePage() {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   // Profile Form state
   const [profileForm, setProfileForm] = useState({
@@ -70,16 +75,33 @@ export default function ProfilePage() {
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    user.name = profileForm.name;
-    user.email = profileForm.email;
-    user.avatar = profileForm.avatar;
-    user.bio = profileForm.bio;
-    setShowEditModal(false);
-    await showAlert({
-      title: 'Profile Updated',
-      message: 'Your profile details have been successfully updated!',
-      variant: 'success',
-    });
+    setSavingProfile(true);
+    try {
+      user.name = profileForm.name;
+      user.email = profileForm.email;
+      user.avatar = profileForm.avatar;
+      user.bio = profileForm.bio;
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      setShowEditModal(false);
+      await showAlert({
+        title: 'Profile Updated',
+        message: 'Your profile details have been successfully updated!',
+        variant: 'success',
+      });
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      await refreshData();
+      router.push('/login');
+    } catch {
+      setLoggingOut(false);
+    }
   };
 
   const handleAddSavedDest = () => {
@@ -102,9 +124,14 @@ export default function ProfilePage() {
       });
       return;
     }
-    await fetch('/api/auth/logout', { method: 'POST' });
-    await refreshData();
-    router.push('/login');
+    setDeletingAccount(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      await refreshData();
+      router.push('/login');
+    } catch {
+      setDeletingAccount(false);
+    }
   };
 
   return (
@@ -163,14 +190,16 @@ export default function ProfilePage() {
                     <span>Edit Profile</span>
                   </button>
                   <button
-                    onClick={async () => {
-                      await fetch('/api/auth/logout', { method: 'POST' });
-                      await refreshData();
-                      router.push('/login');
-                    }}
-                    className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-semibold text-xs px-5 py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer"
+                    onClick={handleLogout}
+                    disabled={loggingOut}
+                    className="bg-red-50 hover:bg-red-100 disabled:opacity-60 text-red-700 border border-red-200 font-semibold text-xs px-5 py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                   >
-                    <span>Sign Out</span>
+                    {loggingOut ? (
+                      <Loader2 className="w-3.5 h-3.5 text-red-600 animate-spin" />
+                    ) : (
+                      <LogOut className="w-3.5 h-3.5 text-red-600" />
+                    )}
+                    <span>{loggingOut ? 'Signing Out...' : 'Sign Out'}</span>
                   </button>
                 </div>
               </div>
@@ -396,9 +425,17 @@ export default function ProfilePage() {
                   </button>
                   <button
                     type="submit"
-                    className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md"
+                    disabled={savingProfile}
+                    className="bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md inline-flex items-center gap-2 disabled:cursor-not-allowed"
                   >
-                    Save Changes
+                    {savingProfile ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 text-sky-400 animate-spin" />
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <span>Save Changes</span>
+                    )}
                   </button>
                 </div>
               </form>
@@ -438,9 +475,17 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={handleDeleteAccount}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-full text-xs shadow-md"
+                  disabled={deletingAccount}
+                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold py-2.5 rounded-full text-xs shadow-md inline-flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                 >
-                  Confirm Delete
+                  {deletingAccount ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 text-white animate-spin" />
+                      <span>Deleting...</span>
+                    </>
+                  ) : (
+                    <span>Confirm Delete</span>
+                  )}
                 </button>
               </div>
             </div>

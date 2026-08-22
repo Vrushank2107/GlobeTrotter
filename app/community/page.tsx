@@ -7,7 +7,7 @@ import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
 import { useConfirmDialog } from '@/context/ConfirmDialogContext';
 import { Trip } from '@/types';
-import { Compass, Copy, Heart, Calendar, MapPin, Sparkles, Search } from 'lucide-react';
+import { Compass, Copy, Heart, Calendar, MapPin, Sparkles, Search, Loader2 } from 'lucide-react';
 
 export default function CommunityPage() {
   const router = useRouter();
@@ -15,6 +15,7 @@ export default function CommunityPage() {
   const { showAlert } = useConfirmDialog();
   const [filterTag, setFilterTag] = useState<string>('All');
   const [search, setSearch] = useState<string>('');
+  const [cloningId, setCloningId] = useState<string | null>(null);
 
   const filtered = communityTrips.filter((t) => {
     const matchesTag = filterTag === 'All' || t.tags.includes(filterTag);
@@ -26,14 +27,19 @@ export default function CommunityPage() {
   });
 
   const handleCopyTrip = async (trip: Trip) => {
-    const newTripId = await cloneCommunityTrip(trip);
-    if (newTripId) {
-      await showAlert({
-        title: 'Trip Cloned',
-        message: `"${trip.title}" copied to your trips! Redirecting to builder...`,
-        variant: 'success',
-      });
-      router.push(`/trips/${newTripId}/builder`);
+    setCloningId(trip.id);
+    try {
+      const newTripId = await cloneCommunityTrip(trip);
+      if (newTripId) {
+        await showAlert({
+          title: 'Trip Cloned',
+          message: `"${trip.title}" copied to your trips! Redirecting to builder...`,
+          variant: 'success',
+        });
+        router.push(`/trips/${newTripId}/builder`);
+      }
+    } finally {
+      setCloningId(null);
     }
   };
 
@@ -145,10 +151,20 @@ export default function CommunityPage() {
 
                     <button
                       onClick={() => handleCopyTrip(trip)}
-                      className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-2.5 rounded-full text-xs transition-all flex items-center gap-2 shadow-md hover:shadow-lg cursor-pointer"
+                      disabled={cloningId === trip.id}
+                      className="bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white font-bold px-5 py-2.5 rounded-full text-xs transition-all flex items-center gap-2 shadow-md hover:shadow-lg cursor-pointer disabled:cursor-not-allowed"
                     >
-                      <Copy className="w-3.5 h-3.5 text-sky-400" />
-                      <span>Copy This Trip</span>
+                      {cloningId === trip.id ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 text-sky-400 animate-spin" />
+                          <span>Copying...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5 text-sky-400" />
+                          <span>Copy This Trip</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>

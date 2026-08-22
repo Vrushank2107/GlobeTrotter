@@ -186,22 +186,33 @@ export default function RegisterPage() {
           <header style={{
             position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20,
             padding: '24px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            maxWidth: '1280px', margin: '0 auto', width: '100%'
+            maxWidth: '1280px', margin: '0 auto', width: '100%', pointerEvents: 'auto'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', cursor: 'pointer' }}>
               <span className="material-symbols-outlined" style={{ color: '#006591', fontSize: '28px' }}>explore</span>
               <span style={{ fontSize: '20px', fontWeight: 700, color: '#191c1e', letterSpacing: '-0.02em' }}>GlobeTrotter</span>
-            </div>
+            </Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <Link href="/login" style={{
-                padding: '8px 16px', borderRadius: '8px', fontSize: '14px', fontWeight: 500,
-                color: '#006591', textDecoration: 'none', background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)',
+                padding: '8px 16px', borderRadius: '8px', fontSize: '14px', fontWeight: 600,
+                color: '#006591', textDecoration: 'none', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)',
+                border: '1px solid #006591', cursor: 'pointer', display: 'inline-block', transition: 'all 0.2s',
               }}>Sign In</Link>
-              <Link href="/register" style={{
-                padding: '8px 20px', borderRadius: '8px', fontSize: '14px', fontWeight: 600,
-                color: '#ffffff', textDecoration: 'none', background: '#006591',
-                boxShadow: '0 2px 8px rgba(0,101,145,0.25)', transition: 'all 0.2s',
-              }}>Sign Up</Link>
+              <button
+                type="button"
+                onClick={() => {
+                  const nameEl = document.getElementById('name');
+                  if (nameEl) nameEl.focus();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                style={{
+                  padding: '8px 20px', borderRadius: '8px', fontSize: '14px', fontWeight: 600,
+                  color: '#ffffff', background: '#006591', border: 'none',
+                  boxShadow: '0 2px 8px rgba(0,101,145,0.25)', transition: 'all 0.2s', cursor: 'pointer'
+                }}
+              >
+                Sign Up
+              </button>
             </div>
           </header>
 
@@ -407,15 +418,25 @@ export default function RegisterPage() {
                         width: '100%', background: '#006591', color: '#fff',
                         border: 'none', borderRadius: '8px', padding: '12px 24px',
                         fontSize: '14px', fontWeight: 600, letterSpacing: '0.05em',
-                        cursor: 'pointer', display: 'flex', alignItems: 'center',
+                        cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center',
                         justifyContent: 'center', gap: '8px',
                         boxShadow: '0 4px 16px rgba(0,101,145,0.25)',
+                        opacity: loading ? 0.7 : 1,
                         transition: 'all 0.2s', marginTop: '8px',
                         fontFamily: 'Inter, sans-serif',
                       }}
                     >
-                      <span>{loading ? 'Creating Account...' : 'Create Account'}</span>
-                      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
+                      {loading ? (
+                        <>
+                          <span className="material-symbols-outlined animate-spin" style={{ fontSize: '18px' }}>progress_activity</span>
+                          <span>Creating Account...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Create Account</span>
+                          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
+                        </>
+                      )}
                     </button>
                   </form>
 

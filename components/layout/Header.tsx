@@ -4,17 +4,25 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTripContext } from '@/context/TripContext';
-import { LogOut, Plus, Zap, MapPin } from 'lucide-react';
+import { LogOut, Plus, Zap, MapPin, Loader2, LogIn, UserPlus } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { trips, refreshData, isSidebarCollapsed } = useTripContext();
+  const { user, trips, refreshData, isSidebarCollapsed } = useTripContext();
+  const [loggingOut, setLoggingOut] = React.useState(false);
+
+  const isGuest = !user || user.id === 'usr_guest' || user.email === 'user@globetrotter.com';
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    await refreshData();
-    router.push('/login');
+    setLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      await refreshData();
+      router.push('/login');
+    } catch {
+      setLoggingOut(false);
+    }
   };
 
   const getPageTitle = () => {
@@ -66,16 +74,59 @@ export const Header: React.FC = () => {
       </div>
 
       {/* Right side: Action Controls */}
-      <div className="flex items-center gap-4">
-        {/* Sign Out Button */}
-        <button
-          onClick={handleLogout}
-          className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-semibold px-4 py-2.5 rounded-full shadow-xs transition-all flex items-center gap-2 cursor-pointer"
-        >
-          <LogOut className="w-4 h-4 text-red-600" />
-          <span>Sign Out</span>
-        </button>
+      <div className="flex items-center gap-3">
+        {isGuest ? (
+          <>
+            {/* Sign In Button */}
+            <Link
+              href="/login"
+              className="flex items-center gap-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200/80 px-4 py-2 rounded-full text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer"
+            >
+              <LogIn className="w-3.5 h-3.5 text-sky-600" />
+              <span>Sign In</span>
+            </Link>
+
+            {/* Sign Up Button */}
+            <Link
+              href="/register"
+              className="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white border border-sky-600 px-4 py-2 rounded-full text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer"
+            >
+              <UserPlus className="w-3.5 h-3.5 text-white" />
+              <span>Sign Up</span>
+            </Link>
+          </>
+        ) : (
+          <>
+            {/* User Profile Link Pill */}
+            <Link
+              href="/profile"
+              className="flex items-center gap-2 bg-white hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-700 transition-all cursor-pointer"
+            >
+              <img
+                src={user.avatar}
+                alt={user.name}
+                className="w-5 h-5 rounded-full object-cover"
+              />
+              <span>{user.name}</span>
+            </Link>
+
+            {/* Sign Out Button */}
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="bg-red-50 hover:bg-red-100 disabled:opacity-60 text-red-700 border border-red-200 text-xs font-semibold px-4 py-2.5 rounded-full shadow-xs transition-all flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+            >
+              {loggingOut ? (
+                <Loader2 className="w-4 h-4 text-red-600 animate-spin" />
+              ) : (
+                <LogOut className="w-4 h-4 text-red-600" />
+              )}
+              <span>{loggingOut ? 'Signing Out...' : 'Sign Out'}</span>
+            </button>
+          </>
+        )}
       </div>
     </header>
   );
 };
+

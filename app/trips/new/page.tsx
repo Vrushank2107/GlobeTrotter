@@ -7,7 +7,7 @@ import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
 import { useConfirmDialog } from '@/context/ConfirmDialogContext';
 import { tripDetailsSchema } from '@/lib/validations/trip';
-import { MapPin, Calendar, DollarSign, Users, Tag, Check, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
+import { MapPin, Calendar, DollarSign, Users, Tag, Check, ArrowRight, ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
 
 export default function NewTripPage() {
   const router = useRouter();
@@ -16,6 +16,7 @@ export default function NewTripPage() {
 
   const [step, setStep] = useState<number>(1);
   const [selectedDestIds, setSelectedDestIds] = useState<string[]>([]);
+  const [isCreatingTrip, setIsCreatingTrip] = useState<boolean>(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -90,35 +91,40 @@ export default function NewTripPage() {
       return;
     }
 
-    const selectedDests = selectedDestIds
-      .map((id) => destinations.find((d) => d.id === id))
-      .filter(Boolean);
+    setIsCreatingTrip(true);
+    try {
+      const selectedDests = selectedDestIds
+        .map((id) => destinations.find((d) => d.id === id))
+        .filter(Boolean);
 
-    const tripStops = selectedDests.map((d, index) => ({
-      id: d!.id,
-      cityName: d!.name,
-      country: d!.country,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      image: d!.coverImage,
-      estimatedCost: d!.avgCostPerDay * 3,
-    }));
+      const tripStops = selectedDests.map((d) => ({
+        id: d!.id,
+        cityName: d!.name,
+        country: d!.country,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        image: d!.coverImage,
+        estimatedCost: d!.avgCostPerDay * 3,
+      }));
 
-    const newTripId = await addTrip({
-      title: formData.title,
-      description: formData.description,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      totalBudget: formToValidate.totalBudget,
-      travelers: formToValidate.travelers,
-      tags: formData.tags,
-      coverImage: formData.coverImage,
-      destinations: tripStops,
-      status: 'Planning',
-    });
+      const newTripId = await addTrip({
+        title: formData.title,
+        description: formData.description,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        totalBudget: formToValidate.totalBudget,
+        travelers: formToValidate.travelers,
+        tags: formData.tags,
+        coverImage: formData.coverImage,
+        destinations: tripStops,
+        status: 'Planning',
+      });
 
-    if (newTripId) {
-      router.push(`/trips/${newTripId}/builder`);
+      if (newTripId) {
+        router.push(`/trips/${newTripId}/builder`);
+      }
+    } catch {
+      setIsCreatingTrip(false);
     }
   };
 
@@ -438,10 +444,20 @@ export default function NewTripPage() {
 
                   <button
                     type="submit"
-                    className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-8 py-3 rounded-full text-xs transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
+                    disabled={isCreatingTrip}
+                    className="bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white font-bold px-8 py-3 rounded-full text-xs transition-all flex items-center gap-2 shadow-md hover:shadow-lg disabled:cursor-not-allowed cursor-pointer"
                   >
-                    <span>Create & Build Itinerary</span>
-                    <ArrowRight className="w-4 h-4 text-sky-400" />
+                    {isCreatingTrip ? (
+                      <>
+                        <Loader2 className="w-4 h-4 text-sky-400 animate-spin" />
+                        <span>Creating & Building Itinerary...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Create & Build Itinerary</span>
+                        <ArrowRight className="w-4 h-4 text-sky-400" />
+                      </>
+                    )}
                   </button>
                 </div>
               </form>

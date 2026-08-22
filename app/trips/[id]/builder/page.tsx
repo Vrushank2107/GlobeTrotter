@@ -27,6 +27,7 @@ import {
   ArrowUp,
   ArrowDown,
   Compass,
+  Loader2,
 } from 'lucide-react';
 
 export default function ItineraryBuilderPage() {
@@ -43,6 +44,8 @@ export default function ItineraryBuilderPage() {
   const [modalTab, setModalTab] = useState<'custom' | 'catalog'>('custom');
   const [showAddStopModal, setShowAddStopModal] = useState<boolean>(false);
   const [selectedCityId, setSelectedCityId] = useState<string>('');
+  const [isAddingStop, setIsAddingStop] = useState<boolean>(false);
+  const [isAddingActivity, setIsAddingActivity] = useState<boolean>(false);
 
   // Modal Form State
   const [activityForm, setActivityForm] = useState({
@@ -110,26 +113,31 @@ export default function ItineraryBuilderPage() {
     const dest = destinations.find((d) => d.id === selectedCityId);
     if (!dest) return;
 
-    const newStop = {
-      id: `stop_${Date.now()}`,
-      destinationId: dest.id,
-      cityName: dest.name,
-      country: dest.country,
-      startDate: trip.startDate,
-      endDate: trip.endDate,
-      image: dest.coverImage,
-      estimatedCost: dest.avgCostPerDay * 3,
-    };
+    setIsAddingStop(true);
+    try {
+      const newStop = {
+        id: `stop_${Date.now()}`,
+        destinationId: dest.id,
+        cityName: dest.name,
+        country: dest.country,
+        startDate: trip.startDate,
+        endDate: trip.endDate,
+        image: dest.coverImage,
+        estimatedCost: dest.avgCostPerDay * 3,
+      };
 
-    const updatedStops = [...trip.destinations, newStop];
-    const newTitle = generateTripTitleFromStops(updatedStops);
+      const updatedStops = [...trip.destinations, newStop];
+      const newTitle = generateTripTitleFromStops(updatedStops);
 
-    await updateTrip(trip.id, {
-      title: newTitle,
-      destinations: updatedStops,
-    });
-    setShowAddStopModal(false);
-    setSelectedCityId('');
+      await updateTrip(trip.id, {
+        title: newTitle,
+        destinations: updatedStops,
+      });
+      setShowAddStopModal(false);
+      setSelectedCityId('');
+    } finally {
+      setIsAddingStop(false);
+    }
   };
 
   const handleMoveStop = async (index: number, direction: 'up' | 'down') => {
@@ -190,7 +198,7 @@ export default function ItineraryBuilderPage() {
     }
   };
 
-  const handleAddActivity = (e: React.FormEvent) => {
+  const handleAddActivity = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
 
@@ -210,24 +218,29 @@ export default function ItineraryBuilderPage() {
       return;
     }
 
-    addActivity(trip.id, {
-      ...activityForm,
-      cost: Number(activityForm.cost),
-      durationMinutes: Number(activityForm.durationMinutes),
-      dayNumber: activeDay,
-      completed: false,
-    });
+    setIsAddingActivity(true);
+    try {
+      await addActivity(trip.id, {
+        ...activityForm,
+        cost: Number(activityForm.cost),
+        durationMinutes: Number(activityForm.durationMinutes),
+        dayNumber: activeDay,
+        completed: false,
+      });
 
-    setShowModal(false);
-    setActivityForm({
-      title: '',
-      category: 'Sightseeing',
-      location: '',
-      time: '10:00 AM',
-      durationMinutes: 90,
-      cost: 1000,
-      notes: '',
-    });
+      setShowModal(false);
+      setActivityForm({
+        title: '',
+        category: 'Sightseeing',
+        location: '',
+        time: '10:00 AM',
+        durationMinutes: 90,
+        cost: 1000,
+        notes: '',
+      });
+    } finally {
+      setIsAddingActivity(false);
+    }
   };
 
   const categories: ActivityCategory[] = [
@@ -738,9 +751,17 @@ export default function ItineraryBuilderPage() {
                     </button>
                     <button
                       type="submit"
-                      className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md"
+                      disabled={isAddingActivity}
+                      className="bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md inline-flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                     >
-                      Save Activity
+                      {isAddingActivity ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 text-sky-400 animate-spin" />
+                          <span>Saving Activity...</span>
+                        </>
+                      ) : (
+                        <span>Save Activity</span>
+                      )}
                     </button>
                   </div>
                 </form>
@@ -793,10 +814,17 @@ export default function ItineraryBuilderPage() {
                   <button
                     type="button"
                     onClick={handleAddStop}
-                    disabled={!selectedCityId}
-                    className="bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md"
+                    disabled={!selectedCityId || isAddingStop}
+                    className="bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md inline-flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                   >
-                    Append Stop
+                    {isAddingStop ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 text-sky-400 animate-spin" />
+                        <span>Adding Stop...</span>
+                      </>
+                    ) : (
+                      <span>Append Stop</span>
+                    )}
                   </button>
                 </div>
               </div>

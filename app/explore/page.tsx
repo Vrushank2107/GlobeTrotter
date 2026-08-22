@@ -6,7 +6,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
 import { useConfirmDialog } from '@/context/ConfirmDialogContext';
-import { Compass, MapPin, Star, Sparkles, Search, ArrowRight } from 'lucide-react';
+import { Compass, MapPin, Star, Sparkles, Search, ArrowRight, Loader2 } from 'lucide-react';
 
 export default function ExplorePage() {
   const { destinations, trips, searchQuery, updateTrip } = useTripContext();
@@ -17,33 +17,39 @@ export default function ExplorePage() {
   const [localSearch, setLocalSearch] = useState<string>('');
   const [selectedDestForTrip, setSelectedDestForTrip] = useState<typeof destinations[0] | null>(null);
   const [targetTripId, setTargetTripId] = useState<string>('');
+  const [isAddingDest, setIsAddingDest] = useState<boolean>(false);
 
   const handleAppendDestinationToTrip = async () => {
     if (!selectedDestForTrip || !targetTripId) return;
     const targetTrip = trips.find((t) => t.id === targetTripId);
     if (!targetTrip) return;
 
-    const newStop = {
-      id: `stop_${Date.now()}`,
-      cityName: selectedDestForTrip.name,
-      country: selectedDestForTrip.country,
-      startDate: targetTrip.startDate,
-      endDate: targetTrip.endDate,
-      image: selectedDestForTrip.coverImage,
-      estimatedCost: selectedDestForTrip.avgCostPerDay * 3,
-    };
+    setIsAddingDest(true);
+    try {
+      const newStop = {
+        id: `stop_${Date.now()}`,
+        cityName: selectedDestForTrip.name,
+        country: selectedDestForTrip.country,
+        startDate: targetTrip.startDate,
+        endDate: targetTrip.endDate,
+        image: selectedDestForTrip.coverImage,
+        estimatedCost: selectedDestForTrip.avgCostPerDay * 3,
+      };
 
-    await updateTrip(targetTrip.id, {
-      destinations: [...targetTrip.destinations, newStop],
-    });
+      await updateTrip(targetTrip.id, {
+        destinations: [...targetTrip.destinations, newStop],
+      });
 
-    await showAlert({
-      title: 'Destination Added',
-      message: `Added ${selectedDestForTrip.name} to "${targetTrip.title}"!`,
-      variant: 'success',
-    });
-    setSelectedDestForTrip(null);
-    setTargetTripId('');
+      await showAlert({
+        title: 'Destination Added',
+        message: `Added ${selectedDestForTrip.name} to "${targetTrip.title}"!`,
+        variant: 'success',
+      });
+      setSelectedDestForTrip(null);
+      setTargetTripId('');
+    } finally {
+      setIsAddingDest(false);
+    }
   };
 
   const countriesList = ['All', ...Array.from(new Set(destinations.map((d) => d.country)))];
@@ -260,10 +266,17 @@ export default function ExplorePage() {
                     </button>
                     <button
                       onClick={handleAppendDestinationToTrip}
-                      disabled={!targetTripId}
-                      className="bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md"
+                      disabled={!targetTripId || isAddingDest}
+                      className="bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md inline-flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                     >
-                      Confirm Add
+                      {isAddingDest ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 text-sky-400 animate-spin" />
+                          <span>Adding...</span>
+                        </>
+                      ) : (
+                        <span>Confirm Add</span>
+                      )}
                     </button>
                   </div>
                 </div>
