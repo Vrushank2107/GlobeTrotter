@@ -37,6 +37,13 @@ export default function PublicTripPage() {
   }, [shareCode]);
 
   const [copiedLink, setCopiedLink] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(encodeURIComponent(window.location.href));
+    }
+  }, []);
 
   const handleCopyLink = () => {
     if (typeof window !== 'undefined') {
@@ -55,7 +62,6 @@ export default function PublicTripPage() {
   };
 
   const shareText = `Check out this multi-city travel itinerary for ${trip?.title || 'GlobeTrotter'}!`;
-  const currentUrl = typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : '';
 
   if (loading) {
     return (

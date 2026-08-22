@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
 import { useConfirmDialog } from '@/context/ConfirmDialogContext';
+import Link from 'next/link';
 import {
   ShieldAlert,
   Database,
@@ -18,6 +19,8 @@ import {
   BarChart as BarChartIcon,
   PieChart as PieChartIcon,
   Search,
+  Lock,
+  ArrowLeft,
 } from 'lucide-react';
 import {
   BarChart,
@@ -43,6 +46,37 @@ export default function AdminPage() {
     avgCostPerDay: 3500,
     coverImage: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=600&q=80',
   });
+
+  const isAdmin = user?.isAdmin || user?.role === 'ADMIN' || user?.email === 'admin@globetrotter.com';
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex">
+        <Sidebar />
+        <div className="pl-72 flex-1 flex flex-col min-w-0">
+          <Header />
+          <main className="pt-32 pb-16 px-10 flex flex-col items-center justify-center min-h-[70vh] text-center max-w-xl mx-auto">
+            <div className="w-16 h-16 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mb-6 shadow-xs ring-4 ring-amber-50">
+              <Lock className="w-8 h-8" />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">Access Restricted to Administrator</h1>
+            <p className="text-sm text-slate-500 mb-8 leading-relaxed">
+              The Admin & Analytics Dashboard is reserved exclusively for the sole platform administrator (<code className="bg-slate-200 text-slate-800 px-2 py-0.5 rounded font-mono text-xs">admin@globetrotter.com</code>). Standard user accounts cannot manage global catalogs or system analytics.
+            </p>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-6 py-3 rounded-full transition-all flex items-center gap-2 shadow-md cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4 text-sky-400" />
+                <span>Return to Dashboard</span>
+              </Link>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   // Dynamic Platform Calculations
   const totalTrips = trips.length;

@@ -11,17 +11,17 @@ import {
   User,
   ShieldAlert,
   Globe2,
-  MoreVertical,
   Luggage,
   Compass,
   ChevronLeft,
   ChevronRight,
-  LogOut,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const { user, isSidebarCollapsed: isCollapsed, toggleSidebar } = useTripContext();
+
+  const isAdmin = user?.isAdmin || user?.role === 'ADMIN' || user?.email === 'admin@globetrotter.com';
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -30,7 +30,7 @@ export const Sidebar: React.FC = () => {
     { label: 'Community Showcase', path: '/community', icon: Users },
     { label: 'Calendar View', path: '/calendar', icon: CalendarDays },
     { label: 'Profile', path: '/profile', icon: User },
-    { label: 'Admin Panel', path: '/admin', icon: ShieldAlert },
+    ...(isAdmin ? [{ label: 'Admin Panel', path: '/admin', icon: ShieldAlert }] : []),
   ];
 
   return (
@@ -140,43 +140,6 @@ export const Sidebar: React.FC = () => {
             );
           })}
         </nav>
-
-        {/* User Profile Card */}
-        <div className="p-3 border-t border-slate-100 bg-slate-50/50">
-          <div className="relative group">
-            <Link
-              href="/profile"
-              className={`flex items-center gap-3 p-2.5 bg-white rounded-xl hover:shadow-xs transition-all border border-slate-200/80 cursor-pointer ${
-                isCollapsed ? 'justify-center p-2' : ''
-              }`}
-            >
-              <div className="relative shrink-0">
-                <img
-                  src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
-                  alt={user.name || 'User Avatar'}
-                  className="w-9 h-9 rounded-full object-cover ring-2 ring-sky-100"
-                />
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
-              </div>
-
-              {!isCollapsed && (
-                <div className="flex flex-col min-w-0 flex-1">
-                  <span className="font-semibold text-xs text-slate-900 truncate">{user.name}</span>
-                  <span className="text-[10px] text-sky-600 font-medium truncate">{user.memberType}</span>
-                </div>
-              )}
-              {!isCollapsed && <MoreVertical className="w-4 h-4 text-slate-400 shrink-0" />}
-            </Link>
-
-            {/* User Profile Floating Tooltip when Collapsed */}
-            {isCollapsed && (
-              <div className="absolute left-full ml-3 bottom-2 px-3 py-2 bg-slate-900 text-white text-xs font-semibold rounded-xl shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all z-50 transform translate-x-1 group-hover:translate-x-0">
-                <p className="font-bold text-white">{user.name}</p>
-                <p className="text-[10px] text-sky-400 font-normal">{user.memberType}</p>
-              </div>
-            )}
-          </div>
-        </div>
       </aside>
     </>
   );

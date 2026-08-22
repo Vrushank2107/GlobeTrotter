@@ -100,6 +100,8 @@ export interface UserProfile {
   name: string;
   email: string;
   avatar: string;
+  role?: string;
+  isAdmin?: boolean;
   memberType: string;
   countriesVisited: number;
   tripsPlanned: number;

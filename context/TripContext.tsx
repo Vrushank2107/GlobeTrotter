@@ -51,17 +51,13 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [activeTripId, setActiveTripId] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('sidebar_collapsed') === 'true';
-    }
-    return false;
-  });
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('sidebar_collapsed');
       if (saved === 'true') {
+        setIsSidebarCollapsed(true);
         document.body.classList.add('sidebar-collapsed');
       } else {
         document.body.classList.remove('sidebar-collapsed');
