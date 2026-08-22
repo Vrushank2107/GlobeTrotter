@@ -89,7 +89,8 @@ export default function TripBudgetPage() {
   const categoriesList = ['Accommodation', 'Transport', 'Activities', 'Food', 'Misc'];
   const COLORS = ['#0ea5e9', '#0d9488', '#f59e0b', '#6366f1', '#ec4899'];
 
-  const categoryTotals: Record<string, number> = {
+  // Calculate expense totals by category
+  const expenseCategoryTotals: Record<string, number> = {
     Accommodation: 0,
     Transport: 0,
     Activities: 0,
@@ -98,21 +99,58 @@ export default function TripBudgetPage() {
   };
 
   trip.expenses.forEach((exp) => {
-    if (categoryTotals[exp.category] !== undefined) {
-      categoryTotals[exp.category] += exp.amount;
+    if (expenseCategoryTotals[exp.category] !== undefined) {
+      expenseCategoryTotals[exp.category] += exp.amount;
     } else {
-      categoryTotals['Misc'] += exp.amount;
+      expenseCategoryTotals['Misc'] += exp.amount;
     }
   });
 
-  const pieData = Object.entries(categoryTotals)
+  // Calculate activity estimated costs by category
+  const activityCategoryTotals: Record<string, number> = {
+    Accommodation: 0,
+    Transport: 0,
+    Activities: 0,
+    Food: 0,
+    Misc: 0,
+  };
+
+  trip.activities.forEach((act) => {
+    // Map activity categories to expense categories
+    const categoryMapping: Record<string, string> = {
+      'Sightseeing': 'Activities',
+      'Food': 'Food',
+      'Adventure': 'Activities',
+      'Culture': 'Activities',
+      'Entertainment': 'Activities',
+      'Nature': 'Activities',
+      'Shopping': 'Misc',
+      'Transport': 'Transport',
+      'Accommodation': 'Accommodation',
+    };
+    
+    const mappedCategory = categoryMapping[act.category] || 'Misc';
+    if (activityCategoryTotals[mappedCategory] !== undefined) {
+      activityCategoryTotals[mappedCategory] += act.cost;
+    } else {
+      activityCategoryTotals['Misc'] += act.cost;
+    }
+  });
+
+  // Calculate totals
+  const totalEstimatedActivityCosts = Object.values(activityCategoryTotals).reduce((sum, val) => sum + val, 0);
+  const totalActualExpenses = Object.values(expenseCategoryTotals).reduce((sum, val) => sum + val, 0);
+
+  // Pie chart data - showing actual expenses
+  const pieData = Object.entries(expenseCategoryTotals)
     .filter(([_, val]) => val > 0)
     .map(([name, value]) => ({ name, value }));
 
+  // Bar chart data - comparing estimated vs actual
   const barData = categoriesList.map((cat) => ({
     category: cat,
-    Spent: categoryTotals[cat] || 0,
-    EstBudget: Math.round(trip.totalBudget / 4),
+    Estimated: activityCategoryTotals[cat] || 0,
+    Spent: expenseCategoryTotals[cat] || 0,
   }));
 
   const handleAddExpense = (e: React.FormEvent) => {
@@ -148,7 +186,8 @@ export default function TripBudgetPage() {
     });
   };
 
-  const isOverBudget = trip.spentBudget > trip.totalBudget;
+  const isOverBudget = trip.spentBudget > trip.totalBudget || totalEstimatedActivityCosts > trip.totalBudget;
+  const isApproachingBudget = !isOverBudget && (trip.spentBudget > trip.totalBudget * 0.85 || totalEstimatedActivityCosts > trip.totalBudget * 0.85);
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -171,7 +210,9 @@ export default function TripBudgetPage() {
               <h1 className="text-3xl font-bold text-slate-900">{trip.title} - Budget & Expenses</h1>
               <div className="flex items-center gap-3 mt-1">
                 <p className="text-xs text-slate-600 font-medium">
-                  Total Budget: <span className="font-bold text-slate-900">₹{trip.totalBudget.toLocaleString()}</span> | Spent: <span className="font-bold text-slate-900">₹{trip.spentBudget.toLocaleString()}</span>
+                  Budget: <span className="font-bold text-slate-900">₹{trip.totalBudget.toLocaleString()}</span> | 
+                  Est. Activities: <span className="font-bold text-emerald-600">₹{totalEstimatedActivityCosts.toLocaleString()}</span> | 
+                  Spent: <span className="font-bold text-slate-900">₹{trip.spentBudget.toLocaleString()}</span>
                 </p>
                 <button
                   onClick={() => {
@@ -202,19 +243,71 @@ export default function TripBudgetPage() {
               <div>
                 <h4 className="font-bold text-sm">Over-Budget Warning</h4>
                 <p className="text-xs">
-                  Your recorded expenses (₹{trip.spentBudget.toLocaleString()}) have exceeded your target budget of ₹{trip.totalBudget.toLocaleString()} by ₹{(trip.spentBudget - trip.totalBudget).toLocaleString()}.
+                  {trip.spentBudget > trip.totalBudget 
+                    ? `Your recorded expenses (₹${trip.spentBudget.toLocaleString()}) have exceeded your target budget of ₹${trip.totalBudget.toLocaleString()} by ₹{(trip.spentBudget - trip.totalBudget).toLocaleString()}.`
+                    : `Your estimated activity costs (₹${totalEstimatedActivityCosts.toLocaleString()}) exceed your target budget of ₹${trip.totalBudget.toLocaleString()} by ₹{(totalEstimatedActivityCosts - trip.totalBudget).toLocaleString()}.`
+                  }
                 </p>
               </div>
             </div>
           )}
 
+          {/* Approaching budget banner */}
+          {isApproachingBudget && !isOverBudget && (
+            <div className="mb-8 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center gap-3">
+              <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0" />
+              <div>
+                <h4 className="font-bold text-sm">Approaching Budget Limit</h4>
+                <p className="text-xs">
+                  {trip.spentBudget > trip.totalBudget * 0.85
+                    ? `You have spent ${Math.round((trip.spentBudget / trip.totalBudget) * 100)}% of your total trip budget.`
+                    : `Your estimated activity costs are ${Math.round((totalEstimatedActivityCosts / trip.totalBudget) * 100)}% of your total trip budget.`
+                  }
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Budget Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-sky-100 p-2 rounded-lg">
+                  <DollarSign className="w-5 h-5 text-sky-600" />
+                </div>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Budget</span>
+              </div>
+              <p className="text-2xl font-bold text-slate-900">₹{trip.totalBudget.toLocaleString()}</p>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-emerald-100 p-2 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-emerald-600" />
+                </div>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Est. Activity Costs</span>
+              </div>
+              <p className="text-2xl font-bold text-slate-900">₹{totalEstimatedActivityCosts.toLocaleString()}</p>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-amber-100 p-2 rounded-lg">
+                  <CreditCard className="w-5 h-5 text-amber-600" />
+                </div>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Actual Expenses</span>
+              </div>
+              <p className="text-2xl font-bold text-slate-900">₹{totalActualExpenses.toLocaleString()}</p>
+            </div>
+          </div>
+
           {/* Recharts Visualization Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* Category Pie Chart */}
+            {/* Category Pie Chart - Actual Expenses */}
             <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
               <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <PieChartIcon className="w-5 h-5 text-sky-600" />
-                <span>Expense Breakdown by Category</span>
+                <span>Actual Expenses by Category</span>
               </h3>
 
               {pieData.length === 0 ? (
@@ -247,11 +340,11 @@ export default function TripBudgetPage() {
               )}
             </div>
 
-            {/* Category Comparison Bar Chart */}
+            {/* Estimated vs Actual Bar Chart */}
             <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
               <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-teal-600" />
-                <span>Category Spend vs Estimated Target</span>
+                <span>Estimated vs Actual by Category</span>
               </h3>
 
               <div className="h-72 w-full">
@@ -262,20 +355,82 @@ export default function TripBudgetPage() {
                     <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip formatter={(val) => `₹${Number(val).toLocaleString()}`} />
                     <Legend />
-                    <Bar dataKey="Spent" fill="#0ea5e9" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="EstBudget" fill="#cbd5e1" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="Estimated" fill="#94a3b8" radius={[6, 6, 0, 0]} name="Est. Activity Costs" />
+                    <Bar dataKey="Spent" fill="#0ea5e9" radius={[6, 6, 0, 0]} name="Actual Expenses" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
           </div>
 
+          {/* Activities Cost Table */}
+          <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs mb-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-slate-900">Planned Activities & Estimated Costs</h2>
+              <span className="text-xs font-semibold text-slate-500">
+                {trip.activities.length} Activit{trip.activities.length !== 1 ? 'ies' : 'y'} | Total: ₹{totalEstimatedActivityCosts.toLocaleString()}
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 text-slate-400 font-semibold uppercase tracking-wider">
+                    <th className="py-3 px-4">Activity</th>
+                    <th className="py-3 px-4">Category</th>
+                    <th className="py-3 px-4">Day</th>
+                    <th className="py-3 px-4">Location</th>
+                    <th className="py-3 px-4 text-right">Est. Cost (₹)</th>
+                    <th className="py-3 px-4 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                  {trip.activities.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-8 text-center text-slate-400">
+                        No activities planned yet. Add activities in the itinerary builder.
+                      </td>
+                    </tr>
+                  ) : (
+                    trip.activities.map((act) => (
+                      <tr key={act.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="py-3.5 px-4 font-bold text-slate-900">{act.title}</td>
+                        <td className="py-3.5 px-4">
+                          <span className="bg-sky-100 text-sky-800 px-2.5 py-1 rounded-full font-semibold text-[10px] uppercase">
+                            {act.category}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-slate-500">Day {act.dayNumber}</td>
+                        <td className="py-3.5 px-4 text-slate-500">{act.location}</td>
+                        <td className="py-3.5 px-4 text-right font-bold text-slate-900">
+                          ₹{act.cost.toLocaleString()}
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          {act.completed ? (
+                            <span className="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-semibold text-[10px] flex items-center gap-1 inline-flex">
+                              <CheckCircle2 className="w-3 h-3" />
+                              Done
+                            </span>
+                          ) : (
+                            <span className="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-semibold text-[10px]">
+                              Planned
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           {/* Expenses Data Table */}
           <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-slate-900">Itemized Expense Log</h2>
+              <h2 className="text-xl font-bold text-slate-900">Actual Expense Log</h2>
               <span className="text-xs font-semibold text-slate-500">
-                {trip.expenses.length} Expense Item{trip.expenses.length !== 1 ? 's' : ''}
+                {trip.expenses.length} Expense Item{trip.expenses.length !== 1 ? 's' : ''} | Total: ₹{totalActualExpenses.toLocaleString()}
               </span>
             </div>
 
