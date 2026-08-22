@@ -42,9 +42,9 @@ export const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 right-0 h-16 md:h-20 bg-slate-50/80 backdrop-blur-xl z-40 px-3 md:px-8 flex items-center justify-between border-b border-slate-200/50 transition-all duration-300 left-0 md:${
+      className={`fixed top-0 h-16 md:h-20 bg-slate-50/80 backdrop-blur-xl z-[60] px-3 md:px-8 flex items-center justify-between border-b border-slate-200/50 transition-all duration-300 left-0 md:${
         isSidebarCollapsed ? 'left-20' : 'left-72'
-      }`}
+      } right-0`}
     >
       {/* Left side: Quick Action Pills */}
       <div className="flex items-center gap-2 md:gap-3">
