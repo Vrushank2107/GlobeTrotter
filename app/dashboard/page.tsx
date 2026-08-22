@@ -66,7 +66,7 @@ export default function DashboardPage() {
                       <Globe2 className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-slate-900">{user?.countriesVisited || 5}</p>
+                      <p className="text-2xl font-bold text-slate-900">{user?.countriesVisited ?? 0}</p>
                       <p className="text-xs text-slate-500 uppercase tracking-wider font-medium">Countries Visited</p>
                     </div>
                   </div>
@@ -107,7 +107,7 @@ export default function DashboardPage() {
 
                   {loading && trips.length === 0 ? (
                     <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-500 text-sm">
-                      Loading your itineraries from database...
+                      Loading your itineraries...
                     </div>
                   ) : upcomingTrips.length === 0 ? (
                     <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-500 text-sm">
@@ -195,47 +195,110 @@ export default function DashboardPage() {
                 <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs h-full">
                   <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center justify-between">
                     <span>Recent Activity</span>
-                    <span className="text-xs text-sky-600 font-normal">Live DB Sync</span>
+                    <span className="text-xs text-slate-400 font-normal">Updated live</span>
                   </h2>
 
                   <div className="relative pl-6 space-y-6">
                     <div className="absolute left-2.5 top-2 bottom-2 w-0.5 bg-slate-200"></div>
 
-                    <div className="relative">
-                      <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center ring-4 ring-white text-xs font-bold">
-                        <MapPin className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
-                        <span className="text-slate-400 font-medium block mb-1">Database Connected</span>
-                        <p className="text-slate-700">
-                          Live trip stops and destinations synchronized with PostgreSQL.
-                        </p>
-                      </div>
-                    </div>
+                    {trips.length > 0 ? (
+                      trips.slice(0, 3).map((trip) => {
+                        const destNames = trip.destinations.map((d) => d.cityName).filter(Boolean).join(' → ');
+                        return (
+                          <React.Fragment key={trip.id}>
+                            <div className="relative">
+                              <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center ring-4 ring-white text-xs font-bold">
+                                <MapPin className="w-3.5 h-3.5" />
+                              </div>
+                              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-slate-900 font-semibold">Trip Planned</span>
+                                  <span className="text-[10px] text-slate-400 font-medium">{trip.status}</span>
+                                </div>
+                                <p className="text-slate-600 leading-relaxed font-medium text-slate-800">
+                                  {trip.title}
+                                </p>
+                                <p className="text-slate-500 text-[11px] mt-0.5">
+                                  {destNames ? `Route: ${destNames}` : `Planned budget: ₹${trip.totalBudget.toLocaleString()}`}
+                                </p>
+                              </div>
+                            </div>
 
-                    <div className="relative">
-                      <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center ring-4 ring-white text-xs font-bold">
-                        <DollarSign className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
-                        <span className="text-slate-400 font-medium block mb-1">Budget Tracker</span>
-                        <p className="text-slate-700">
-                          Logged expenses dynamically calculated against total planned budgets.
-                        </p>
-                      </div>
-                    </div>
+                            {trip.activities && trip.activities.length > 0 && (
+                              <div className="relative">
+                                <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center ring-4 ring-white text-xs font-bold">
+                                  <Calendar className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="text-slate-900 font-semibold">Itinerary Schedule</span>
+                                    <span className="text-[10px] text-slate-400 font-medium">{trip.activities.length} items</span>
+                                  </div>
+                                  <p className="text-slate-600 leading-relaxed">
+                                    Added activities including <span className="font-medium text-slate-800">{trip.activities[0].title}</span> for {trip.title}.
+                                  </p>
+                                </div>
+                              </div>
+                            )}
 
-                    <div className="relative">
-                      <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center ring-4 ring-white text-xs font-bold">
-                        <Calendar className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
-                        <span className="text-slate-400 font-medium block mb-1">Itinerary Scheduling</span>
-                        <p className="text-slate-700">
-                          Day-by-day activities linked to destinations and dates.
-                        </p>
-                      </div>
-                    </div>
+                            {trip.totalBudget > 0 && (
+                              <div className="relative">
+                                <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center ring-4 ring-white text-xs font-bold">
+                                  <DollarSign className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="text-slate-900 font-semibold">Budget Tracking</span>
+                                    <span className="text-[10px] text-emerald-600 font-medium">₹{trip.spentBudget.toLocaleString()} spent</span>
+                                  </div>
+                                  <p className="text-slate-600 leading-relaxed">
+                                    Total estimated budget for {trip.title} is set at <span className="font-semibold text-slate-800">₹{trip.totalBudget.toLocaleString()}</span>.
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                          </React.Fragment>
+                        );
+                      })
+                    ) : (
+                      <>
+                        <div className="relative">
+                          <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center ring-4 ring-white text-xs font-bold">
+                            <MapPin className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+                            <span className="text-slate-900 font-semibold block mb-1">Trip Overview</span>
+                            <p className="text-slate-600 leading-relaxed">
+                              Plan multi-city destinations with automated route optimization.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center ring-4 ring-white text-xs font-bold">
+                            <DollarSign className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+                            <span className="text-slate-900 font-semibold block mb-1">Budget Tracker</span>
+                            <p className="text-slate-600 leading-relaxed">
+                              Track expenses and manage allocations across all travel destinations.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center ring-4 ring-white text-xs font-bold">
+                            <Calendar className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+                            <span className="text-slate-900 font-semibold block mb-1">Itinerary Scheduling</span>
+                            <p className="text-slate-600 leading-relaxed">
+                              Organize day-by-day activities, tours, and accommodations.
+                            </p>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

@@ -282,8 +282,9 @@ export default function NewTripPage() {
                     </label>
                     <input
                       type="number"
-                      value={formData.totalBudget}
+                      value={formData.totalBudget === 0 ? '' : formData.totalBudget}
                       onChange={(e) => setFormData({ ...formData, totalBudget: e.target.value === '' ? '' : Number(e.target.value) })}
+                      placeholder="40000"
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all"
                     />
                     {errors.totalBudget && <p className="text-xs text-red-500 mt-1">{errors.totalBudget}</p>}
@@ -295,8 +296,9 @@ export default function NewTripPage() {
                     </label>
                     <input
                       type="number"
-                      value={formData.travelers}
+                      value={formData.travelers === 0 ? '' : formData.travelers}
                       onChange={(e) => setFormData({ ...formData, travelers: e.target.value === '' ? '' : Number(e.target.value) })}
+                      placeholder="2"
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all"
                     />
                     {errors.travelers && <p className="text-xs text-red-500 mt-1">{errors.travelers}</p>}

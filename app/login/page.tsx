@@ -31,13 +31,10 @@ export default function LoginPage() {
         await refreshData();
         router.push('/dashboard');
       } else {
-        setErrorMsg(data?.message || 'Authentication failed');
-        await refreshData();
-        router.push('/dashboard');
+        setErrorMsg(data?.message || 'Authentication failed. Please check your credentials.');
       }
     } catch {
-      await refreshData();
-      router.push('/dashboard');
+      setErrorMsg('Failed to sign in. Please try again.');
     } finally {
       setLoading(false);
     }

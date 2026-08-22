@@ -65,7 +65,7 @@ export async function GET() {
         tripsPlanned,
         totalBudgetSpent: Number(expensesSum._sum.amount || 0),
         bio: 'Explorer & traveler planning multi-city adventures worldwide.',
-        favoriteDestinations: favoriteDestinations.length > 0 ? favoriteDestinations : ['Goa, India', 'Mumbai, India'],
+        favoriteDestinations,
       },
     });
   } catch (error: unknown) {

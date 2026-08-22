@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { getTrip } from '@/lib/services/tripService';
+import { cookies } from 'next/headers';
 
 export async function POST(req: Request, { params }: { params: Promise<{ tripId: string }> }) {
   try {
     const { tripId } = await params;
+    const cookieStore = await cookies();
+    const userId = cookieStore.get('user_id')?.value;
 
     const sourceTrip = await prisma.trip.findUnique({
       where: { id: tripId },
@@ -19,7 +22,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ tripId:
       return NextResponse.json({ success: false, message: 'Source trip not found' }, { status: 404 });
     }
 
-    let user = await prisma.user.findFirst();
+    let user = null;
+    if (userId) {
+      user = await prisma.user.findUnique({ where: { id: userId } });
+    }
+    if (!user) {
+      user = await prisma.user.findFirst();
+    }
     if (!user) {
       user = await prisma.user.create({
         data: {

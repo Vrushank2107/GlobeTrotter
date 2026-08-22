@@ -2,15 +2,22 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTripContext } from '@/context/TripContext';
-import { Search, Bell, Plus, ChevronRight, Home } from 'lucide-react';
+import { Bell, LogOut, Plus, Zap, MapPin } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
-  const { searchQuery, setSearchQuery } = useTripContext();
+  const router = useRouter();
+  const { trips, refreshData } = useTripContext();
 
-  const getBreadcrumb = () => {
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    await refreshData();
+    router.push('/login');
+  };
+
+  const getPageTitle = () => {
     if (pathname === '/dashboard') return 'Dashboard';
     if (pathname === '/trips') return 'My Trips';
     if (pathname === '/trips/new') return 'Plan New Trip';
@@ -26,44 +33,49 @@ export const Header: React.FC = () => {
 
   return (
     <header className="fixed top-0 left-72 right-0 h-20 bg-slate-50/80 backdrop-blur-xl z-40 px-8 flex items-center justify-between border-b border-slate-200/50">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-slate-500 text-sm">
-        <Link href="/dashboard" className="flex items-center gap-1 hover:text-sky-600 transition-colors">
-          <Home className="w-4 h-4" />
-          <span>Home</span>
-        </Link>
-        <ChevronRight className="w-4 h-4 text-slate-300" />
-        <span className="font-semibold text-slate-900">{getBreadcrumb()}</span>
-      </div>
-
-      {/* Action Controls */}
-      <div className="flex items-center gap-4">
-        {/* Search */}
-        <div className="relative">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search destinations, trips..."
-            className="bg-white border border-slate-200 h-10 pl-10 pr-4 rounded-full text-xs outline-none w-64 focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all shadow-xs"
-          />
+      {/* Left side: Quick Action Pills */}
+      <div className="flex items-center gap-3">
+        {/* Page Title Pill */}
+        <div className="flex items-center gap-2 bg-white border border-slate-200/80 px-3.5 py-1.5 rounded-full shadow-xs">
+          <MapPin className="w-3.5 h-3.5 text-sky-600" />
+          <span className="text-xs font-bold text-slate-800 tracking-tight">{getPageTitle()}</span>
         </div>
 
-        {/* Notifications */}
+        {/* Plan Trip Quick Pill */}
+        <Link
+          href="/trips/new"
+          className="flex items-center gap-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200/80 px-3.5 py-1.5 rounded-full text-xs font-semibold shadow-xs hover:shadow-md transition-all group cursor-pointer"
+        >
+          <Plus className="w-3.5 h-3.5 text-sky-600 group-hover:rotate-90 transition-transform duration-200" />
+          <span>+ Plan Trip</span>
+        </Link>
+
+        {/* Quick Stats Pill */}
+        <Link
+          href="/trips"
+          className="flex items-center gap-1.5 bg-amber-50/90 hover:bg-amber-100/90 text-amber-900 border border-amber-200/80 px-3.5 py-1.5 rounded-full text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer"
+        >
+          <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+          <span>⚡ {trips.length} {trips.length === 1 ? 'Trip' : 'Trips'} Active</span>
+        </Link>
+      </div>
+
+      {/* Right side: Action Controls */}
+      <div className="flex items-center gap-4">
+        {/* Notifications Bell */}
         <button className="p-2.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 relative shadow-xs transition-all cursor-pointer">
           <Bell className="w-4 h-4" />
           <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
         </button>
 
-        {/* Plan New Trip CTA */}
-        <Link
-          href="/trips/new"
-          className="bg-slate-900 text-white hover:bg-slate-800 text-xs font-semibold px-4 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+        {/* Sign Out Button */}
+        <button
+          onClick={handleLogout}
+          className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-semibold px-4 py-2.5 rounded-full shadow-xs transition-all flex items-center gap-2 cursor-pointer"
         >
-          <Plus className="w-4 h-4 text-sky-400" />
-          <span>Plan New Trip</span>
-        </Link>
+          <LogOut className="w-4 h-4 text-red-600" />
+          <span>Sign Out</span>
+        </button>
       </div>
     </header>
   );

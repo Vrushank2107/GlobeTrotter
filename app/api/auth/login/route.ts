@@ -14,19 +14,15 @@ export async function POST(req: Request) {
       );
     }
 
-    let user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email },
     });
 
     if (!user) {
-      user = await prisma.user.create({
-        data: {
-          name: email.split('@')[0],
-          email,
-          passwordHash: '$2a$10$demo',
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(email)}`,
-        },
-      });
+      return NextResponse.json(
+        { success: false, message: 'Account not found. Please register first.' },
+        { status: 404 }
+      );
     }
 
     // Set authentication session cookie

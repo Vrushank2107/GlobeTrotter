@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -26,8 +26,19 @@ export default function TripOverviewPage() {
   const router = useRouter();
   const tripId = params.id as string;
 
-  const { trips } = useTripContext();
+  const { trips, updateTrip } = useTripContext();
   const trip = trips.find((t) => t.id === tripId) || trips[0];
+
+  const [showBudgetModal, setShowBudgetModal] = useState<boolean>(false);
+  const [newBudget, setNewBudget] = useState<number | ''>(trip?.totalBudget || 50000);
+
+  const handleSaveBudget = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newBudget && Number(newBudget) > 0 && trip) {
+      await updateTrip(trip.id, { totalBudget: Number(newBudget) });
+      setShowBudgetModal(false);
+    }
+  };
 
   if (!trip) {
     return (
@@ -111,10 +122,21 @@ export default function TripOverviewPage() {
                 <span className="text-xl font-bold text-slate-900">{trip.activities.length} Events</span>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-                <span className="text-slate-400 font-medium text-xs uppercase tracking-wider block mb-1">
-                  Total Budget
-                </span>
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 font-medium text-xs uppercase tracking-wider block mb-1">
+                    Total Budget
+                  </span>
+                  <button
+                    onClick={() => {
+                      setNewBudget(trip.totalBudget);
+                      setShowBudgetModal(true);
+                    }}
+                    className="text-sky-600 hover:text-sky-700 font-semibold text-xs flex items-center gap-1 cursor-pointer"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Edit
+                  </button>
+                </div>
                 <span className="text-xl font-bold text-slate-900">₹{trip.totalBudget.toLocaleString()}</span>
               </div>
 
@@ -203,6 +225,51 @@ export default function TripOverviewPage() {
             </div>
           </div>
         </main>
+
+        {/* Edit Total Budget Modal Drawer */}
+        {showBudgetModal && (
+          <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-200 animate-fade-in">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-slate-900">Edit Total Trip Budget</h3>
+                <button onClick={() => setShowBudgetModal(false)} className="text-slate-400 hover:text-slate-600 font-bold">
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveBudget} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
+                    Total Planned Budget (₹)
+                  </label>
+                  <input
+                    type="number"
+                    value={newBudget === 0 ? '' : newBudget}
+                    onChange={(e) => setNewBudget(e.target.value === '' ? '' : Number(e.target.value))}
+                    placeholder="50000"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setShowBudgetModal(false)}
+                    className="bg-slate-100 text-slate-700 font-semibold px-5 py-2.5 rounded-full text-xs cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-6 py-2.5 rounded-full text-xs shadow-md cursor-pointer"
+                  >
+                    Save Budget
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

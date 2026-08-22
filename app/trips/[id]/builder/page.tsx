@@ -409,8 +409,12 @@ export default function ItineraryBuilderPage() {
                     </label>
                     <input
                       type="number"
-                      value={activityForm.durationMinutes}
-                      onChange={(e) => setActivityForm({ ...activityForm, durationMinutes: Number(e.target.value) })}
+                      value={activityForm.durationMinutes === 0 ? '' : activityForm.durationMinutes}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setActivityForm({ ...activityForm, durationMinutes: val === '' ? 0 : Number(val) });
+                      }}
+                      placeholder="90"
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:border-sky-500"
                     />
                   </div>
@@ -421,8 +425,12 @@ export default function ItineraryBuilderPage() {
                     </label>
                     <input
                       type="number"
-                      value={activityForm.cost}
-                      onChange={(e) => setActivityForm({ ...activityForm, cost: Number(e.target.value) })}
+                      value={activityForm.cost === 0 ? '' : activityForm.cost}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setActivityForm({ ...activityForm, cost: val === '' ? 0 : Number(val) });
+                      }}
+                      placeholder="0"
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:border-sky-500"
                     />
                   </div>
