@@ -20,14 +20,10 @@ export async function GET() {
     }
 
     if (!dbUser) {
-      dbUser = await prisma.user.create({
-        data: {
-          name: 'Demo User',
-          email: 'demo@globetrotter.com',
-          passwordHash: '$2a$10$demo',
-          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-        },
-      });
+      return NextResponse.json(
+        { success: false, message: 'User not found. Please login or register.' },
+        { status: 401 }
+      );
     }
 
     const tripsPlanned = await prisma.trip.count({
@@ -53,8 +49,8 @@ export async function GET() {
       new Set(userStops.map((s) => `${s.destination?.name}, ${s.destination?.country}`).filter(Boolean))
     );
 
-    const userRole = (dbUser as any).role || (dbUser.email === 'admin@globetrotter.com' ? 'ADMIN' : 'USER');
-    const isAdmin = userRole === 'ADMIN' || dbUser.email === 'admin@globetrotter.com';
+    const userRole = (dbUser as any).role || 'USER';
+    const isAdmin = userRole === 'ADMIN';
 
     return NextResponse.json({
       success: true,

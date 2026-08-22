@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Activity, Expense, Trip, Destination, UserProfile, SmartInsight } from '@/types/index';
 
 interface TripContextType {
-  user: UserProfile;
+  user: UserProfile | null;
   trips: Trip[];
   destinations: Destination[];
   communityTrips: Trip[];
@@ -44,7 +44,7 @@ const DEFAULT_USER: UserProfile = {
 const TripContext = createContext<TripContextType | undefined>(undefined);
 
 export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserProfile>(DEFAULT_USER);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [communityTrips, setCommunityTrips] = useState<Trip[]>([]);
@@ -102,16 +102,6 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setDestinations(destData.data);
       }
 
-      // Fetch user trips
-      const tripsRes = await fetch('/api/trips');
-      const tripsData = await safeFetchJson(tripsRes);
-      if (tripsData?.success && Array.isArray(tripsData.data)) {
-        setTrips(tripsData.data);
-        if (tripsData.data.length > 0 && !activeTripId) {
-          setActiveTripId(tripsData.data[0].id);
-        }
-      }
-
       // Fetch community trips
       const commRes = await fetch('/api/community');
       const commData = await safeFetchJson(commRes);
@@ -124,9 +114,24 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const userData = await safeFetchJson(userRes);
       if (userData?.success && userData.data) {
         setUser(userData.data);
+        
+        // Fetch user trips only if authenticated
+        const tripsRes = await fetch('/api/trips');
+        const tripsData = await safeFetchJson(tripsRes);
+        if (tripsData?.success && Array.isArray(tripsData.data)) {
+          setTrips(tripsData.data);
+          if (tripsData.data.length > 0 && !activeTripId) {
+            setActiveTripId(tripsData.data[0].id);
+          }
+        }
+      } else {
+        // User not authenticated, clear user data
+        setUser(null);
+        setTrips([]);
       }
     } catch (error) {
       console.error('Error fetching initial data from backend APIs:', error);
+      setUser(null);
     } finally {
       setLoading(false);
     }

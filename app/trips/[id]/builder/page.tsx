@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -35,13 +35,31 @@ export default function ItineraryBuilderPage() {
   const router = useRouter();
   const tripId = params.id as string;
 
-  const { trips, destinations, addActivity, deleteActivity, toggleActivityCompleted, updateTrip } = useTripContext();
+  const { user, trips, destinations, addActivity, deleteActivity, toggleActivityCompleted, updateTrip, loading, isSidebarCollapsed } = useTripContext();
   const { confirm, showAlert } = useConfirmDialog();
   const trip = trips.find((t) => t.id === tripId) || trips[0];
 
   const [activeDay, setActiveDay] = useState<number>(1);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalTab, setModalTab] = useState<'custom' | 'catalog'>('custom');
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-500">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
   const [showAddStopModal, setShowAddStopModal] = useState<boolean>(false);
   const [selectedCityId, setSelectedCityId] = useState<string>('');
   const [isAddingStop, setIsAddingStop] = useState<boolean>(false);
@@ -258,7 +276,7 @@ export default function ItineraryBuilderPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-0 md:pl-72 flex-1 flex flex-col min-w-0">
+      <div className={`pl-0 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">

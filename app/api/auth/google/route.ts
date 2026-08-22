@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { cookies } from 'next/headers';
+import * as bcrypt from 'bcryptjs';
 
 export async function POST(req: Request) {
   try {
@@ -40,12 +41,16 @@ export async function POST(req: Request) {
       });
 
       if (!user) {
+        // Generate a random password hash for OAuth users (they don't need passwords)
+        const randomPassword = Math.random().toString(36).substring(2) + Date.now().toString();
+        const hashedPassword = await bcrypt.hash(randomPassword, 10);
+        
         user = await prisma.user.create({
           data: {
             email: userEmail,
             name: userName || userEmail.split('@')[0],
             avatar: userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
-            passwordHash: '$2a$10$googleoauthpasswordhashplaceholder',
+            passwordHash: hashedPassword,
           },
         });
       } else if (userAvatar && !user.avatar) {
@@ -69,7 +74,7 @@ export async function POST(req: Request) {
     const cookieStore = await cookies();
     cookieStore.set('user_id', user.id, {
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24, // 1 day - reduced from 7 days for better security
       httpOnly: true,
       sameSite: 'lax',
     });

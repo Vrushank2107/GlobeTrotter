@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { cookies } from 'next/headers';
+import * as bcrypt from 'bcryptjs';
 
 export async function POST(req: Request) {
   try {
@@ -25,11 +26,20 @@ export async function POST(req: Request) {
       );
     }
 
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+    if (!isValidPassword) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid email or password' },
+        { status: 401 }
+      );
+    }
+
     // Set authentication session cookie
     const cookieStore = await cookies();
     cookieStore.set('user_id', user.id, {
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24, // 1 day - reduced from 7 days for better security
       httpOnly: true,
       sameSite: 'lax',
     });

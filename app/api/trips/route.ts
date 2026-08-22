@@ -8,13 +8,14 @@ export async function GET() {
     const cookieStore = await cookies();
     const userId = cookieStore.get('user_id')?.value;
 
-    let targetUserId = userId;
-    if (!targetUserId) {
-      const demoUser = await prisma.user.findFirst({ where: { email: 'demo@globetrotter.com' } });
-      targetUserId = demoUser?.id;
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'Authentication required' },
+        { status: 401 }
+      );
     }
 
-    const trips = await getUserTrips(targetUserId);
+    const trips = await getUserTrips(userId);
 
     return NextResponse.json({
       success: true,
@@ -35,22 +36,19 @@ export async function POST(req: Request) {
     const cookieStore = await cookies();
     const userId = cookieStore.get('user_id')?.value;
 
-    let user = null;
-    if (userId) {
-      user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'Authentication required' },
+        { status: 401 }
+      );
     }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
-      user = await prisma.user.findFirst();
-    }
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          name: 'Demo User',
-          email: 'demo@globetrotter.com',
-          passwordHash: '$2a$10$demo',
-          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo',
-        },
-      });
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 }
+      );
     }
 
     const startDate = body.startDate ? new Date(body.startDate) : new Date('2026-10-15');

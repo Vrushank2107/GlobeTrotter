@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
@@ -35,11 +36,30 @@ const MONTH_NAMES = [
 ];
 
 export default function CalendarPage() {
-  const { trips } = useTripContext();
+  const router = useRouter();
+  const { user, trips, loading, isSidebarCollapsed } = useTripContext();
   const [selectedTripFilter, setSelectedTripFilter] = useState<string>('All');
   const [currentYear, setCurrentYear] = useState<number>(2026);
   const [currentMonth, setCurrentMonth] = useState<number>(9); // 0-indexed: 9 = October
   const [selectedDate, setSelectedDate] = useState<number | null>(15);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-500">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfWeek = new Date(currentYear, currentMonth, 1).getDay();
@@ -113,7 +133,7 @@ export default function CalendarPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-0 md:pl-72 flex-1 flex flex-col min-w-0">
+      <div className={`pl-0 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">

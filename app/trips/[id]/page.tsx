@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -27,11 +27,29 @@ export default function TripOverviewPage() {
   const router = useRouter();
   const tripId = params.id as string;
 
-  const { trips, updateTrip } = useTripContext();
+  const { user, trips, updateTrip, loading, isSidebarCollapsed } = useTripContext();
   const { showAlert } = useConfirmDialog();
   const trip = trips.find((t) => t.id === tripId) || trips[0];
 
   const [showBudgetModal, setShowBudgetModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-500">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
   const [newBudget, setNewBudget] = useState<number | ''>(trip?.totalBudget || 50000);
 
   const handleSaveBudget = async (e: React.FormEvent) => {
@@ -56,7 +74,7 @@ export default function TripOverviewPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-0 md:pl-72 flex-1 flex flex-col min-w-0">
+      <div className={`pl-0 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-20 md:pt-20 pb-24 md:pb-16 min-h-screen">

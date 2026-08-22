@@ -14,7 +14,7 @@ export default function CommunityTripDetailPage() {
   const router = useRouter();
   const tripId = params.tripId as string;
 
-  const { communityTrips, cloneCommunityTrip } = useTripContext();
+  const { communityTrips, cloneCommunityTrip, isSidebarCollapsed } = useTripContext();
   const { showAlert } = useConfirmDialog();
   const trip = communityTrips.find((t) => t.id === tripId) || communityTrips[0];
 
@@ -41,7 +41,7 @@ export default function CommunityTripDetailPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-72 flex-1 flex flex-col min-w-0">
+      <div className={`pl-72 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-20 pb-16 min-h-screen">

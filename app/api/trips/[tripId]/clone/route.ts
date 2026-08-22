@@ -22,22 +22,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ tripId:
       return NextResponse.json({ success: false, message: 'Source trip not found' }, { status: 404 });
     }
 
-    let user = null;
-    if (userId) {
-      user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'Authentication required' },
+        { status: 401 }
+      );
     }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
-      user = await prisma.user.findFirst();
-    }
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          name: 'Demo User',
-          email: 'demo@globetrotter.com',
-          passwordHash: '$2a$10$demo',
-          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo',
-        },
-      });
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 }
+      );
     }
 
     const clonedTrip = await prisma.trip.create({

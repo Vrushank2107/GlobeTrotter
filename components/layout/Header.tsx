@@ -12,7 +12,7 @@ export const Header: React.FC = () => {
   const { user, trips, refreshData, isSidebarCollapsed } = useTripContext();
   const [loggingOut, setLoggingOut] = React.useState(false);
 
-  const isGuest = false; // Always show logged-in UI (username and sign out)
+  const isGuest = !user; // Show guest UI when user is not authenticated
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -58,13 +58,15 @@ export const Header: React.FC = () => {
         </Link>
 
         {/* Quick Stats Pill - Hidden on small mobile */}
-        <Link
-          href="/trips"
-          className="hidden md:flex items-center gap-1.5 bg-amber-50/90 hover:bg-amber-100/90 text-amber-900 border border-amber-200/80 px-3.5 py-1.5 rounded-full text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer"
-        >
-          <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-          <span>⚡ {trips.length} {trips.length === 1 ? 'Trip' : 'Trips'} Active</span>
-        </Link>
+        {!isGuest && (
+          <Link
+            href="/trips"
+            className="hidden md:flex items-center gap-1.5 bg-amber-50/90 hover:bg-amber-100/90 text-amber-900 border border-amber-200/80 px-3.5 py-1.5 rounded-full text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer"
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+            <span>⚡ {trips?.length || 0} {(trips?.length || 0) === 1 ? 'Trip' : 'Trips'} Active</span>
+          </Link>
+        )}
       </div>
 
       {/* Right side: Action Controls */}
@@ -97,11 +99,11 @@ export const Header: React.FC = () => {
               className="flex items-center gap-1.5 md:gap-2 bg-white hover:bg-slate-100 border border-slate-200 px-2 md:px-3 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-semibold text-slate-700 transition-all cursor-pointer"
             >
               <img
-                src={user.avatar}
-                alt={user.name}
+                src={user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}
+                alt={user?.name || 'User'}
                 className="w-5 h-5 md:w-5 md:h-5 rounded-full object-cover"
               />
-              <span>{user.name}</span>
+              <span>{user?.name || 'User'}</span>
             </Link>
 
             {/* Sign Out Button */}

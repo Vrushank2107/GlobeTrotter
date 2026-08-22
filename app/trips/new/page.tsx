@@ -11,12 +11,30 @@ import { MapPin, Calendar, DollarSign, Users, Tag, Check, ArrowRight, ArrowLeft,
 
 export default function NewTripPage() {
   const router = useRouter();
-  const { destinations, addTrip } = useTripContext();
+  const { user, destinations, addTrip, loading, isSidebarCollapsed } = useTripContext();
   const { showAlert } = useConfirmDialog();
 
   const [step, setStep] = useState<number>(1);
   const [selectedDestIds, setSelectedDestIds] = useState<string[]>([]);
   const [isCreatingTrip, setIsCreatingTrip] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-500">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
 
   // Form State
   const [formData, setFormData] = useState({
@@ -151,7 +169,7 @@ export default function NewTripPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-72 flex-1 flex flex-col min-w-0">
+      <div className={`pl-72 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-24 pb-16 px-10 max-w-5xl mx-auto w-full min-h-screen">

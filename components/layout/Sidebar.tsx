@@ -24,7 +24,12 @@ export const Sidebar: React.FC = () => {
   const { user, isSidebarCollapsed: isCollapsed, toggleSidebar } = useTripContext();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  const isAdmin = user?.isAdmin || user?.role === 'ADMIN' || user?.email === 'admin@globetrotter.com';
+  const isAdmin = user?.isAdmin || user?.role === 'ADMIN';
+  
+  // Don't show navigation if user is not authenticated
+  if (!user) {
+    return null;
+  }
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },

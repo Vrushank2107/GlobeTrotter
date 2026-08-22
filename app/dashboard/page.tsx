@@ -1,14 +1,34 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
 import { Globe2, Calendar, Wallet, PlaneTakeoff, ArrowRight, MapPin, DollarSign, Sparkles } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { user, trips, searchQuery, setActiveTripId, loading } = useTripContext();
+  const router = useRouter();
+  const { user, trips, searchQuery, setActiveTripId, loading, isSidebarCollapsed } = useTripContext();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-500">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
 
   const filteredTrips = trips.filter((t) =>
     searchQuery
@@ -22,7 +42,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-0 md:pl-72 flex-1 flex flex-col min-w-0">
+      <div className={`pl-0 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-20 md:pt-20 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">

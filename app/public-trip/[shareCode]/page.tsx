@@ -13,7 +13,7 @@ export default function PublicTripPage() {
   const params = useParams();
   const router = useRouter();
   const shareCode = params.shareCode as string;
-  const { cloneCommunityTrip } = useTripContext();
+  const { cloneCommunityTrip, isSidebarCollapsed } = useTripContext();
 
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -86,7 +86,7 @@ export default function PublicTripPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-72 flex-1 flex flex-col min-w-0">
+      <div className={`pl-72 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-24 pb-16 px-10 min-h-screen max-w-5xl mx-auto w-full">

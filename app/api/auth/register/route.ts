@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { cookies } from 'next/headers';
+import * as bcrypt from 'bcryptjs';
 
 export async function POST(req: Request) {
   try {
@@ -25,27 +26,21 @@ export async function POST(req: Request) {
       );
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
     const newUser = await prisma.user.create({
       data: {
         name,
         email,
-        passwordHash: '$2a$10$demo',
+        passwordHash: hashedPassword,
         avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`,
       },
     });
 
-    // Set authentication session cookie
-    const cookieStore = await cookies();
-    cookieStore.set('user_id', newUser.id, {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      httpOnly: true,
-      sameSite: 'lax',
-    });
-
+    // Registration successful but don't auto-login - user must login explicitly
     return NextResponse.json({
       success: true,
-      message: 'Registration successful',
+      message: 'Registration successful. Please login with your credentials.',
       user: {
         id: newUser.id,
         name: newUser.name,

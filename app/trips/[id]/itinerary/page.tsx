@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useParams } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
@@ -22,10 +22,29 @@ import {
 export default function ItineraryViewPage() {
   const params = useParams();
   const tripId = params.id as string;
-  const { trips } = useTripContext();
+  const router = useRouter();
+  const { user, trips, loading, isSidebarCollapsed } = useTripContext();
 
   const trip = trips.find((t) => t.id === tripId) || trips[0];
   const [viewMode, setViewMode] = useState<'timeline' | 'calendar' | 'cities'>('timeline');
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-500">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
 
   if (!trip) {
     return (
@@ -56,7 +75,7 @@ export default function ItineraryViewPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-72 flex-1 flex flex-col min-w-0">
+      <div className={`pl-72 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-24 pb-16 px-10 min-h-screen">

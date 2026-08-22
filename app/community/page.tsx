@@ -11,7 +11,7 @@ import { Compass, Copy, Heart, Calendar, MapPin, Sparkles, Search, Loader2 } fro
 
 export default function CommunityPage() {
   const router = useRouter();
-  const { communityTrips, cloneCommunityTrip } = useTripContext();
+  const { communityTrips, cloneCommunityTrip, isSidebarCollapsed } = useTripContext();
   const { showAlert } = useConfirmDialog();
   const [filterTag, setFilterTag] = useState<string>('All');
   const [search, setSearch] = useState<string>('');
@@ -52,7 +52,7 @@ export default function CommunityPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-0 md:pl-72 flex-1 flex flex-col min-w-0">
+      <div className={`pl-0 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">

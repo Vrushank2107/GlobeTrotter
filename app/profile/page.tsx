@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -29,7 +29,7 @@ import {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, trips, refreshData } = useTripContext();
+  const { user, trips, refreshData, loading, isSidebarCollapsed } = useTripContext();
   const { showAlert } = useConfirmDialog();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -37,6 +37,24 @@ export default function ProfilePage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-500">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
   const [deletingAccount, setDeletingAccount] = useState(false);
 
   // Profile Form state
@@ -137,7 +155,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-72 flex-1 flex flex-col min-w-0">
+      <div className={`pl-72 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-24 pb-16 px-10 min-h-screen max-w-5xl mx-auto w-full space-y-8">

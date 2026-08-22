@@ -9,7 +9,7 @@ import { useConfirmDialog } from '@/context/ConfirmDialogContext';
 import { Compass, MapPin, Star, Sparkles, Search, ArrowRight, Loader2, Plus } from 'lucide-react';
 
 export default function ExplorePage() {
-  const { destinations, trips, searchQuery, updateTrip } = useTripContext();
+  const { destinations, trips, searchQuery, updateTrip, isSidebarCollapsed } = useTripContext();
   const { showAlert } = useConfirmDialog();
   const [selectedTag, setSelectedTag] = useState<string>('All');
   const [selectedCountry, setSelectedCountry] = useState<string>('All');
@@ -114,7 +114,7 @@ export default function ExplorePage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-0 md:pl-72 flex-1 flex flex-col min-w-0">
+           <div className={`pl-0 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">
