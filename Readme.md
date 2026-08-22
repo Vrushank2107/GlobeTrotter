@@ -2,11 +2,13 @@
 
 **Plan smarter. Travel better.**
 
-![Next.js](https://img.shields.io/badge/Next.js-18+-black?style=flat-square&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?style=flat-square&logo=typescript)
+![Next.js](https://img.shields.io/badge/Next.js-15+-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.6+-blue?style=flat-square&logo=typescript)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue?style=flat-square&logo=postgresql)
-![Prisma](https://img.shields.io/badge/Prisma-5.0+-2D3748?style=flat-square&logo=prisma)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0+-38B2AC?style=flat-square&logo=tailwind-css)
+![Prisma](https://img.shields.io/badge/Prisma-5.20+-2D3748?style=flat-square&logo=prisma)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4+-38B2AC?style=flat-square&logo=tailwind-css)
+![Recharts](https://img.shields.io/badge/Recharts-2.15+-FF4154?style=flat-square&logo=recharts)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 ---
 
@@ -49,14 +51,27 @@ A user can:
 3. Discover activities
 4. Build a day-by-day itinerary
 5. Assign activities to specific dates
-6. Estimate and track the trip budget
+6. Estimate and track the trip budget with activity cost integration
 7. Identify scheduling or budget problems
 8. View the complete trip on a calendar
 9. Share the trip publicly
 10. Copy an existing public trip as a starting point
 
+## 🌐 Live Demo
+
+**Check out the deployed application:** [GlobeTrotter Live Demo](https://globe-trotter-sand.vercel.app/)
+
 
 ## ✨ Key Features
+
+### 🆕 Enhanced Budget Analytics
+- **Activity Cost Integration**: Automatically calculates total estimated costs from planned activities
+- **Visual Budget Comparison**: Interactive bar charts comparing estimated vs actual spending by category
+- **Expense Distribution**: Pie charts showing actual spending breakdown across categories
+- **Smart Budget Alerts**: Real-time warnings when approaching or exceeding budget limits
+- **Comprehensive Budget Dashboard**: Summary cards showing total budget, estimated activity costs, and actual expenses
+- **Activities Cost Table**: Detailed view of all planned activities with their estimated costs and completion status
+- **Category Mapping**: Intelligent mapping of activity categories to expense categories for accurate budget tracking
 
 ### 1. Multi-City Trip Planning
 
@@ -98,22 +113,39 @@ Users can add, edit, remove, and organize activities within their trip.
 
 ### 3. Smart Budget Planning
 
-GlobeTrotter automatically calculates estimated trip expenses.
+GlobeTrotter automatically calculates estimated trip expenses and integrates activity costs with actual spending.
+
+**Features:**
+- **Activity Cost Integration**: Estimated costs from planned activities are automatically calculated and displayed
+- **Expense Tracking**: Log actual expenses and compare them with planned activity costs
+- **Visual Budget Analytics**: Interactive charts showing estimated vs actual spending by category
+- **Smart Budget Warnings**: Alerts when approaching or exceeding budget limits
+- **Category Breakdown**: Detailed analysis of spending across Accommodation, Transport, Activities, Food, and Misc
 
 **Example:**
 
 ```
-Accommodation     ₹9,000
-Transport         ₹6,500
-Activities        ₹5,200
-Food              ₹6,750
+Summary Cards:
+Total Budget:        ₹50,000
+Est. Activity Costs: ₹27,450
+Actual Expenses:     ₹15,200
+
+Category Breakdown:
+Accommodation     ₹9,000 (Est) vs ₹8,500 (Actual)
+Transport         ₹6,500 (Est) vs ₹4,200 (Actual)
+Activities        ₹5,200 (Est) vs ₹2,500 (Actual)
+Food              ₹6,750 (Est) vs ₹0 (Actual)
 --------------------------------
-Total             ₹27,450
+Total             ₹27,450 (Est) vs ₹15,200 (Actual)
 ```
 
-Users can compare estimated expenses with their planned budget.
+The budget section includes:
+- Pie chart showing actual expense distribution
+- Bar chart comparing estimated activity costs vs actual spending
+- Detailed activities table with estimated costs and completion status
+- Comprehensive expense log with category breakdown
 
-The application can highlight situations where the user is approaching or exceeding their budget.
+Users can compare estimated expenses with their planned budget and track spending in real-time.
 
 
 ### 4. Smart Itinerary Insights
@@ -127,7 +159,8 @@ The system can identify situations such as:
 - Unrealistic schedules
 - Insufficient time between activities
 - Excessive daily spending
-- Trips exceeding the planned budget
+- Trips exceeding the planned budget (based on both actual expenses and estimated activity costs)
+- Approaching budget limits (85%+ of budget utilization)
 
 **Example:**
 
@@ -140,7 +173,16 @@ Suggestion:
 Consider moving the adventure activity to Day 3 for a more comfortable schedule.
 ```
 
-The goal is to help users create itineraries that are not only complete, but also realistic.
+```
+Budget Insight
+
+Your estimated activity costs (₹32,000) exceed your target budget of ₹30,000 by ₹2,000.
+
+Suggestion:
+Consider adjusting accommodation or activity options to stay within budget.
+```
+
+The goal is to help users create itineraries that are not only complete, but also realistic and budget-conscious.
 
 
 ### 5. Destination and Activity Discovery
@@ -297,22 +339,28 @@ This allows the application to dynamically generate and manage the user's itiner
 ## 🛠️ Technology Stack
 
 ### Frontend
-- **Next.js** - React framework for production
-- **React** - UI library
-- **TypeScript** - Type-safe JavaScript
-- **Tailwind CSS** - Utility-first CSS framework
+- **Next.js 15** - React framework for production
+- **React 18** - UI library
+- **TypeScript 5.6** - Type-safe JavaScript
+- **Tailwind CSS 3.4** - Utility-first CSS framework
+- **Recharts 2.15** - Chart library for budget visualization
+- **Lucide React** - Icon library
 
 ### Backend
-- **Next.js API** - Server-side backend
+- **Next.js API Routes** - Server-side backend
 - **TypeScript** - Type-safe JavaScript
+- **NextAuth 4** - Authentication
+- **Zod** - Schema validation
 
 ### Database
 - **PostgreSQL** - Relational database
-- **Prisma ORM** - Database toolkit
+- **Prisma ORM 5.20** - Database toolkit
+- **bcryptjs** - Password hashing
 
 ### Development
 - **Git** - Version control
 - **GitHub** - Code hosting
+- **tsx** - TypeScript execution
 
 
 ## 📁 Project Structure
@@ -510,6 +558,47 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 
+## 🚀 Deployment
+
+### Vercel Deployment
+
+GlobeTrotter is currently deployed on Vercel: [https://globe-trotter-sand.vercel.app/](https://globe-trotter-sand.vercel.app/)
+
+**Deployment Steps:**
+
+1. **Push to GitHub:**
+   ```bash
+   git add .
+   git commit -m "Your commit message"
+   git push origin main
+   ```
+
+2. **Connect to Vercel:**
+   - Go to [vercel.com](https://vercel.com)
+   - Import your GitHub repository
+   - Vercel will automatically detect Next.js
+
+3. **Configure Environment Variables:**
+   Add these in Vercel project settings:
+   ```
+   DATABASE_URL=your-production-database-url
+   AUTH_SECRET=your-production-secret
+   NEXTAUTH_URL=https://globe-trotter-sand.vercel.app
+   ```
+
+4. **Deploy:**
+   - Vercel will automatically deploy on every push to main
+   - Or trigger manual deployment from the Vercel dashboard
+
+**Production Database:**
+- Use a managed PostgreSQL service (Supabase, Neon, Railway)
+- Update `DATABASE_URL` with production connection string
+- Run migrations: `npx prisma migrate deploy`
+
+**Build Configuration:**
+The project uses standard Next.js build configuration compatible with Vercel's automatic deployment.
+
+
 ## �️ Database Status
 
 ✅ **Database implementation is complete and verified**
@@ -566,56 +655,58 @@ AI_API_KEY=
 ## ✅ Testing Checklist
 
 ### Authentication
-- [ ] User registration
-- [ ] Login
-- [ ] Logout
-- [ ] Invalid credentials handling
+- [x] User registration
+- [x] Login
+- [x] Logout
+- [x] Invalid credentials handling
 
 ### Trip Creation
-- [ ] Create trip
-- [ ] Select dates
-- [ ] Search destinations
-- [ ] Add multiple cities
-- [ ] Edit destinations
-- [ ] Remove destinations
+- [x] Create trip
+- [x] Select dates
+- [x] Search destinations
+- [x] Add multiple cities
+- [x] Edit destinations
+- [x] Remove destinations
 
 ### Activities
-- [ ] Search activities
-- [ ] Add activity
-- [ ] Edit activity
-- [ ] Remove activity
-- [ ] Assign activity to date/time
+- [x] Search activities
+- [x] Add activity
+- [x] Edit activity
+- [x] Remove activity
+- [x] Assign activity to date/time
 
 ### Itinerary
-- [ ] Multi-day itinerary
-- [ ] Multiple destinations
-- [ ] Activity ordering
-- [ ] Schedule validation
+- [x] Multi-day itinerary
+- [x] Multiple destinations
+- [x] Activity ordering
+- [x] Schedule validation
 
 ### Budget
-- [ ] Expense calculation
-- [ ] Category breakdown
-- [ ] Budget comparison
-- [ ] Over-budget warning
+- [x] Expense calculation
+- [x] Category breakdown
+- [x] Budget comparison
+- [x] Over-budget warning
+- [x] Activity cost integration
+- [x] Visual budget analytics
 
 ### Calendar
-- [ ] Display trip dates
-- [ ] Display activities
-- [ ] Correct date assignment
+- [x] Display trip dates
+- [x] Display activities
+- [x] Correct date assignment
 
 ### Sharing
-- [ ] Publish trip
-- [ ] View public trip
-- [ ] Copy public trip
+- [x] Publish trip
+- [x] View public trip
+- [x] Copy public trip
 
 ### UI
-- [ ] Responsive desktop layout
-- [ ] Tablet layout
-- [ ] Mobile layout
-- [ ] Loading states
-- [ ] Empty states
-- [ ] Error states
-- [ ] Form validation
+- [x] Responsive desktop layout
+- [x] Tablet layout
+- [x] Mobile layout
+- [x] Loading states
+- [x] Empty states
+- [x] Error states
+- [x] Form validation
 
 
 ## 🎯 Hackathon Focus
@@ -678,6 +769,13 @@ Trips, cities, activities, expenses, and users are connected through a structure
 ### Intelligent
 The system identifies scheduling and budget issues and provides actionable planning insights.
 
+### Visual Analytics
+Interactive charts and graphs provide clear visualization of:
+- Activity cost estimation vs actual spending
+- Category-wise budget breakdown
+- Multi-city expense distribution
+- Budget utilization progress
+
 ### Shareable
 Users can publish and reuse travel itineraries.
 
@@ -699,6 +797,9 @@ Potential future enhancements include:
 - Offline itinerary access
 - Mobile applications
 - More advanced AI-assisted itinerary optimization
+- Budget forecasting and expense prediction
+- Multi-currency support for international travel
+- Integration with travel booking services
 
 ---
 
@@ -711,6 +812,18 @@ Potential future enhancements include:
 - **Vrushank Solanki**
 - **Yaksh Rana**
 
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+## 📞 Contact
+
+For questions or feedback about GlobeTrotter, please reach out to the team members.
+
 ---
 
 <div align="center">
@@ -718,5 +831,7 @@ Potential future enhancements include:
 **GlobeTrotter**
 
 *Plan smarter. Travel better.*
+
+[🌐 Live Demo](https://globe-trotter-sand.vercel.app/) • [🐛 Report Issues](https://github.com/Vrushank2107/GlobeTrotter/issues)
 
 </div>
