@@ -1,12 +1,21 @@
-GLOBETROTTER
-Plan smarter. Travel better.
+# GlobeTrotter
+
+**Plan smarter. Travel better.**
+
+![Next.js](https://img.shields.io/badge/Next.js-18+-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?style=flat-square&logo=typescript)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue?style=flat-square&logo=postgresql)
+![Prisma](https://img.shields.io/badge/Prisma-5.0+-2D3748?style=flat-square&logo=prisma)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0+-38B2AC?style=flat-square&logo=tailwind-css)
+
+---
 
 GlobeTrotter is a personalized multi-city travel planning platform built for the Odoo LDCE Hackathon. It helps travelers turn a travel idea into a complete, organized, budget-aware itinerary.
 
 Instead of managing destinations, activities, dates, budgets, and plans across multiple applications, GlobeTrotter brings everything together into one simple workflow.
 
 
-THE PROBLEM
+## 🎯 The Problem
 
 Planning a multi-city trip often requires switching between multiple platforms for:
 
@@ -20,16 +29,16 @@ Planning a multi-city trip often requires switching between multiple platforms f
 
 This becomes especially difficult when a trip contains multiple cities and many activities.
 
-OUR GOAL
+## 🚀 Our Goal
 
 Build a single platform where a user can:
 
-Discover → Plan → Organize → Budget → Visualize → Share
+**Discover → Plan → Organize → Budget → Visualize → Share**
 
 their entire trip.
 
 
-OUR SOLUTION
+## 💡 Our Solution
 
 GlobeTrotter provides an end-to-end trip planning experience.
 
@@ -47,14 +56,15 @@ A user can:
 10. Copy an existing public trip as a starting point
 
 
-KEY FEATURES
+## ✨ Key Features
 
-1. MULTI-CITY TRIP PLANNING
+### 1. Multi-City Trip Planning
 
 Create trips containing multiple cities and organize them in a logical sequence.
 
-Example:
+**Example:**
 
+```
 Ahmedabad
     ↓
 Mumbai
@@ -62,16 +72,18 @@ Mumbai
 Goa
     ↓
 Bengaluru
+```
 
 Each destination can contain its own activities, dates, and estimated expenses.
 
 
-2. DAY-BY-DAY ITINERARY
+### 2. Day-by-Day Itinerary
 
 Build a detailed itinerary for every day of the trip.
 
-Example:
+**Example:**
 
+```
 Day 1 — Mumbai
 
 09:00  Breakfast
@@ -79,29 +91,32 @@ Day 1 — Mumbai
 13:00  Lunch
 15:00  Marine Drive
 19:30  Dinner
+```
 
 Users can add, edit, remove, and organize activities within their trip.
 
 
-3. SMART BUDGET PLANNING
+### 3. Smart Budget Planning
 
 GlobeTrotter automatically calculates estimated trip expenses.
 
-Example:
+**Example:**
 
+```
 Accommodation     ₹9,000
 Transport         ₹6,500
 Activities        ₹5,200
 Food              ₹6,750
 --------------------------------
 Total             ₹27,450
+```
 
 Users can compare estimated expenses with their planned budget.
 
 The application can highlight situations where the user is approaching or exceeding their budget.
 
 
-4. SMART ITINERARY INSIGHTS
+### 4. Smart Itinerary Insights
 
 GlobeTrotter focuses on useful planning intelligence rather than adding AI simply for the sake of having an AI feature.
 
@@ -114,19 +129,21 @@ The system can identify situations such as:
 - Excessive daily spending
 - Trips exceeding the planned budget
 
-Example:
+**Example:**
 
+```
 Planning Insight
 
 Day 2 contains approximately 10.5 hours of activities.
 
 Suggestion:
 Consider moving the adventure activity to Day 3 for a more comfortable schedule.
+```
 
 The goal is to help users create itineraries that are not only complete, but also realistic.
 
 
-5. DESTINATION AND ACTIVITY DISCOVERY
+### 5. Destination and Activity Discovery
 
 Users can explore destinations and activities using search, filters, and categories.
 
@@ -143,7 +160,7 @@ Supported activity categories include:
 Each destination/activity can provide relevant information such as estimated cost and description.
 
 
-6. CALENDAR VIEW
+### 6. Calendar View
 
 The calendar provides a visual overview of the complete trip.
 
@@ -156,7 +173,7 @@ Users can quickly understand:
 - How the trip progresses across multiple dates
 
 
-7. TRIP SHARING
+### 7. Trip Sharing
 
 Users can publish their trips and share them with others.
 
@@ -169,14 +186,10 @@ A public trip can contain:
 - Itinerary
 - Budget summary
 
-Other users can use:
-
-Copy This Trip
-
-to create their own version of an existing itinerary.
+Other users can use **"Copy This Trip"** to create their own version of an existing itinerary.
 
 
-8. COMMUNITY
+### 8. Community
 
 GlobeTrotter includes a lightweight travel community where users can discover publicly shared trips.
 
@@ -190,8 +203,9 @@ Users can browse:
 The focus is on travel inspiration and reusable itineraries rather than building a complex social network.
 
 
-CORE USER JOURNEY
+## 🗺️ Core User Journey
 
+```
 Dashboard
     ↓
 Create New Trip
@@ -209,21 +223,24 @@ Budget Analysis
 Calendar View
     ↓
 Share / Publish
+```
 
 
-ARCHITECTURE
+## 🏗️ Architecture
 
 GlobeTrotter follows a simple full-stack architecture designed to be maintainable and scalable.
 
+```
 Frontend
     ↓
 Backend / API
     ↓
 Database
+```
 
-The frontend provides the user interface.
+**Frontend** provides the user interface.
 
-The backend handles:
+**Backend** handles:
 
 - Authentication
 - Trip management
@@ -232,7 +249,7 @@ The backend handles:
 - Itinerary validation
 - Data retrieval
 
-The database stores:
+**Database** stores:
 
 - Users
 - Trips
@@ -243,10 +260,11 @@ The database stores:
 - Shared trips
 
 
-DATA MODEL
+## 📊 Data Model
 
 The core relationships are:
 
+```
 User
  |
  └── Trip
@@ -260,8 +278,9 @@ User
        |      └── Activity
        |
        └── Expense
+```
 
-Main entities:
+**Main entities:**
 
 - User
 - Trip
@@ -275,29 +294,30 @@ Main entities:
 This allows the application to dynamically generate and manage the user's itinerary rather than relying on hard-coded trip data.
 
 
-TECHNOLOGY STACK
+## 🛠️ Technology Stack
 
-Frontend:
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
+### Frontend
+- **Next.js** - React framework for production
+- **React** - UI library
+- **TypeScript** - Type-safe JavaScript
+- **Tailwind CSS** - Utility-first CSS framework
 
-Backend:
-- Next.js API / Server-side backend
-- TypeScript
+### Backend
+- **Next.js API** - Server-side backend
+- **TypeScript** - Type-safe JavaScript
 
-Database:
-- PostgreSQL
-- Prisma ORM
+### Database
+- **PostgreSQL** - Relational database
+- **Prisma ORM** - Database toolkit
 
-Development:
-- Git
-- GitHub
+### Development
+- **Git** - Version control
+- **GitHub** - Code hosting
 
 
-PROJECT STRUCTURE
+## 📁 Project Structure
 
+```
 globetrotter/
 |
 ├── app/
@@ -337,11 +357,12 @@ globetrotter/
 ├── .env.example
 ├── package.json
 └── README.md
+```
 
 
-GETTING STARTED
+## 🚀 Getting Started
 
-PREREQUISITES
+### Prerequisites
 
 Make sure you have installed:
 
@@ -351,138 +372,141 @@ Make sure you have installed:
 - Git
 
 
-1. CLONE THE REPOSITORY
+### 1. Clone the Repository
 
+```bash
 git clone https://github.com/Vrushank2107/GlobeTrotter
-
 cd globetrotter
+```
 
 
-2. INSTALL DEPENDENCIES
+### 2. Install Dependencies
 
+```bash
 npm install
+```
 
 
-3. CONFIGURE ENVIRONMENT VARIABLES
+### 3. Configure Environment Variables
 
-Create a .env file.
+Create a `.env` file.
 
-Example:
+**Example:**
 
+```env
 DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/globetrotter"
-
 AUTH_SECRET="your-secret"
-
 NEXTAUTH_URL="http://localhost:3000"
+```
 
 Add any additional API keys required by the project.
 
 
-4. SET UP THE DATABASE
+### 4. Set Up the Database
 
+```bash
 npx prisma generate
-
 npx prisma migrate dev
+```
 
 If seed data is available:
 
+```bash
 npm run seed
+```
 
 
-5. START THE DEVELOPMENT SERVER
+### 5. Start the Development Server
 
+```bash
 npm run dev
+```
 
-Open:
-
-http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 
-ENVIRONMENT VARIABLES
+## 🔐 Environment Variables
 
-Example:
+**Required:**
 
+```env
 DATABASE_URL=
 AUTH_SECRET=
+```
 
-Optional external APIs:
+**Optional (External APIs):**
 
+```env
 MAPS_API_KEY=
 TRAVEL_API_KEY=
 AI_API_KEY=
+```
 
 
-TESTING CHECKLIST
+## ✅ Testing Checklist
 
-Authentication:
+### Authentication
+- [ ] User registration
+- [ ] Login
+- [ ] Logout
+- [ ] Invalid credentials handling
 
-[ ] User registration
-[ ] Login
-[ ] Logout
-[ ] Invalid credentials handling
+### Trip Creation
+- [ ] Create trip
+- [ ] Select dates
+- [ ] Search destinations
+- [ ] Add multiple cities
+- [ ] Edit destinations
+- [ ] Remove destinations
 
-Trip Creation:
+### Activities
+- [ ] Search activities
+- [ ] Add activity
+- [ ] Edit activity
+- [ ] Remove activity
+- [ ] Assign activity to date/time
 
-[ ] Create trip
-[ ] Select dates
-[ ] Search destinations
-[ ] Add multiple cities
-[ ] Edit destinations
-[ ] Remove destinations
+### Itinerary
+- [ ] Multi-day itinerary
+- [ ] Multiple destinations
+- [ ] Activity ordering
+- [ ] Schedule validation
 
-Activities:
+### Budget
+- [ ] Expense calculation
+- [ ] Category breakdown
+- [ ] Budget comparison
+- [ ] Over-budget warning
 
-[ ] Search activities
-[ ] Add activity
-[ ] Edit activity
-[ ] Remove activity
-[ ] Assign activity to date/time
+### Calendar
+- [ ] Display trip dates
+- [ ] Display activities
+- [ ] Correct date assignment
 
-Itinerary:
+### Sharing
+- [ ] Publish trip
+- [ ] View public trip
+- [ ] Copy public trip
 
-[ ] Multi-day itinerary
-[ ] Multiple destinations
-[ ] Activity ordering
-[ ] Schedule validation
-
-Budget:
-
-[ ] Expense calculation
-[ ] Category breakdown
-[ ] Budget comparison
-[ ] Over-budget warning
-
-Calendar:
-
-[ ] Display trip dates
-[ ] Display activities
-[ ] Correct date assignment
-
-Sharing:
-
-[ ] Publish trip
-[ ] View public trip
-[ ] Copy public trip
-
-UI:
-
-[ ] Responsive desktop layout
-[ ] Tablet layout
-[ ] Mobile layout
-[ ] Loading states
-[ ] Empty states
-[ ] Error states
-[ ] Form validation
+### UI
+- [ ] Responsive desktop layout
+- [ ] Tablet layout
+- [ ] Mobile layout
+- [ ] Loading states
+- [ ] Empty states
+- [ ] Error states
+- [ ] Form validation
 
 
-HACKATHON FOCUS
+## 🎯 Hackathon Focus
 
 GlobeTrotter was designed with one simple principle:
 
-Build the complete core experience instead of adding unnecessary features.
+**Build the complete core experience instead of adding unnecessary features.**
 
 The primary focus is the journey:
 
+```
 Idea
  ↓
 Destination
@@ -496,17 +520,18 @@ Budget
 Calendar
  ↓
 Share
+```
 
 Every feature should contribute to making that journey faster, clearer, or smarter.
 
 
-WHY GLOBETROTTER?
+## 💎 Why GlobeTrotter?
 
 Traditional travel planning often involves multiple disconnected tools.
 
 GlobeTrotter combines:
 
-Discovery + Planning + Scheduling + Budgeting + Visualization + Sharing
+**Discovery + Planning + Scheduling + Budgeting + Visualization + Sharing**
 
 into a single workflow.
 
@@ -514,44 +539,33 @@ The platform doesn't just store a list of places.
 
 It helps users answer:
 
-"Can I realistically fit all of this into my trip and stay within my budget?"
+> *"Can I realistically fit all of this into my trip and stay within my budget?"*
 
 That is the core problem GlobeTrotter is designed to solve.
 
 
-HACKATHON HIGHLIGHTS
+## 🌟 Hackathon Highlights
 
-Personalized
-
+### Personalized
 Every itinerary is created around the user's destinations, dates, activities, and budget.
 
-
-Dynamic
-
+### Dynamic
 Trip information is stored and retrieved dynamically rather than relying on static UI data.
 
-
-Relational
-
+### Relational
 Trips, cities, activities, expenses, and users are connected through a structured relational data model.
 
-
-Intelligent
-
+### Intelligent
 The system identifies scheduling and budget issues and provides actionable planning insights.
 
-
-Shareable
-
+### Shareable
 Users can publish and reuse travel itineraries.
 
-
-Practical
-
+### Practical
 The application focuses on solving an actual travel-planning problem rather than adding technology without a purpose.
 
 
-FUTURE IMPROVEMENTS
+## 🔮 Future Improvements
 
 Potential future enhancements include:
 
@@ -566,14 +580,23 @@ Potential future enhancements include:
 - Mobile applications
 - More advanced AI-assisted itinerary optimization
 
-Hackathon: Odoo LDCE Hackathon 2026
+---
 
-Team Members:
+## 🏆 Hackathon
 
-- Vrushank Solanki
-- Yaksh Rana
+**Odoo LDCE Hackathon 2026**
 
+### Team Members
 
-GLOBETROTTER
+- **Vrushank Solanki**
+- **Yaksh Rana**
 
-Plan smarter. Travel better.
+---
+
+<div align="center">
+
+**GlobeTrotter**
+
+*Plan smarter. Travel better.*
+
+</div>
