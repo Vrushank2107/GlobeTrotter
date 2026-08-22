@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { TripProvider } from '@/context/TripContext';
 import { ConfirmDialogProvider } from '@/context/ConfirmDialogContext';
+import MobileNav from '@/components/layout/mobile-nav';
 
 export const metadata: Metadata = {
   title: 'GlobeTrotter | Plan smarter. Travel better.',
@@ -11,9 +12,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+      </head>
       <body className="min-h-full bg-slate-50 text-slate-900 font-sans antialiased">
         <ConfirmDialogProvider>
-          <TripProvider>{children}</TripProvider>
+          <TripProvider>
+            {children}
+            <MobileNav />
+          </TripProvider>
         </ConfirmDialogProvider>
       </body>
     </html>

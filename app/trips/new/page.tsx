@@ -235,16 +235,25 @@ export default function NewTripPage() {
 
               {/* Bottom Nav */}
               <div className="flex justify-between items-center border-t border-slate-100 pt-6">
-                <span className="text-xs text-slate-500 font-medium">
-                  {selectedDestIds.length} destination{selectedDestIds.length !== 1 ? 's' : ''} selected
-                </span>
                 <button
-                  onClick={handleNextStep}
-                  className="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-8 py-3 rounded-full text-xs transition-all flex items-center gap-2"
+                  onClick={() => router.push('/trips')}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-full text-xs transition-all flex items-center gap-2"
                 >
-                  <span>Continue to Details</span>
-                  <ArrowRight className="w-4 h-4 text-sky-400" />
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Back to My Trips</span>
                 </button>
+                <div className="flex items-center gap-4">
+                  <span className="text-xs text-slate-500 font-medium">
+                    {selectedDestIds.length} destination{selectedDestIds.length !== 1 ? 's' : ''} selected
+                  </span>
+                  <button
+                    onClick={handleNextStep}
+                    className="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-8 py-3 rounded-full text-xs transition-all flex items-center gap-2"
+                  >
+                    <span>Continue to Details</span>
+                    <ArrowRight className="w-4 h-4 text-sky-400" />
+                  </button>
+                </div>
               </div>
             </div>
           ) : (

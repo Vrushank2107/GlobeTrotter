@@ -192,26 +192,31 @@ export default function TripBudgetPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-72 flex-1 flex flex-col min-w-0">
+      <div className="pl-0 md:pl-72 flex-1 flex flex-col min-w-0">
         <Header />
 
-        <main className="pt-24 pb-16 px-10 min-h-screen">
+        <main className="pt-20 pb-20 md:pt-24 md:pb-16 px-4 md:px-10 min-h-screen">
           {/* Header Action Bar */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-xs">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Link href={`/trips/${trip.id}`} className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs px-3.5 py-1.5 rounded-full transition-all inline-flex items-center gap-1.5 shadow-2xs hover:shadow-xs cursor-pointer border border-slate-200/80">
+                <Link href={`/trips/${trip.id}`} className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs px-3 py-1.5 rounded-full transition-all inline-flex items-center gap-1.5 shadow-2xs hover:shadow-xs cursor-pointer border border-slate-200/80">
                   <ArrowLeft className="w-3.5 h-3.5 text-sky-600" />
-                  <span>Back to Trip Details</span>
+                  <span className="hidden sm:inline">Back to Trip Details</span>
+                  <span className="sm:hidden">Back</span>
                 </Link>
-                <span className="text-slate-300">•</span>
-                <span className="text-xs text-slate-500 font-medium">Recharts Analytics</span>
+                <span className="text-slate-300 hidden sm:inline">•</span>
+                <span className="text-xs text-slate-500 font-medium hidden sm:inline">Recharts Analytics</span>
               </div>
-              <h1 className="text-3xl font-bold text-slate-900">{trip.title} - Budget & Expenses</h1>
-              <div className="flex items-center gap-3 mt-1">
+              <h1 className="text-xl md:text-3xl font-bold text-slate-900">{trip.title} - Budget & Expenses</h1>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-1">
                 <p className="text-xs text-slate-600 font-medium">
-                  Budget: <span className="font-bold text-slate-900">₹{trip.totalBudget.toLocaleString()}</span> | 
-                  Est. Activities: <span className="font-bold text-emerald-600">₹{totalEstimatedActivityCosts.toLocaleString()}</span> | 
+                  Budget: <span className="font-bold text-slate-900">₹{trip.totalBudget.toLocaleString()}</span>
+                </p>
+                <p className="text-xs text-slate-600 font-medium">
+                  Est. Activities: <span className="font-bold text-emerald-600">₹{totalEstimatedActivityCosts.toLocaleString()}</span>
+                </p>
+                <p className="text-xs text-slate-600 font-medium">
                   Spent: <span className="font-bold text-slate-900">₹{trip.spentBudget.toLocaleString()}</span>
                 </p>
                 <button
@@ -229,7 +234,7 @@ export default function TripBudgetPage() {
 
             <button
               onClick={() => setShowModal(true)}
-              className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+              className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 md:px-6 py-2.5 md:py-3 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
             >
               <Plus className="w-4 h-4 text-sky-400" />
               <span>Log New Expense</span>
@@ -269,64 +274,64 @@ export default function TripBudgetPage() {
           )}
 
           {/* Budget Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
-              <div className="flex items-center gap-3 mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 md:p-6 shadow-xs">
+              <div className="flex items-center gap-2 md:gap-3 mb-2">
                 <div className="bg-sky-100 p-2 rounded-lg">
-                  <DollarSign className="w-5 h-5 text-sky-600" />
+                  <DollarSign className="w-4 h-4 md:w-5 md:h-5 text-sky-600" />
                 </div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Budget</span>
+                <span className="text-[10px] md:text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Budget</span>
               </div>
-              <p className="text-2xl font-bold text-slate-900">₹{trip.totalBudget.toLocaleString()}</p>
+              <p className="text-xl md:text-2xl font-bold text-slate-900">₹{trip.totalBudget.toLocaleString()}</p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
-              <div className="flex items-center gap-3 mb-2">
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 md:p-6 shadow-xs">
+              <div className="flex items-center gap-2 md:gap-3 mb-2">
                 <div className="bg-emerald-100 p-2 rounded-lg">
-                  <TrendingUp className="w-5 h-5 text-emerald-600" />
+                  <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-emerald-600" />
                 </div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Est. Activity Costs</span>
+                <span className="text-[10px] md:text-xs font-semibold text-slate-500 uppercase tracking-wider">Est. Activity Costs</span>
               </div>
-              <p className="text-2xl font-bold text-slate-900">₹{totalEstimatedActivityCosts.toLocaleString()}</p>
+              <p className="text-xl md:text-2xl font-bold text-slate-900">₹{totalEstimatedActivityCosts.toLocaleString()}</p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
-              <div className="flex items-center gap-3 mb-2">
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 md:p-6 shadow-xs">
+              <div className="flex items-center gap-2 md:gap-3 mb-2">
                 <div className="bg-amber-100 p-2 rounded-lg">
-                  <CreditCard className="w-5 h-5 text-amber-600" />
+                  <CreditCard className="w-4 h-4 md:w-5 md:h-5 text-amber-600" />
                 </div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Actual Expenses</span>
+                <span className="text-[10px] md:text-xs font-semibold text-slate-500 uppercase tracking-wider">Actual Expenses</span>
               </div>
-              <p className="text-2xl font-bold text-slate-900">₹{totalActualExpenses.toLocaleString()}</p>
+              <p className="text-xl md:text-2xl font-bold text-slate-900">₹{totalActualExpenses.toLocaleString()}</p>
             </div>
           </div>
 
           {/* Recharts Visualization Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Category Pie Chart - Actual Expenses */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
-              <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <PieChartIcon className="w-5 h-5 text-sky-600" />
+            <div className="bg-white rounded-3xl border border-slate-200 p-4 md:p-6 shadow-xs">
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <PieChartIcon className="w-4 h-4 md:w-5 md:h-5 text-sky-600" />
                 <span>Actual Expenses by Category</span>
               </h3>
 
               {pieData.length === 0 ? (
-                <div className="h-64 flex items-center justify-center text-xs text-slate-400">
+                <div className="h-48 md:h-64 flex items-center justify-center text-xs text-slate-400">
                   No logged expenses yet.
                 </div>
               ) : (
-                <div className="h-72 w-full">
+                <div className="h-56 md:h-72 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <RePieChart>
                       <Pie
                         data={pieData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={60}
-                        outerRadius={95}
+                        innerRadius={40}
+                        outerRadius={70}
                         paddingAngle={5}
                         dataKey="value"
-                        label={({ name, percent }) => `${name} (${((percent || 0) * 100).toFixed(0)}%)`}
+                        label={false}
                       >
                         {pieData.map((_, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -341,18 +346,18 @@ export default function TripBudgetPage() {
             </div>
 
             {/* Estimated vs Actual Bar Chart */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
-              <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-teal-600" />
+            <div className="bg-white rounded-3xl border border-slate-200 p-4 md:p-6 shadow-xs">
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-teal-600" />
                 <span>Estimated vs Actual by Category</span>
               </h3>
 
-              <div className="h-72 w-full">
+              <div className="h-56 md:h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                  <BarChart data={barData} margin={{ top: 20, right: 10, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                    <XAxis dataKey="category" tick={{ fontSize: 12 }} />
-                    <YAxis tick={{ fontSize: 12 }} />
+                    <XAxis dataKey="category" tick={{ fontSize: 10 }} />
+                    <YAxis tick={{ fontSize: 10 }} />
                     <Tooltip formatter={(val) => `₹${Number(val).toLocaleString()}`} />
                     <Legend />
                     <Bar dataKey="Estimated" fill="#94a3b8" radius={[6, 6, 0, 0]} name="Est. Activity Costs" />
@@ -479,10 +484,10 @@ export default function TripBudgetPage() {
         {/* Expense Modal Drawer */}
         {showModal && (
           <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-200 animate-fade-in">
+            <div className="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-slate-200 animate-fade-in max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-slate-900">Log New Expense</h3>
-                <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 font-bold">
+                <h3 className="text-lg md:text-xl font-bold text-slate-900">Log New Expense</h3>
+                <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 font-bold text-2xl">
                   ✕
                 </button>
               </div>
@@ -502,7 +507,7 @@ export default function TripBudgetPage() {
                   {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title}</p>}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                       Category
@@ -547,17 +552,17 @@ export default function TripBudgetPage() {
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="bg-slate-100 text-slate-700 font-semibold px-5 py-2.5 rounded-full text-xs"
+                    className="bg-slate-100 text-slate-700 font-semibold px-5 py-2.5 rounded-full text-xs w-full sm:w-auto"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md"
+                    className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md w-full sm:w-auto"
                   >
                     Save Expense
                   </button>
@@ -570,10 +575,10 @@ export default function TripBudgetPage() {
         {/* Edit Total Budget Modal Drawer */}
         {showBudgetModal && (
           <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-200 animate-fade-in">
+            <div className="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-slate-200 animate-fade-in">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-slate-900">Edit Total Trip Budget</h3>
-                <button onClick={() => setShowBudgetModal(false)} className="text-slate-400 hover:text-slate-600 font-bold">
+                <h3 className="text-lg md:text-xl font-bold text-slate-900">Edit Total Trip Budget</h3>
+                <button onClick={() => setShowBudgetModal(false)} className="text-slate-400 hover:text-slate-600 font-bold text-2xl">
                   ✕
                 </button>
               </div>
@@ -592,17 +597,17 @@ export default function TripBudgetPage() {
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => setShowBudgetModal(false)}
-                    className="bg-slate-100 text-slate-700 font-semibold px-5 py-2.5 rounded-full text-xs cursor-pointer"
+                    className="bg-slate-100 text-slate-700 font-semibold px-5 py-2.5 rounded-full text-xs cursor-pointer w-full sm:w-auto"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-6 py-2.5 rounded-full text-xs shadow-md cursor-pointer"
+                    className="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-6 py-2.5 rounded-full text-xs shadow-md cursor-pointer w-full sm:w-auto"
                   >
                     Save Budget
                   </button>
