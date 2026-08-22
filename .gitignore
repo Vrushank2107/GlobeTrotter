@@ -34,7 +34,7 @@ yarn-error.log*
 Thumbs.db
 
 # Prisma
-prisma/migrations/
+# Note: We track migrations in version control for this project
 
 # Debug
 debug.log

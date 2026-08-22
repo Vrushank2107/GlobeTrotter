@@ -1,5 +1,13 @@
-// Expense type definitions placeholder
-// Expense-related TypeScript types will be defined here
+// Expense type definitions
+// These types align with the Prisma Expense model
+
+export type ExpenseCategory =
+  | 'accommodation'
+  | 'transport'
+  | 'food'
+  | 'activities'
+  | 'shopping'
+  | 'other';
 
 export interface Expense {
   id: string;
@@ -9,12 +17,6 @@ export interface Expense {
   amount: number;
   date: Date;
   notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
-
-export type ExpenseCategory = 
-  | 'accommodation' 
-  | 'transport' 
-  | 'food' 
-  | 'activities' 
-  | 'shopping' 
-  | 'other';

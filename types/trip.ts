@@ -1,5 +1,7 @@
-// Trip type definitions placeholder
-// Trip-related TypeScript types will be defined here
+// Trip type definitions
+// These types align with the Prisma Trip and TripStop models
+
+export type TripStatus = 'planning' | 'confirmed' | 'completed' | 'cancelled';
 
 export interface Trip {
   id: string;
@@ -8,7 +10,7 @@ export interface Trip {
   startDate: Date;
   endDate: Date;
   budget: number;
-  status: 'planning' | 'confirmed' | 'completed' | 'cancelled';
+  status: TripStatus;
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -17,8 +19,10 @@ export interface Trip {
 export interface TripStop {
   id: string;
   tripId: string;
-  cityId: string;
+  destinationId: string;
   startDate: Date;
   endDate: Date;
-  order: number;
+  orderIndex: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -1,5 +1,14 @@
-// Activity type definitions placeholder
-// Activity-related TypeScript types will be defined here
+// Activity type definitions
+// These types align with the Prisma Activity model
+
+export type ActivityCategory =
+  | 'sightseeing'
+  | 'food'
+  | 'adventure'
+  | 'culture'
+  | 'entertainment'
+  | 'nature'
+  | 'shopping';
 
 export interface Activity {
   id: string;
@@ -8,14 +17,7 @@ export interface Activity {
   description?: string;
   estimatedCost: number;
   duration: string;
-  cityId?: string;
+  destinationId?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
-
-export type ActivityCategory = 
-  | 'sightseeing' 
-  | 'food' 
-  | 'adventure' 
-  | 'culture' 
-  | 'entertainment' 
-  | 'nature' 
-  | 'shopping';

@@ -1,5 +1,5 @@
-// User type definitions placeholder
-// User-related TypeScript types will be defined here
+// User type definitions
+// These types align with the Prisma User model
 
 export interface User {
   id: string;
@@ -7,4 +7,5 @@ export interface User {
   email: string;
   avatar?: string;
   createdAt: Date;
+  updatedAt: Date;
 }

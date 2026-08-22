@@ -1,5 +1,5 @@
-// Itinerary type definitions placeholder
-// Itinerary-related TypeScript types will be defined here
+// Itinerary type definitions
+// These types align with the Prisma ItineraryItem model
 
 export interface ItineraryItem {
   id: string;
@@ -8,8 +8,10 @@ export interface ItineraryItem {
   date: Date;
   time: string;
   duration: string;
-  order: number;
+  orderIndex: number;
   notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ItineraryDay {

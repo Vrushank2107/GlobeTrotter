@@ -1,5 +1,5 @@
-// Destination type definitions placeholder
-// Destination-related TypeScript types will be defined here
+// Destination type definitions
+// These types align with the Prisma Destination model
 
 export interface Destination {
   id: string;
@@ -7,6 +7,7 @@ export interface Destination {
   country: string;
   description?: string;
   imageUrl?: string;
-  popularActivities?: string[];
   averageCost?: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

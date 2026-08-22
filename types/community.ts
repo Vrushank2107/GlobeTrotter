@@ -1,5 +1,5 @@
-// Community type definitions placeholder
-// Community-related TypeScript types will be defined here
+// Community type definitions
+// These types align with the Prisma TripShare model
 
 export interface PublicTrip {
   id: string;
@@ -21,4 +21,6 @@ export interface TripShare {
   shareCode: string;
   expiresAt?: Date;
   accessCount: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
