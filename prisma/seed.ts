@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Starting comprehensive database seed...');
 
-  // 1. Clear existing data in correct dependency order
   await prisma.itineraryItem.deleteMany();
   await prisma.expense.deleteMany();
   await prisma.tripStop.deleteMany();
@@ -96,138 +95,28 @@ async function main() {
 
   // 3. Create Curated World Destinations
   const destData = [
-    {
-      key: 'mumbai',
-      name: 'Mumbai',
-      country: 'India',
-      description: 'The financial capital of India, known for Bollywood, iconic seafronts, historic architecture, and street cuisine.',
-      imageUrl: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 3500,
-    },
-    {
-      key: 'goa',
-      name: 'Goa',
-      country: 'India',
-      description: 'Tropical coastal state famous for golden beaches, Portuguese heritage churches, water sports, and vibrant nightlife.',
-      imageUrl: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 3000,
-    },
-    {
-      key: 'bengaluru',
-      name: 'Bengaluru',
-      country: 'India',
-      description: 'Silicon Valley of India, celebrated for pleasant climate, lush green parks, craft microbreweries, and tech hubs.',
-      imageUrl: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 3200,
-    },
-    {
-      key: 'delhi',
-      name: 'Delhi',
-      country: 'India',
-      description: 'India historical capital blending ancient Mughal monuments like Red Fort with modern metropolis culture.',
-      imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 3200,
-    },
-    {
-      key: 'jaipur',
-      name: 'Jaipur',
-      country: 'India',
-      description: 'The Pink City of Rajasthan, home to majestic hill forts, royal palaces, vibrant bazaars, and traditional handicrafts.',
-      imageUrl: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 2800,
-    },
-    {
-      key: 'udaipur',
-      name: 'Udaipur',
-      country: 'India',
-      description: 'The City of Lakes, renowned for romantic palace hotels, serene Lake Pichola cruises, and royal Mewar heritage.',
-      imageUrl: 'https://images.unsplash.com/photo-1615836245337-f5b9b2303f1c?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 3400,
-    },
-    {
-      key: 'kerala',
-      name: 'Kerala',
-      country: 'India',
-      description: 'God Own Country, featuring serene Alleppey backwater houseboats, Munnar tea gardens, and Ayurvedic retreats.',
-      imageUrl: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 3600,
-    },
-    {
-      key: 'agra',
-      name: 'Agra',
-      country: 'India',
-      description: 'Home of the world-famous Taj Mahal, magnificent Agra Fort, and exquisite Mughal marble artisan crafts.',
-      imageUrl: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 2500,
-    },
-    {
-      key: 'tokyo',
-      name: 'Tokyo',
-      country: 'Japan',
-      description: 'Ultramodern metropolis seamlessly blending neon skyscrapers, cutting-edge tech, historic shrines, and world-class culinary arts.',
-      imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 9500,
-    },
-    {
-      key: 'kyoto',
-      name: 'Kyoto',
-      country: 'Japan',
-      description: 'Japan cultural heart with thousands of classical Zen temples, bamboo groves, geisha districts, and traditional ryokans.',
-      imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 8500,
-    },
-    {
-      key: 'paris',
-      name: 'Paris',
-      country: 'France',
-      description: 'The City of Light, world-renowned for Eiffel Tower, Louvre masterpieces, haute couture, romantic Seine cruises, and cafes.',
-      imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 12000,
-    },
-    {
-      key: 'zurich',
-      name: 'Zurich',
-      country: 'Switzerland',
-      description: 'Scenic Alpine lakeside city featuring crystal-clear lake views, luxury shopping, historic Old Town, and gateway to Swiss Alps.',
-      imageUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 14000,
-    },
-    {
-      key: 'dubai',
-      name: 'Dubai',
-      country: 'United Arab Emirates',
-      description: 'Futuristic desert metropolis featuring Burj Khalifa, luxury shopping malls, palm islands, and adrenaline desert safaris.',
-      imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 11000,
-    },
-    {
-      key: 'newyork',
-      name: 'New York',
-      country: 'United States',
-      description: 'The Big Apple, featuring Central Park, Broadway shows, Times Square, world-renowned museums, and iconic skyline views.',
-      imageUrl: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 13500,
-    },
-    {
-      key: 'rome',
-      name: 'Rome',
-      country: 'Italy',
-      description: 'The Eternal City packed with ancient Roman history, Colosseum, Vatican City, magnificent fountains, and authentic trattorias.',
-      imageUrl: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 10500,
-    },
-    {
-      key: 'bali',
-      name: 'Bali',
-      country: 'Indonesia',
-      description: 'Island of the Gods, featuring emerald rice terraces, cliffside temples, sacred monkey forests, volcano treks, and beach clubs.',
-      imageUrl: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80',
-      averageCost: 4500,
-    },
+    { key: 'mumbai', name: 'Mumbai', country: 'India', description: 'The financial capital of India, known for Bollywood, iconic seafronts, historic architecture, and street cuisine.', imageUrl: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=1200&q=80', averageCost: 3500 },
+    { key: 'goa', name: 'Goa', country: 'India', description: 'Tropical coastal state famous for golden beaches, Portuguese heritage churches, water sports, and vibrant nightlife.', imageUrl: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80', averageCost: 3000 },
+    { key: 'bengaluru', name: 'Bengaluru', country: 'India', description: 'Silicon Valley of India, celebrated for pleasant climate, lush green parks, craft microbreweries, and tech hubs.', imageUrl: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1200&q=80', averageCost: 3200 },
+    { key: 'delhi', name: 'Delhi', country: 'India', description: 'India historical capital blending ancient Mughal monuments like Red Fort with modern metropolis culture.', imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=80', averageCost: 3200 },
+    { key: 'jaipur', name: 'Jaipur', country: 'India', description: 'The Pink City of Rajasthan, home to majestic hill forts, royal palaces, vibrant bazaars, and traditional handicrafts.', imageUrl: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=80', averageCost: 2800 },
+    { key: 'udaipur', name: 'Udaipur', country: 'India', description: 'The City of Lakes, renowned for romantic palace hotels, serene Lake Pichola cruises, and royal Mewar heritage.', imageUrl: 'https://images.unsplash.com/photo-1568454537842-d933259bb258?auto=format&fit=crop&w=1200&q=80', averageCost: 3400 },
+    { key: 'kerala', name: 'Kerala', country: 'India', description: 'God Own Country, featuring serene Alleppey backwater houseboats, Munnar tea gardens, and Ayurvedic retreats.', imageUrl: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80', averageCost: 3600 },
+    { key: 'agra', name: 'Agra', country: 'India', description: 'Home of the world-famous Taj Mahal, magnificent Agra Fort, and exquisite Mughal marble artisan crafts.', imageUrl: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=80', averageCost: 2500 },
+    { key: 'tokyo', name: 'Tokyo', country: 'Japan', description: 'Ultramodern metropolis seamlessly blending neon skyscrapers, cutting-edge tech, historic shrines, and world-class culinary arts.', imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1200&q=80', averageCost: 9500 },
+    { key: 'kyoto', name: 'Kyoto', country: 'Japan', description: 'Japan cultural heart with thousands of classical Zen temples, bamboo groves, geisha districts, and traditional ryokans.', imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80', averageCost: 8500 },
+    { key: 'paris', name: 'Paris', country: 'France', description: 'The City of Light, world-renowned for Eiffel Tower, Louvre masterpieces, haute couture, romantic Seine cruises, and cafes.', imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&q=80', averageCost: 12000 },
+    { key: 'zurich', name: 'Zurich', country: 'Switzerland', description: 'Scenic Alpine lakeside city featuring crystal-clear lake views, luxury shopping, historic Old Town, and gateway to Swiss Alps.', imageUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=1200&q=80', averageCost: 14000 },
+    { key: 'dubai', name: 'Dubai', country: 'United Arab Emirates', description: 'Futuristic desert metropolis featuring Burj Khalifa, luxury shopping malls, palm islands, and adrenaline desert safaris.', imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80', averageCost: 11000 },
+    { key: 'newyork', name: 'New York', country: 'United States', description: 'The Big Apple, featuring Central Park, Broadway shows, Times Square, world-renowned museums, and iconic skyline views.', imageUrl: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=1200&q=80', averageCost: 13500 },
+    { key: 'rome', name: 'Rome', country: 'Italy', description: 'The Eternal City packed with ancient Roman history, Colosseum, Vatican City, magnificent fountains, and authentic trattorias.', imageUrl: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80', averageCost: 10500 },
+    { key: 'bali', name: 'Bali', country: 'Indonesia', description: 'Island of the Gods, featuring emerald rice terraces, cliffside temples, sacred monkey forests, volcano treks, and beach clubs.', imageUrl: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80', averageCost: 4500 },
   ];
 
+  const destMap: Record<string, any> = {};
+
   for (const item of destData) {
-    await prisma.destination.create({
+    const created = await prisma.destination.create({
       data: {
         name: item.name,
         country: item.country,
@@ -236,16 +125,7 @@ async function main() {
         averageCost: item.averageCost,
       },
     });
-  }
-
-  // Fetch created destinations to build an authoritative key -> destination mapping
-  const allDestinations = await prisma.destination.findMany();
-  const destMap: Record<string, any> = {};
-  for (const item of destData) {
-    const found = allDestinations.find((d) => d.name.toLowerCase() === item.name.toLowerCase());
-    if (found) {
-      destMap[item.key] = found;
-    }
+    destMap[item.key] = created;
   }
 
   console.log(`Created ${Object.keys(destMap).length} world destinations.`);
@@ -345,10 +225,7 @@ async function main() {
 
   for (const act of activitiesData) {
     const destObj = destMap[act.destKey];
-    if (!destObj) {
-      console.warn(`Destination key "${act.destKey}" missing for activity "${act.name}"`);
-      continue;
-    }
+    if (!destObj) continue;
 
     const createdAct = await prisma.activity.create({
       data: {
@@ -367,7 +244,17 @@ async function main() {
 
   console.log('Created rich activity catalog for all destinations.');
 
-  // Helper to create trip with stops, itinerary, expenses & share
+  // Fetch all verified DB activities for relational mapping
+  const allDbActivities = await prisma.activity.findMany();
+  const actByDestId: Record<string, string[]> = {};
+  for (const a of allDbActivities) {
+    if (a.destinationId) {
+      if (!actByDestId[a.destinationId]) actByDestId[a.destinationId] = [];
+      actByDestId[a.destinationId].push(a.id);
+    }
+  }
+
+  // Helper to create trip atomically with nested relation creates
   async function createFullTrip(config: {
     user: any;
     title: string;
@@ -382,85 +269,88 @@ async function main() {
     expenseItems: Array<{ name: string; category: ExpenseCategory; amount: number; date: string }>;
     itineraryDays: Array<{ destKey: string; activityIndex: number; date: string; time: string; duration: string; notes?: string }>;
   }) {
-    const trip = await prisma.trip.create({
-      data: {
-        userId: config.user.id,
-        title: config.title,
-        startDate: new Date(config.startDate),
-        endDate: new Date(config.endDate),
-        budget: config.budget,
-        status: config.status,
-        isPublic: config.isPublic,
-      },
-    });
-
-    // Create TripStops
-    let order = 0;
     const totalDays = Math.max(1, Math.floor((new Date(config.endDate).getTime() - new Date(config.startDate).getTime()) / (1000 * 60 * 60 * 24)));
-    const daysPerStop = Math.max(1, Math.floor(totalDays / config.destKeys.length));
+    const daysPerStop = Math.max(1, Math.floor(totalDays / (config.destKeys.length || 1)));
 
-    for (let i = 0; i < config.destKeys.length; i++) {
-      const dKey = config.destKeys[i];
+    const tripStopsCreate = config.destKeys.map((dKey, i) => {
       const dObj = destMap[dKey];
-      if (!dObj) continue;
-
+      if (!dObj?.id) return null;
       const stopStart = new Date(new Date(config.startDate).getTime() + i * daysPerStop * 24 * 60 * 60 * 1000);
       const stopEnd = new Date(stopStart.getTime() + daysPerStop * 24 * 60 * 60 * 1000);
+      return {
+        destinationId: dObj.id,
+        startDate: stopStart,
+        endDate: stopEnd,
+        orderIndex: i,
+      };
+    }).filter((s): s is { destinationId: string; startDate: Date; endDate: Date; orderIndex: number } => Boolean(s));
 
-      await prisma.tripStop.create({
-        data: {
-          tripId: trip.id,
-          destinationId: dObj.id,
-          startDate: stopStart,
-          endDate: stopEnd,
-          orderIndex: order++,
-        },
-      });
-    }
+    const expensesCreate = config.expenseItems.map((exp) => ({
+      name: exp.name,
+      category: exp.category,
+      amount: exp.amount,
+      date: new Date(exp.date),
+    }));
 
-    // Create Expenses
-    for (const exp of config.expenseItems) {
-      await prisma.expense.create({
-        data: {
-          tripId: trip.id,
-          name: exp.name,
-          category: exp.category,
-          amount: exp.amount,
-          date: new Date(exp.date),
-        },
-      });
-    }
+    const itineraryCreate: Array<{
+      activityId: string;
+      date: Date;
+      time: string;
+      duration: string;
+      orderIndex: number;
+      notes?: string;
+    }> = [];
 
-    // Create Itinerary Items
     let itOrder = 0;
     for (const item of config.itineraryDays) {
-      const actIds = activityMap[item.destKey] || [];
-      const actId = actIds[item.activityIndex % actIds.length];
-      if (!actId) continue;
-
-      await prisma.itineraryItem.create({
-        data: {
-          tripId: trip.id,
+      const dObj = destMap[item.destKey];
+      const availableActs = (dObj?.id && actByDestId[dObj.id]) || [];
+      const actId = availableActs[item.activityIndex % availableActs.length] || allDbActivities[0]?.id;
+      if (actId) {
+        itineraryCreate.push({
           activityId: actId,
           date: new Date(item.date),
           time: item.time,
           duration: item.duration,
           orderIndex: itOrder++,
           notes: item.notes,
-        },
-      });
+        });
+      }
     }
 
-    // Create TripShare
-    await prisma.tripShare.create({
-      data: {
-        tripId: trip.id,
-        shareCode: config.shareCode,
-        accessCount: config.likesCount || Math.floor(Math.random() * 50) + 10,
-      },
-    });
+    try {
+      const trip = await prisma.trip.create({
+        data: {
+          userId: config.user.id,
+          title: config.title,
+          startDate: new Date(config.startDate),
+          endDate: new Date(config.endDate),
+          budget: config.budget,
+          status: config.status,
+          isPublic: config.isPublic,
+          tripStops: {
+            create: tripStopsCreate,
+          },
+          expenses: {
+            create: expensesCreate,
+          },
+          itineraryItems: {
+            create: itineraryCreate,
+          },
+          tripShare: {
+            create: {
+              shareCode: config.shareCode,
+              accessCount: config.likesCount || Math.floor(Math.random() * 50) + 10,
+            },
+          },
+        },
+      });
 
-    return trip;
+      return trip;
+    } catch (err) {
+      console.error(`Failed to create trip "${config.title}":`, err);
+      throw err;
+    }
   }
 
   // 5. Seed Demo User Trips
@@ -680,7 +570,7 @@ async function main() {
     destKeys: ['newyork'],
     expenseItems: [
       { name: 'Midtown Manhattan Hotel', category: ExpenseCategory.accommodation, amount: 110000, date: '2026-12-20' },
-      { name: 'Broadway Show Tickets & Dining', category: ExpenseCategory.entertainment, amount: 35000, date: '2026-12-22' },
+      { name: 'Broadway Show Tickets & Dining', category: ExpenseCategory.activities, amount: 35000, date: '2026-12-22' },
     ],
     itineraryDays: [
       { destKey: 'newyork', activityIndex: 0, date: '2026-12-21', time: '10:00 AM', duration: '3 hours' },
