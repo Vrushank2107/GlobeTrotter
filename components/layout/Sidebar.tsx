@@ -106,7 +106,7 @@ export const Sidebar: React.FC = () => {
         <button
           onClick={toggleSidebar}
           title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-          className="hidden md:flex absolute -right-3.5 top-6 z-50 bg-white border border-slate-200 text-slate-600 hover:text-sky-600 hover:border-sky-300 hover:scale-110 items-center justify-center w-7 h-7 rounded-full shadow-md transition-all cursor-pointer group"
+          className="hidden md:flex absolute -right-3.5 top-6 z-[60] bg-white border border-slate-200 text-slate-600 hover:text-sky-600 hover:border-sky-300 hover:scale-110 items-center justify-center w-7 h-7 rounded-full shadow-md transition-all cursor-pointer group"
         >
           {isCollapsed ? (
             <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
