@@ -1,0 +1,29 @@
+// Prisma schema placeholder
+// Database schema will be implemented here based on the following relational model:
+
+// User
+//   └── Trip
+//         ├── Trip Stop
+//         │      └── City
+//         ├── Trip Activity
+//         │      └── Activity
+//         └── Expense
+
+// This file will contain the complete Prisma schema definition for:
+// - User
+// - Trip
+// - City / Destination
+// - Activity
+// - TripStop
+// - TripActivity
+// - Expense
+// - TripShare
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
