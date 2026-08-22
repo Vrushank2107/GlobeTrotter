@@ -85,7 +85,16 @@ export function mapPrismaTripToTrip(prismaTrip: any): Trip {
     destinations[0]?.image ||
     'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80';
 
-  const tags = destinations.map((d: any) => d.cityName);
+  // Build tags from unique activity categories (e.g. 'Nature', 'Food') + city names
+  const activityCategoryTags = [
+    ...new Set(
+      (prismaTrip.itineraryItems || []).map((item: any) =>
+        capitalize(item.activity?.category || '')
+      ).filter(Boolean)
+    ),
+  ] as string[];
+  const cityTags = destinations.map((d: any) => d.cityName);
+  const tags = [...new Set([...activityCategoryTags, ...cityTags])];
   if (tags.length === 0) tags.push('Adventure');
 
   return {

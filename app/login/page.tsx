@@ -58,18 +58,23 @@ export default function LoginPage() {
 
     const initGoogle = () => {
       if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
-        (window as any).google.accounts.id.initialize({
-          client_id: clientId,
-          callback: handleGoogleCallback,
-        });
+        // Guard: only initialize once
+        if (!(window as any).__gsiInitialized) {
+          (window as any).__gsiInitialized = true;
+          (window as any).google.accounts.id.initialize({
+            client_id: clientId,
+            callback: handleGoogleCallback,
+          });
+        }
 
         const btnDiv = document.getElementById('google-btn-container');
         if (btnDiv) {
           btnDiv.innerHTML = '';
+          // GSI renderButton only accepts numeric px widths, not percentage strings
           (window as any).google.accounts.id.renderButton(btnDiv, {
             theme: 'outline',
             size: 'large',
-            width: '100%',
+            width: 400,
             text: 'continue_with',
             shape: 'rectangular',
           });
@@ -79,18 +84,21 @@ export default function LoginPage() {
 
     if (typeof window !== 'undefined') {
       if (!(window as any).google?.accounts?.id) {
-        const script = document.createElement('script');
-        script.id = 'google-gsi';
-        script.src = 'https://accounts.google.com/gsi/client';
-        script.async = true;
-        script.defer = true;
-        script.onload = initGoogle;
-        document.body.appendChild(script);
+        if (!document.getElementById('google-gsi')) {
+          const script = document.createElement('script');
+          script.id = 'google-gsi';
+          script.src = 'https://accounts.google.com/gsi/client';
+          script.async = true;
+          script.defer = true;
+          script.onload = initGoogle;
+          document.body.appendChild(script);
+        }
       } else {
         initGoogle();
       }
     }
-  }, [router, refreshData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
 
   const handleGoogleManualClick = () => {
     if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {

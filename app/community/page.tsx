@@ -19,9 +19,15 @@ export default function CommunityPage() {
 
   const filtered = communityTrips.filter((t) => {
     const matchesTag = filterTag === 'All' || t.tags.includes(filterTag);
+    const q = search.toLowerCase();
+    const destinationNames = t.destinations.map((d) =>
+      `${d.cityName} ${d.country}`.toLowerCase()
+    );
     const matchesSearch = search
-      ? t.title.toLowerCase().includes(search.toLowerCase()) ||
-        t.description.toLowerCase().includes(search.toLowerCase())
+      ? t.title.toLowerCase().includes(q) ||
+        (t.description || '').toLowerCase().includes(q) ||
+        t.tags.some((tag) => tag.toLowerCase().includes(q)) ||
+        destinationNames.some((name) => name.includes(q))
       : true;
     return matchesTag && matchesSearch;
   });
@@ -77,7 +83,7 @@ export default function CommunityPage() {
 
           {/* Filter Pills */}
           <div className="flex items-center gap-2 mb-8 border-b border-slate-200 pb-4">
-            {['All', 'Romance', 'Art', 'Nature', 'Adventure', 'Food'].map((tag) => (
+            {['All', 'Sightseeing', 'Culture', 'Nature', 'Adventure', 'Food', 'Entertainment'].map((tag) => (
               <button
                 key={tag}
                 onClick={() => setFilterTag(tag)}
