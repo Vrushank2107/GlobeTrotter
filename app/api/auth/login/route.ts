@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
+import { cookies } from 'next/headers';
 
 export async function POST(req: Request) {
   try {
@@ -27,6 +28,15 @@ export async function POST(req: Request) {
         },
       });
     }
+
+    // Set authentication session cookie
+    const cookieStore = await cookies();
+    cookieStore.set('user_id', user.id, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      httpOnly: true,
+      sameSite: 'lax',
+    });
 
     return NextResponse.json({
       success: true,

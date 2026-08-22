@@ -17,12 +17,12 @@ export default function NewTripPage() {
 
   // Form State
   const [formData, setFormData] = useState({
-    title: 'Goa & Mumbai Coastline Tour',
+    title: 'New Trip',
     description: 'A multi-city coastal getaway combining historical charm with beaches.',
     startDate: '2026-10-15',
     endDate: '2026-10-22',
-    totalBudget: 40000,
-    travelers: 2,
+    totalBudget: 40000 as number | string,
+    travelers: 2 as number | string,
     tags: ['Beach', 'Culture', 'Food'],
     coverImage: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80',
   });
@@ -67,7 +67,14 @@ export default function NewTripPage() {
     e.preventDefault();
     setErrors({});
 
-    const validation = tripDetailsSchema.safeParse(formData);
+    // Convert empty strings to default values for validation
+    const formToValidate = {
+      ...formData,
+      totalBudget: formData.totalBudget === '' ? 40000 : Number(formData.totalBudget),
+      travelers: formData.travelers === '' ? 2 : Number(formData.travelers),
+    };
+
+    const validation = tripDetailsSchema.safeParse(formToValidate);
     if (!validation.success) {
       const formatted: Record<string, string> = {};
       validation.error.issues.forEach((issue) => {
@@ -96,8 +103,8 @@ export default function NewTripPage() {
       description: formData.description,
       startDate: formData.startDate,
       endDate: formData.endDate,
-      totalBudget: Number(formData.totalBudget),
-      travelers: Number(formData.travelers),
+      totalBudget: formToValidate.totalBudget,
+      travelers: formToValidate.travelers,
       tags: formData.tags,
       coverImage: formData.coverImage,
       destinations: tripStops,
@@ -155,6 +162,7 @@ export default function NewTripPage() {
                 {destinations.map((dest) => {
                   const selectedIndex = selectedDestIds.indexOf(dest.id);
                   const isSelected = selectedIndex !== -1;
+                  const orderNumber = selectedIndex + 1;
 
                   return (
                     <div
@@ -174,7 +182,7 @@ export default function NewTripPage() {
 
                         {isSelected && (
                           <div className="absolute top-3 right-3 bg-sky-500 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md">
-                            #{selectedIndex + 1}
+                            #{orderNumber}
                           </div>
                         )}
                       </div>
@@ -275,7 +283,7 @@ export default function NewTripPage() {
                     <input
                       type="number"
                       value={formData.totalBudget}
-                      onChange={(e) => setFormData({ ...formData, totalBudget: Number(e.target.value) })}
+                      onChange={(e) => setFormData({ ...formData, totalBudget: e.target.value === '' ? '' : Number(e.target.value) })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all"
                     />
                     {errors.totalBudget && <p className="text-xs text-red-500 mt-1">{errors.totalBudget}</p>}
@@ -288,7 +296,7 @@ export default function NewTripPage() {
                     <input
                       type="number"
                       value={formData.travelers}
-                      onChange={(e) => setFormData({ ...formData, travelers: Number(e.target.value) })}
+                      onChange={(e) => setFormData({ ...formData, travelers: e.target.value === '' ? '' : Number(e.target.value) })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all"
                     />
                     {errors.travelers && <p className="text-xs text-red-500 mt-1">{errors.travelers}</p>}

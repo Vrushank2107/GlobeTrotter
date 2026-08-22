@@ -2,13 +2,15 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
 import { User, MapPin, Globe2, Award, Calendar, Wallet, Heart, Edit3 } from 'lucide-react';
 
 export default function ProfilePage() {
-  const { user, trips } = useTripContext();
+  const router = useRouter();
+  const { user, trips, refreshData } = useTripContext();
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -39,13 +41,25 @@ export default function ProfilePage() {
                   </span>
                 </div>
 
-                <button
-                  onClick={() => alert('Profile settings saved!')}
-                  className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-5 py-2.5 rounded-full transition-all inline-flex items-center gap-2"
-                >
-                  <Edit3 className="w-3.5 h-3.5 text-sky-400" />
-                  <span>Edit Profile</span>
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => alert('Profile settings saved!')}
+                    className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-5 py-2.5 rounded-full transition-all inline-flex items-center gap-2"
+                  >
+                    <Edit3 className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Edit Profile</span>
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await fetch('/api/auth/logout', { method: 'POST' });
+                      await refreshData();
+                      router.push('/login');
+                    }}
+                    className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-semibold text-xs px-5 py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>Sign Out</span>
+                  </button>
+                </div>
               </div>
 
               <p className="text-xs text-slate-500 leading-relaxed max-w-xl mb-4">{user.bio}</p>

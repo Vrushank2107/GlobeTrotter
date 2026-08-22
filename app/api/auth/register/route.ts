@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
+import { cookies } from 'next/headers';
 
 export async function POST(req: Request) {
   try {
@@ -31,6 +32,15 @@ export async function POST(req: Request) {
         passwordHash: '$2a$10$demo',
         avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`,
       },
+    });
+
+    // Set authentication session cookie
+    const cookieStore = await cookies();
+    cookieStore.set('user_id', newUser.id, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      httpOnly: true,
+      sameSite: 'lax',
     });
 
     return NextResponse.json({

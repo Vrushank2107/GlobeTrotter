@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTripContext } from '@/context/TripContext';
 import {
   LayoutDashboard,
@@ -13,11 +13,20 @@ import {
   Globe2,
   MoreVertical,
   Luggage,
+  LogOut,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
-  const { user } = useTripContext();
+  const router = useRouter();
+  const { user, refreshData } = useTripContext();
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    await fetch('/api/auth/logout', { method: 'POST' });
+    await refreshData();
+    router.push('/login');
+  };
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -26,6 +35,7 @@ export const Sidebar: React.FC = () => {
     { label: 'Calendar View', path: '/calendar', icon: CalendarDays },
     { label: 'Profile', path: '/profile', icon: User },
     { label: 'Admin Panel', path: '/admin', icon: ShieldAlert },
+    { label: 'Sign Out / Login', path: '/login', icon: LogOut, onClick: handleLogout },
   ];
 
   return (
@@ -58,6 +68,7 @@ export const Sidebar: React.FC = () => {
             <Link
               key={item.path}
               href={item.path}
+              onClick={item.onClick}
               className={`flex items-center px-4 py-3 rounded-xl transition-all gap-3.5 text-sm font-medium ${
                 isActive
                   ? 'bg-sky-50 text-sky-700 font-semibold shadow-xs border border-sky-100'

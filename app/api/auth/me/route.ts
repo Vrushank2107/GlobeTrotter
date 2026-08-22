@@ -1,13 +1,28 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
+import { cookies } from 'next/headers';
 
 export async function GET() {
   try {
-    let dbUser = await prisma.user.findFirst();
+    const cookieStore = await cookies();
+    const userId = cookieStore.get('user_id')?.value;
+
+    let dbUser = null;
+
+    if (userId) {
+      dbUser = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+    }
+
+    if (!dbUser) {
+      dbUser = await prisma.user.findFirst();
+    }
+
     if (!dbUser) {
       dbUser = await prisma.user.create({
         data: {
-          name: 'Nirmal Purja',
+          name: 'Demo User',
           email: 'demo@globetrotter.com',
           passwordHash: '$2a$10$demo',
           avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
@@ -26,19 +41,31 @@ export async function GET() {
       },
     });
 
+    const userStops = await prisma.tripStop.findMany({
+      where: { trip: { userId: dbUser.id } },
+      include: { destination: true },
+    });
+
+    const countriesSet = new Set(userStops.map((s) => s.destination?.country).filter(Boolean));
+    const countriesVisited = countriesSet.size;
+
+    const favoriteDestinations = Array.from(
+      new Set(userStops.map((s) => `${s.destination?.name}, ${s.destination?.country}`).filter(Boolean))
+    );
+
     return NextResponse.json({
       success: true,
       data: {
         id: dbUser.id,
         name: dbUser.name,
         email: dbUser.email,
-        avatar: dbUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+        avatar: dbUser.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(dbUser.name)}`,
         memberType: 'Pro Member',
-        countriesVisited: 12,
+        countriesVisited,
         tripsPlanned,
-        totalBudgetSpent: Number(expensesSum._sum.amount || 385000),
-        bio: 'High-altitude mountaineer & explorer. Always looking for the next ridge to cross.',
-        favoriteDestinations: ['Goa, India', 'Tokyo, Japan', 'Kathmandu, Nepal', 'Paris, France'],
+        totalBudgetSpent: Number(expensesSum._sum.amount || 0),
+        bio: 'Explorer & traveler planning multi-city adventures worldwide.',
+        favoriteDestinations: favoriteDestinations.length > 0 ? favoriteDestinations : ['Goa, India', 'Mumbai, India'],
       },
     });
   } catch (error: unknown) {

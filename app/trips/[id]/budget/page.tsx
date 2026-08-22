@@ -44,7 +44,7 @@ export default function TripBudgetPage() {
   const [expenseForm, setExpenseForm] = useState({
     title: '',
     category: 'Accommodation' as 'Accommodation' | 'Transport' | 'Activities' | 'Food' | 'Misc',
-    amount: 2500,
+    amount: '' as string | number,
     date: '2026-10-16',
     paidBy: 'Nirmal Purja',
   });
@@ -92,10 +92,13 @@ export default function TripBudgetPage() {
     e.preventDefault();
     setErrors({});
 
-    const validation = expenseSchema.safeParse({
+    // Convert empty string to 0 for validation
+    const formToValidate = {
       ...expenseForm,
-      amount: Number(expenseForm.amount),
-    });
+      amount: expenseForm.amount === '' ? 0 : Number(expenseForm.amount),
+    };
+
+    const validation = expenseSchema.safeParse(formToValidate);
 
     if (!validation.success) {
       const formatted: Record<string, string> = {};
@@ -106,16 +109,13 @@ export default function TripBudgetPage() {
       return;
     }
 
-    addExpense(trip.id, {
-      ...expenseForm,
-      amount: Number(expenseForm.amount),
-    });
+    addExpense(trip.id, formToValidate);
 
     setShowModal(false);
     setExpenseForm({
       title: '',
       category: 'Accommodation',
-      amount: 2500,
+      amount: '',
       date: '2026-10-16',
       paidBy: 'Nirmal Purja',
     });
@@ -332,7 +332,7 @@ export default function TripBudgetPage() {
                     <input
                       type="number"
                       value={expenseForm.amount}
-                      onChange={(e) => setExpenseForm({ ...expenseForm, amount: Number(e.target.value) })}
+                      onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value === '' ? '' : Number(e.target.value) })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:border-sky-500"
                     />
                     {errors.amount && <p className="text-xs text-red-500 mt-1">{errors.amount}</p>}
