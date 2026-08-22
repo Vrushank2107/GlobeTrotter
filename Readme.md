@@ -353,7 +353,7 @@ Make sure you have installed:
 
 1. CLONE THE REPOSITORY
 
-git clone <YOUR_REPOSITORY_URL>
+git clone https://github.com/Vrushank2107/GlobeTrotter
 
 cd globetrotter
 
