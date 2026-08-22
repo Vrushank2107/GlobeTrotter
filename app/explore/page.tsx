@@ -252,7 +252,7 @@ export default function ExplorePage() {
           </div>
 
           {/* Destination Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+          <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 transition-all duration-300 ${isSidebarCollapsed ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
             {filtered.map((dest) => (
               <div
                 key={dest.id}
