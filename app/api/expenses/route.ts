@@ -1,30 +1,55 @@
 import { NextResponse } from 'next/server';
-import { INITIAL_TRIPS } from '@/lib/mock-data/mockData';
+import { prisma } from '@/lib/db/prisma';
+import { getTrip } from '@/lib/services/tripService';
+import { ExpenseCategory } from '@prisma/client';
 
 export async function GET() {
-  return NextResponse.json({ success: true, data: INITIAL_TRIPS[0].expenses });
+  try {
+    const expenses = await prisma.expense.findMany({
+      orderBy: { date: 'desc' },
+    });
+    return NextResponse.json({ success: true, data: expenses });
+  } catch (error: unknown) {
+    const errMessage = error instanceof Error ? error.message : 'Failed to fetch expenses';
+    return NextResponse.json({ success: false, message: errMessage }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { tripId, ...expenseData } = body;
+    const { tripId, title, name, category, amount, date, notes } = body;
 
-    const trip = INITIAL_TRIPS.find((t) => t.id === tripId) || INITIAL_TRIPS[0];
-    const newExpense = {
-      id: `exp_${Date.now()}`,
-      tripId: tripId || trip.id,
-      ...expenseData,
-    };
+    const trip = await prisma.trip.findUnique({
+      where: { id: tripId },
+    });
 
-    const updatedExpenses = [newExpense, ...trip.expenses];
-    const newSpentBudget = updatedExpenses.reduce((sum, e) => sum + e.amount, 0);
+    if (!trip) {
+      return NextResponse.json({ success: false, message: 'Trip not found' }, { status: 404 });
+    }
 
-    const updatedTrip = {
-      ...trip,
-      expenses: updatedExpenses,
-      spentBudget: newSpentBudget,
-    };
+    let prismaCategory: ExpenseCategory = ExpenseCategory.other;
+    const catLower = (category || '').toLowerCase();
+    if (catLower === 'accommodation') prismaCategory = ExpenseCategory.accommodation;
+    else if (catLower === 'transport') prismaCategory = ExpenseCategory.transport;
+    else if (catLower === 'food') prismaCategory = ExpenseCategory.food;
+    else if (catLower === 'activities') prismaCategory = ExpenseCategory.activities;
+    else if (catLower === 'shopping') prismaCategory = ExpenseCategory.shopping;
+
+    const expDate = date ? new Date(date) : new Date();
+
+    await prisma.expense.create({
+      data: {
+        tripId: trip.id,
+        name: title || name || 'Expense',
+        category: prismaCategory,
+        amount: Number(amount || 0),
+        date: expDate,
+        notes: notes || null,
+      },
+    });
+
+    const updatedTrip = await getTrip(trip.id);
 
     return NextResponse.json({
       success: true,

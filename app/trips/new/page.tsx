@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
@@ -13,7 +13,7 @@ export default function NewTripPage() {
   const { destinations, addTrip } = useTripContext();
 
   const [step, setStep] = useState<number>(1);
-  const [selectedDestIds, setSelectedDestIds] = useState<string[]>(['dest_goa', 'dest_mumbai']);
+  const [selectedDestIds, setSelectedDestIds] = useState<string[]>([]);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -28,6 +28,26 @@ export default function NewTripPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Generate trip title based on selected destinations
+  const generateTripTitle = (selectedIds: string[]) => {
+    const selectedDests = selectedIds
+      .map((id) => destinations.find((d) => d.id === id))
+      .filter(Boolean);
+
+    if (selectedDests.length === 0) return 'New Trip';
+    if (selectedDests.length === 1) return `${selectedDests[0]!.name} Trip`;
+    if (selectedDests.length === 2) return `${selectedDests[0]!.name} & ${selectedDests[1]!.name} Tour`;
+    return `${selectedDests[0]!.name} + ${selectedDests.length - 1} Cities Tour`;
+  };
+
+  // Update title when destinations change
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      title: generateTripTitle(selectedDestIds),
+    }));
+  }, [selectedDestIds, destinations]);
 
   const toggleDestination = (destId: string) => {
     setSelectedDestIds((prev) =>

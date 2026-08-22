@@ -1,23 +1,37 @@
 import { NextResponse } from 'next/server';
-import { INITIAL_TRIPS } from '@/lib/mock-data/mockData';
+import { prisma } from '@/lib/db/prisma';
+import { getTrip } from '@/lib/services/tripService';
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ expenseId: string }> }) {
-  const { expenseId } = await params;
-  const { searchParams } = new URL(req.url);
-  const tripId = searchParams.get('tripId');
+  try {
+    const { expenseId } = await params;
+    const { searchParams } = new URL(req.url);
+    const tripId = searchParams.get('tripId');
 
-  const trip = INITIAL_TRIPS.find((t) => t.id === tripId) || INITIAL_TRIPS[0];
-  const updatedExpenses = trip.expenses.filter((e) => e.id !== expenseId);
-  const newSpentBudget = updatedExpenses.reduce((sum, e) => sum + e.amount, 0);
+    const existingExp = await prisma.expense.findUnique({
+      where: { id: expenseId },
+    });
 
-  const updatedTrip = {
-    ...trip,
-    expenses: updatedExpenses,
-    spentBudget: newSpentBudget,
-  };
+    const targetTripId = tripId || existingExp?.tripId;
 
-  return NextResponse.json({
-    success: true,
-    data: updatedTrip,
-  });
+    if (existingExp) {
+      await prisma.expense.delete({
+        where: { id: expenseId },
+      });
+    }
+
+    if (!targetTripId) {
+      return NextResponse.json({ success: false, message: 'Trip ID not specified' }, { status: 400 });
+    }
+
+    const updatedTrip = await getTrip(targetTripId);
+
+    return NextResponse.json({
+      success: true,
+      data: updatedTrip,
+    });
+  } catch (error: unknown) {
+    const errMessage = error instanceof Error ? error.message : 'Failed to delete expense';
+    return NextResponse.json({ success: false, message: errMessage }, { status: 500 });
+  }
 }

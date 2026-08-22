@@ -34,11 +34,13 @@ export interface TripStop {
   estimatedCost: number;
 }
 
+export type ExpenseCategory = 'Accommodation' | 'Transport' | 'Activities' | 'Food' | 'Misc';
+
 export interface Expense {
   id: string;
   tripId?: string;
   title: string;
-  category: 'Accommodation' | 'Transport' | 'Activities' | 'Food' | 'Misc';
+  category: ExpenseCategory;
   amount: number;
   date: string;
   paidBy?: string;

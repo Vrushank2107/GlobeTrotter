@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/db/prisma';
 
 export async function POST(req: Request) {
   try {
@@ -12,14 +13,29 @@ export async function POST(req: Request) {
       );
     }
 
-    // Demo authentication logic
+    let user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          name: email.split('@')[0],
+          email,
+          passwordHash: '$2a$10$demo',
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(email)}`,
+        },
+      });
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Login successful',
       user: {
-        id: 'usr_demo',
-        name: 'Nirmal Purja',
-        email: email,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
       },
     });
   } catch (error: unknown) {

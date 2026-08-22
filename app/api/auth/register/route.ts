@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/db/prisma';
 
 export async function POST(req: Request) {
   try {
@@ -12,13 +13,34 @@ export async function POST(req: Request) {
       );
     }
 
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { success: false, message: 'User already exists with this email' },
+        { status: 400 }
+      );
+    }
+
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        email,
+        passwordHash: '$2a$10$demo',
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`,
+      },
+    });
+
     return NextResponse.json({
       success: true,
       message: 'Registration successful',
       user: {
-        id: `usr_${Date.now()}`,
-        name,
-        email,
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        avatar: newUser.avatar,
       },
     });
   } catch (error: unknown) {

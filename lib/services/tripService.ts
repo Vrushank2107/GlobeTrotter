@@ -1,26 +1,221 @@
-import { INITIAL_TRIPS, COMMUNITY_TRIPS, INITIAL_DESTINATIONS } from '@/lib/mock-data/mockData';
-import { Trip, Destination } from '@/types';
+import { prisma } from '@/lib/db/prisma';
+import { Trip, Destination, ActivityCategory, ExpenseCategory, TripStatus } from '@/types';
+
+function capitalize(str: string): string {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+function parseDurationMinutes(durationStr: string): number {
+  if (!durationStr) return 60;
+  const match = durationStr.match(/(\d+)/);
+  if (!match) return 60;
+  const val = parseInt(match[1], 10);
+  if (durationStr.toLowerCase().includes('hour')) {
+    return val * 60;
+  }
+  return val;
+}
+
+export function mapPrismaTripToTrip(prismaTrip: any): Trip {
+  const startDateObj = new Date(prismaTrip.startDate);
+  const endDateObj = new Date(prismaTrip.endDate);
+
+  const destinations = (prismaTrip.tripStops || []).map((stop: any) => ({
+    id: stop.id,
+    cityName: stop.destination?.name || 'Unknown',
+    country: stop.destination?.country || 'Unknown',
+    startDate: new Date(stop.startDate).toISOString().split('T')[0],
+    endDate: new Date(stop.endDate).toISOString().split('T')[0],
+    image: stop.destination?.imageUrl || 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800',
+    estimatedCost: stop.destination?.averageCost ? Number(stop.destination.averageCost) : 0,
+  }));
+
+  const expenses = (prismaTrip.expenses || []).map((exp: any) => {
+    let cat: 'Accommodation' | 'Transport' | 'Activities' | 'Food' | 'Misc' = 'Misc';
+    const c = (exp.category || '').toLowerCase();
+    if (c === 'accommodation') cat = 'Accommodation';
+    else if (c === 'transport') cat = 'Transport';
+    else if (c === 'activities') cat = 'Activities';
+    else if (c === 'food') cat = 'Food';
+
+    return {
+      id: exp.id,
+      tripId: exp.tripId,
+      title: exp.name,
+      category: cat,
+      amount: Number(exp.amount),
+      date: new Date(exp.date).toISOString().split('T')[0],
+      notes: exp.notes || undefined,
+    };
+  });
+
+  const spentBudget = expenses.reduce((sum: number, e: any) => sum + e.amount, 0);
+
+  const activities = (prismaTrip.itineraryItems || []).map((item: any) => {
+    const itemDateObj = new Date(item.date);
+    const dayDiff = Math.max(1, Math.floor((itemDateObj.getTime() - startDateObj.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+
+    let catName = capitalize(item.activity?.category || 'Sightseeing') as ActivityCategory;
+    if (catName === 'Sightseeing') catName = 'Sightseeing';
+
+    return {
+      id: item.id,
+      itemId: item.id,
+      title: item.activity?.name || 'Activity',
+      category: catName,
+      location: item.activity?.destination?.name || 'Destination',
+      time: item.time || '10:00 AM',
+      durationMinutes: parseDurationMinutes(item.duration),
+      cost: item.activity?.estimatedCost ? Number(item.activity.estimatedCost) : 0,
+      notes: item.notes || item.activity?.description || undefined,
+      dayNumber: dayDiff,
+      dateStr: itemDateObj.toISOString().split('T')[0],
+      completed: false,
+    };
+  });
+
+  let status: TripStatus = 'Planning';
+  const st = (prismaTrip.status || '').toLowerCase();
+  if (st === 'confirmed') status = 'Confirmed';
+  else if (st === 'completed') status = 'Completed';
+  else if (st === 'cancelled') status = 'Cancelled';
+
+  const coverImage =
+    destinations[0]?.image ||
+    'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80';
+
+  const tags = destinations.map((d: any) => d.cityName);
+  if (tags.length === 0) tags.push('Adventure');
+
+  return {
+    id: prismaTrip.id,
+    title: prismaTrip.title,
+    description: `${prismaTrip.title} - ${destinations.map((d: any) => d.cityName).join(', ')}`,
+    coverImage,
+    startDate: startDateObj.toISOString().split('T')[0],
+    endDate: endDateObj.toISOString().split('T')[0],
+    destinations,
+    totalBudget: Number(prismaTrip.budget),
+    spentBudget,
+    status,
+    travelers: 2,
+    tags,
+    activities,
+    expenses,
+    smartInsights: [],
+    isPublic: prismaTrip.isPublic || false,
+    shareCode: prismaTrip.tripShare?.shareCode || undefined,
+    authorName: prismaTrip.user?.name || 'Explorer',
+    authorAvatar: prismaTrip.user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo',
+    likesCount: 24,
+  };
+}
+
+export function mapPrismaDestinationToDestination(prismaDest: any): Destination {
+  const popularActivities = (prismaDest.activities || []).map((act: any) => ({
+    name: act.name,
+    category: capitalize(act.category || 'Sightseeing') as ActivityCategory,
+    estCost: Number(act.estimatedCost || 0),
+  }));
+
+  return {
+    id: prismaDest.id,
+    name: prismaDest.name,
+    country: prismaDest.country,
+    region: 'South Asia',
+    coverImage: prismaDest.imageUrl || 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80',
+    description: prismaDest.description || '',
+    popularActivities,
+    avgCostPerDay: prismaDest.averageCost ? Number(prismaDest.averageCost) : 2500,
+    rating: 4.8,
+    tags: ['Culture', 'Sightseeing', 'Travel'],
+  };
+}
+
+const tripInclude = {
+  user: true,
+  tripStops: {
+    include: {
+      destination: true,
+    },
+    orderBy: {
+      orderIndex: 'asc' as const,
+    },
+  },
+  itineraryItems: {
+    include: {
+      activity: {
+        include: {
+          destination: true,
+        },
+      },
+    },
+    orderBy: [
+      { date: 'asc' as const },
+      { orderIndex: 'asc' as const },
+    ],
+  },
+  expenses: {
+    orderBy: {
+      date: 'asc' as const,
+    },
+  },
+  tripShare: true,
+};
 
 export async function getTrips(): Promise<Trip[]> {
-  return INITIAL_TRIPS;
+  const prismaTrips = await prisma.trip.findMany({
+    include: tripInclude,
+    orderBy: { createdAt: 'desc' },
+  });
+  return prismaTrips.map(mapPrismaTripToTrip);
 }
 
 export async function getTrip(id: string): Promise<Trip | undefined> {
-  return INITIAL_TRIPS.find((t) => t.id === id);
+  const prismaTrip = await prisma.trip.findUnique({
+    where: { id },
+    include: tripInclude,
+  });
+  return prismaTrip ? mapPrismaTripToTrip(prismaTrip) : undefined;
 }
 
-export async function getUserTrips(_userId?: string): Promise<Trip[]> {
-  return INITIAL_TRIPS;
+export async function getUserTrips(userId?: string): Promise<Trip[]> {
+  const where = userId ? { userId } : {};
+  const prismaTrips = await prisma.trip.findMany({
+    where,
+    include: tripInclude,
+    orderBy: { createdAt: 'desc' },
+  });
+  return prismaTrips.map(mapPrismaTripToTrip);
 }
 
 export async function getCommunityTrips(): Promise<Trip[]> {
-  return COMMUNITY_TRIPS;
+  const prismaTrips = await prisma.trip.findMany({
+    where: { isPublic: true },
+    include: tripInclude,
+    orderBy: { createdAt: 'desc' },
+  });
+  return prismaTrips.map(mapPrismaTripToTrip);
 }
 
 export async function getPublicTripByShareCode(shareCode: string): Promise<Trip | undefined> {
-  return COMMUNITY_TRIPS.find((t) => t.id === shareCode) || INITIAL_TRIPS[0];
+  const share = await prisma.tripShare.findFirst({
+    where: { shareCode },
+    include: {
+      trip: {
+        include: tripInclude,
+      },
+    },
+  });
+  return share?.trip ? mapPrismaTripToTrip(share.trip) : undefined;
 }
 
 export async function getDestinations(): Promise<Destination[]> {
-  return INITIAL_DESTINATIONS;
+  const prismaDestinations = await prisma.destination.findMany({
+    include: {
+      activities: true,
+    },
+  });
+  return prismaDestinations.map(mapPrismaDestinationToDestination);
 }

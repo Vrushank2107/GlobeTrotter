@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
-import { INITIAL_DESTINATIONS } from '@/lib/mock-data/mockData';
+import { getDestinations } from '@/lib/services/tripService';
 
 export async function GET() {
   try {
+    const destinations = await getDestinations();
     return NextResponse.json({
       success: true,
-      data: INITIAL_DESTINATIONS,
+      data: destinations,
     });
   } catch (error: unknown) {
     const errMessage = error instanceof Error ? error.message : 'Failed to fetch destinations';

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { INITIAL_TRIPS, COMMUNITY_TRIPS } from '@/lib/mock-data/mockData';
+import { prisma } from '@/lib/db/prisma';
+import { getTrip } from '@/lib/services/tripService';
 
 export async function GET(req: Request, { params }: { params: Promise<{ tripId: string }> }) {
   const { tripId } = await params;
-  const allTrips = [...INITIAL_TRIPS, ...COMMUNITY_TRIPS];
-  const trip = allTrips.find((t) => t.id === tripId);
+  const trip = await getTrip(tripId);
 
   if (!trip) {
     return NextResponse.json({ success: false, message: 'Trip not found' }, { status: 404 });
@@ -20,8 +20,26 @@ export async function PUT(req: Request, { params }: { params: Promise<{ tripId: 
   try {
     const { tripId } = await params;
     const body = await req.json();
-    const trip = INITIAL_TRIPS.find((t) => t.id === tripId) || INITIAL_TRIPS[0];
-    const updatedTrip = { ...trip, ...body };
+
+    const updateData: any = {};
+    if (body.title) updateData.title = body.title;
+    if (body.startDate) updateData.startDate = new Date(body.startDate);
+    if (body.endDate) updateData.endDate = new Date(body.endDate);
+    if (body.totalBudget) updateData.budget = Number(body.totalBudget);
+    if (body.status) {
+      const st = (body.status || '').toLowerCase();
+      if (['planning', 'confirmed', 'completed', 'cancelled'].includes(st)) {
+        updateData.status = st;
+      }
+    }
+    if (typeof body.isPublic === 'boolean') updateData.isPublic = body.isPublic;
+
+    await prisma.trip.update({
+      where: { id: tripId },
+      data: updateData,
+    });
+
+    const updatedTrip = await getTrip(tripId);
 
     return NextResponse.json({
       success: true,
@@ -34,9 +52,18 @@ export async function PUT(req: Request, { params }: { params: Promise<{ tripId: 
 }
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ tripId: string }> }) {
-  const { tripId } = await params;
-  return NextResponse.json({
-    success: true,
-    message: `Trip ${tripId} deleted successfully`,
-  });
+  try {
+    const { tripId } = await params;
+    await prisma.trip.delete({
+      where: { id: tripId },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `Trip ${tripId} deleted successfully`,
+    });
+  } catch (error: unknown) {
+    const errMessage = error instanceof Error ? error.message : 'Failed to delete trip';
+    return NextResponse.json({ success: false, message: errMessage }, { status: 500 });
+  }
 }
