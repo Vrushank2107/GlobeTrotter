@@ -22,72 +22,72 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-72 flex-1 flex flex-col min-w-0">
+      <div className="pl-0 md:pl-72 flex-1 flex flex-col min-w-0">
         <Header />
 
-        <main className="pt-20 pb-16 min-h-screen">
+        <main className="pt-20 md:pt-20 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">
           {/* Cinematic Header */}
           <div
-            className="relative w-full h-80 mb-10 flex items-center px-10 parallax-bg overflow-hidden shadow-sm"
+            className="relative w-full h-48 sm:h-64 md:h-80 mb-6 md:mb-10 flex items-center px-4 md:px-10 parallax-bg overflow-hidden shadow-sm"
             style={{
               backgroundImage: `linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.2)), url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80')`,
             }}
           >
-            <div className="relative z-10 flex flex-col gap-3 max-w-2xl text-white">
-              <span className="text-sky-400 font-semibold text-xs tracking-widest uppercase flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" /> Welcome Back
+            <div className="relative z-10 flex flex-col gap-2 md:gap-3 max-w-2xl text-white">
+              <span className="text-sky-400 font-semibold text-[10px] md:text-xs tracking-widest uppercase flex items-center gap-1.5">
+                <Sparkles className="w-3 h-3 md:w-3.5 md:h-3.5" /> Welcome Back
               </span>
-              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+              <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold leading-tight">
                 Good morning, {user?.name ? user.name.split(' ')[0] : 'Traveler'}.<br />
-                <span className="text-sky-300 italic font-light">Ready for your next adventure?</span>
+                <span className="text-sky-300 italic font-light text-xs sm:text-sm md:text-base">Ready for your next adventure?</span>
               </h1>
-              <p className="text-sm text-slate-300">
+              <p className="text-xs md:text-sm text-slate-300 hidden sm:block">
                 Here is a curated summary of your upcoming travels and recent planning activity.
               </p>
-              <div className="mt-4">
+              <div className="mt-3 md:mt-4">
                 <Link
                   href="/trips/new"
-                  className="bg-white text-slate-900 px-6 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 inline-flex items-center gap-2.5 font-semibold text-sm group cursor-pointer"
+                  className="bg-white text-slate-900 px-4 md:px-6 py-2 md:py-2.5 sm:py-3.5 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 inline-flex items-center gap-2 md:gap-2.5 font-semibold text-xs md:text-sm group cursor-pointer"
                 >
                   <span>Plan a New Trip</span>
-                  <PlaneTakeoff className="w-4 h-4 text-sky-600 group-hover:translate-x-1 transition-transform" />
+                  <PlaneTakeoff className="w-3.5 h-3.5 md:w-4 md:h-4 text-sky-600 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>
           </div>
 
-          <div className="px-10">
-            <div className="grid grid-cols-12 gap-8 mb-10">
-              <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
+          <div className="px-0 md:px-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8 mb-6 md:mb-10">
+              <div className="col-span-1 lg:col-span-8 flex flex-col gap-4 md:gap-8">
                 {/* Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 flex items-center gap-4 shadow-xs hover:shadow-md transition-all hover:-translate-y-0.5">
-                    <div className="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
-                      <Globe2 className="w-6 h-6" />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 md:p-6 flex items-center gap-3 md:gap-4 shadow-xs hover:shadow-md transition-all hover:-translate-y-0.5">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
+                      <Globe2 className="w-5 h-5 md:w-6 md:h-6" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-slate-900">{user?.countriesVisited ?? 0}</p>
-                      <p className="text-xs text-slate-500 uppercase tracking-wider font-medium">Countries Visited</p>
+                      <p className="text-xl md:text-2xl font-bold text-slate-900">{user?.countriesVisited ?? 0}</p>
+                      <p className="text-[10px] md:text-xs text-slate-500 uppercase tracking-wider font-medium">Countries Visited</p>
                     </div>
                   </div>
 
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 flex items-center gap-4 shadow-xs hover:shadow-md transition-all hover:-translate-y-0.5">
-                    <div className="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0">
-                      <Calendar className="w-6 h-6" />
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 md:p-6 flex items-center gap-3 md:gap-4 shadow-xs hover:shadow-md transition-all hover:-translate-y-0.5">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0">
+                      <Calendar className="w-5 h-5 md:w-6 md:h-6" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-slate-900">{trips.length}</p>
-                      <p className="text-xs text-slate-500 uppercase tracking-wider font-medium">Upcoming Trips</p>
+                      <p className="text-xl md:text-2xl font-bold text-slate-900">{trips.length}</p>
+                      <p className="text-[10px] md:text-xs text-slate-500 uppercase tracking-wider font-medium">Upcoming Trips</p>
                     </div>
                   </div>
 
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-6 flex items-center gap-4 shadow-xs hover:shadow-md transition-all hover:-translate-y-0.5">
-                    <div className="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
-                      <Wallet className="w-6 h-6" />
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 md:p-6 flex items-center gap-3 md:gap-4 shadow-xs hover:shadow-md transition-all hover:-translate-y-0.5">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
+                      <Wallet className="w-5 h-5 md:w-6 md:h-6" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-slate-900">₹{(trips.reduce((acc, t) => acc + t.totalBudget, 0) / 1000).toFixed(0)}k</p>
-                      <p className="text-xs text-slate-500 uppercase tracking-wider font-medium">Planned Budget</p>
+                      <p className="text-xl md:text-2xl font-bold text-slate-900">₹{(trips.reduce((acc, t) => acc + t.totalBudget, 0) / 1000).toFixed(0)}k</p>
+                      <p className="text-[10px] md:text-xs text-slate-500 uppercase tracking-wider font-medium">Planned Budget</p>
                     </div>
                   </div>
                 </div>
@@ -114,7 +114,7 @@ export default function DashboardPage() {
                       No trips found. Click &quot;Plan a New Trip&quot; to get started!
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                       {upcomingTrips.map((trip) => (
                         <div
                           key={trip.id}
@@ -122,62 +122,62 @@ export default function DashboardPage() {
                           className="bg-white rounded-2xl overflow-hidden shadow-xs border border-slate-200 hover:shadow-xl transition-all group cursor-pointer flex flex-col"
                         >
                           <div
-                            className="w-full h-48 bg-cover bg-center relative overflow-hidden"
+                            className="w-full h-36 md:h-48 bg-cover bg-center relative overflow-hidden"
                             style={{ backgroundImage: `url('${trip.coverImage}')` }}
                           >
                             <div className="absolute inset-0 bg-slate-950/20 group-hover:bg-slate-950/0 transition-colors"></div>
-                            <div className="absolute top-4 right-4">
+                            <div className="absolute top-3 md:top-4 right-3 md:right-4">
                               <span
-                                className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md flex items-center gap-1.5 shadow-xs ${
+                                className={`px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-semibold backdrop-blur-md flex items-center gap-1 md:gap-1.5 shadow-xs ${
                                   trip.status === 'Confirmed'
                                     ? 'bg-emerald-500/90 text-white'
                                     : 'bg-amber-500/90 text-white'
                                 }`}
                               >
-                                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                                <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-white animate-pulse"></span>
                                 {trip.status}
                               </span>
                             </div>
                           </div>
 
-                          <div className="p-5 flex flex-col flex-1">
-                            <h3 className="font-bold text-xl text-slate-900 mb-1 group-hover:text-sky-600 transition-colors">
+                          <div className="p-4 md:p-5 flex flex-col flex-1">
+                            <h3 className="font-bold text-lg md:text-xl text-slate-900 mb-1 group-hover:text-sky-600 transition-colors">
                               {trip.title}
                             </h3>
-                            <p className="text-xs text-slate-500 flex items-center gap-1.5 mb-4">
-                              <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                            <p className="text-[10px] md:text-xs text-slate-500 flex items-center gap-1.5 mb-3 md:mb-4">
+                              <Calendar className="w-3 h-3 md:w-3.5 md:h-3.5 text-slate-400" />
                               {trip.startDate} - {trip.endDate}
                             </p>
 
-                            <div className="grid grid-cols-2 gap-4 mt-auto pt-4 border-t border-slate-100 text-xs">
+                            <div className="grid grid-cols-2 gap-3 md:gap-4 mt-auto pt-3 md:pt-4 border-t border-slate-100 text-[10px] md:text-xs">
                               <div>
-                                <span className="text-slate-400 font-medium block uppercase tracking-wider text-[10px]">
+                                <span className="text-slate-400 font-medium block uppercase tracking-wider text-[9px] md:text-[10px]">
                                   Destinations
                                 </span>
-                                <span className="font-semibold text-slate-800 truncate block">
+                                <span className="font-semibold text-slate-800 truncate block text-[10px] md:text-xs">
                                   {trip.destinations.map((d) => d.cityName).join(', ') || 'Multi-city'}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-slate-400 font-medium block uppercase tracking-wider text-[10px]">
+                                <span className="text-slate-400 font-medium block uppercase tracking-wider text-[9px] md:text-[10px]">
                                   Est. Budget
                                 </span>
-                                <span className="font-semibold text-slate-900">
+                                <span className="font-semibold text-slate-900 text-[10px] md:text-xs">
                                   ₹{trip.totalBudget.toLocaleString()}
                                 </span>
                               </div>
                             </div>
 
-                            <div className="mt-4 flex gap-2">
+                            <div className="mt-3 md:mt-4 flex gap-2">
                               <Link
                                 href={`/trips/${trip.id}`}
-                                className="flex-1 text-center bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-medium py-2 rounded-lg transition-colors"
+                                className="flex-1 text-center bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] md:text-xs font-medium py-2 rounded-lg transition-colors"
                               >
                                 View Overview
                               </Link>
                               <Link
                                 href={`/trips/${trip.id}/builder`}
-                                className="flex-1 text-center bg-sky-50 text-sky-700 hover:bg-sky-100 text-xs font-semibold py-2 rounded-lg transition-colors"
+                                className="flex-1 text-center bg-sky-50 text-sky-700 hover:bg-sky-100 text-[10px] md:text-xs font-semibold py-2 rounded-lg transition-colors"
                               >
                                 Build Itinerary
                               </Link>
@@ -270,8 +270,8 @@ export default function DashboardPage() {
               </div>
 
               {/* Sidebar Recent Activity */}
-              <div className="col-span-12 lg:col-span-4">
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs h-full">
+              <div className="col-span-1 lg:col-span-4">
+                <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-xs h-full">
                   <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center justify-between">
                     <span>Recent Activity</span>
                     <span className="text-xs text-slate-400 font-normal">Updated live</span>

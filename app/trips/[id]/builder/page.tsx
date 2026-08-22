@@ -258,55 +258,56 @@ export default function ItineraryBuilderPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-72 flex-1 flex flex-col min-w-0">
+      <div className="pl-0 md:pl-72 flex-1 flex flex-col min-w-0">
         <Header />
 
-        <main className="pt-24 pb-16 px-10 min-h-screen">
+        <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">
           {/* Header Action Bar */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8 bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-xs">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Link href="/trips" className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs px-3.5 py-1.5 rounded-full transition-all inline-flex items-center gap-1.5 shadow-2xs hover:shadow-xs cursor-pointer border border-slate-200/80">
-                  <ArrowLeft className="w-3.5 h-3.5 text-sky-600" />
-                  <span>Back to My Trips</span>
+                <Link href="/trips" className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-[10px] md:text-xs px-3 md:px-3.5 py-1.5 rounded-full transition-all inline-flex items-center gap-1.5 shadow-2xs hover:shadow-xs cursor-pointer border border-slate-200/80">
+                  <ArrowLeft className="w-3 h-3 md:w-3.5 md:h-3.5 text-sky-600" />
+                  <span className="hidden sm:inline">Back to My Trips</span>
                 </Link>
-                <span className="text-slate-300">•</span>
-                <span className="text-xs text-slate-500 font-medium">Multi-City Itinerary</span>
+                <span className="text-slate-300 hidden sm:inline">•</span>
+                <span className="text-[10px] md:text-xs text-slate-500 font-medium hidden sm:inline">Multi-City Itinerary</span>
               </div>
-              <h1 className="text-3xl font-bold text-slate-900">{trip.title}</h1>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h1 className="text-xl md:text-3xl font-bold text-slate-900">{trip.title}</h1>
+              <p className="text-[10px] md:text-xs text-slate-500 mt-0.5">
                 {trip.destinations.map((d) => d.cityName).join(' → ')} | {trip.startDate} to {trip.endDate}
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <Link
                 href={`/trips/${trip.id}/budget`}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-4 py-2.5 rounded-full transition-colors flex items-center gap-1.5"
+                className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] md:text-xs font-semibold px-3 md:px-4 py-2 md:py-2.5 rounded-full transition-colors flex items-center gap-1.5"
               >
-                <PieChart className="w-4 h-4 text-teal-600" />
-                <span>View Budget Breakdown</span>
+                <PieChart className="w-3.5 h-3.5 md:w-4 md:h-4 text-teal-600" />
+                <span className="hidden sm:inline">View Budget Breakdown</span>
               </Link>
               <button
                 onClick={() => {
                   setModalTab('custom');
                   setShowModal(true);
                 }}
-                className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                className="bg-slate-900 hover:bg-slate-800 text-white text-[10px] md:text-xs font-bold px-3 md:px-5 py-2 md:py-2.5 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 md:gap-2 cursor-pointer"
               >
-                <Plus className="w-4 h-4 text-sky-400" />
-                <span>Add Activity to Day {activeDay}</span>
+                <Plus className="w-3.5 h-3.5 md:w-4 md:h-4 text-sky-400" />
+                <span className="hidden sm:inline">Add Activity to Day {activeDay}</span>
+                <span className="sm:hidden">Add</span>
               </button>
             </div>
           </div>
 
           {/* Route Destination Stops Bar */}
-          <div className="bg-slate-900 text-white p-5 rounded-2xl mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-md">
+          <div className="bg-slate-900 text-white p-4 md:p-5 rounded-2xl mb-6 md:mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-md">
             <div>
               <span className="text-sky-400 font-semibold text-[10px] uppercase tracking-widest block mb-0.5">
                 {trip.destinations.length === 1 ? 'Destination Stop' : 'Multi-City Route Sequence'} ({trip.destinations.length} {trip.destinations.length === 1 ? 'City' : 'Cities'})
               </span>
-              <p className="text-xs text-slate-300 font-medium">
+              <p className="text-[10px] md:text-xs text-slate-300 font-medium">
                 {trip.destinations.length === 1
                   ? 'Single city itinerary. Click "+ Add City" to turn this into a multi-city route.'
                   : 'Reorder stops or manage destination sequence for your journey.'}
@@ -317,12 +318,12 @@ export default function ItineraryBuilderPage() {
               {trip.destinations.map((stop, idx) => (
                 <div
                   key={stop.id}
-                  className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 flex items-center gap-2 text-xs font-medium"
+                  className="bg-slate-800 border border-slate-700 rounded-xl px-2 md:px-3 py-1.5 flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs font-medium"
                 >
-                  <span className="bg-sky-500 text-slate-950 font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center">
+                  <span className="bg-sky-500 text-slate-950 font-bold text-[10px] w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center">
                     {idx + 1}
                   </span>
-                  <span>{stop.cityName}</span>
+                  <span className="truncate max-w-[80px] md:max-w-none">{stop.cityName}</span>
 
                   <div className="flex items-center gap-0.5 ml-1 border-l border-slate-700 pl-1">
                     {idx > 0 && (
@@ -335,7 +336,7 @@ export default function ItineraryBuilderPage() {
                         title="Move Stop Earlier"
                         className="p-1 hover:text-sky-400 transition-colors cursor-pointer"
                       >
-                        <ArrowUp className="w-3 h-3" />
+                        <ArrowUp className="w-2.5 h-2.5 md:w-3 md:h-3" />
                       </button>
                     )}
                     {idx < trip.destinations.length - 1 && (
@@ -348,7 +349,7 @@ export default function ItineraryBuilderPage() {
                         title="Move Stop Later"
                         className="p-1 hover:text-sky-400 transition-colors cursor-pointer"
                       >
-                        <ArrowDown className="w-3 h-3" />
+                        <ArrowDown className="w-2.5 h-2.5 md:w-3 md:h-3" />
                       </button>
                     )}
                     {trip.destinations.length > 1 && (
@@ -361,7 +362,7 @@ export default function ItineraryBuilderPage() {
                         title="Remove Stop"
                         className="p-1 hover:text-red-400 transition-colors ml-1 cursor-pointer"
                       >
-                        <Trash2 className="w-3 h-3 text-red-400" />
+                        <Trash2 className="w-2.5 h-2.5 md:w-3 md:h-3 text-red-400" />
                       </button>
                     )}
                   </div>
@@ -371,10 +372,11 @@ export default function ItineraryBuilderPage() {
               <button
                 type="button"
                 onClick={() => setShowAddStopModal(true)}
-                className="bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-xl px-3 py-1.5 flex items-center gap-1.5 text-xs font-semibold transition-all cursor-pointer"
+                className="bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-xl px-2 md:px-3 py-1.5 flex items-center gap-1 md:gap-1.5 text-[10px] md:text-xs font-semibold transition-all cursor-pointer shrink-0"
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Add City</span>
+                <Plus className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                <span className="hidden sm:inline">Add City</span>
+                <span className="sm:hidden">Add</span>
               </button>
             </div>
           </div>
@@ -422,13 +424,13 @@ export default function ItineraryBuilderPage() {
           )}
 
           {/* Day Tabs Selector */}
-          <div className="mb-8 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="mb-6 md:mb-8 bg-white p-4 md:p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-slate-100 pb-3">
               <div>
-                <span className="text-xs font-bold text-sky-600 uppercase tracking-wider block">
+                <span className="text-[10px] md:text-xs font-bold text-sky-600 uppercase tracking-wider block">
                   Planning Stage ({totalDays} {totalDays === 1 ? 'Day' : 'Days'} Total)
                 </span>
-                <p className="text-xs text-slate-500">Only showing planned days for your itinerary.</p>
+                <p className="text-[10px] md:text-xs text-slate-500">Only showing planned days for your itinerary.</p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -436,19 +438,21 @@ export default function ItineraryBuilderPage() {
                   type="button"
                   onClick={() => handleAdjustDuration(totalDays - 1)}
                   disabled={totalDays <= 1}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1 cursor-pointer"
+                  className="text-[10px] md:text-xs font-semibold px-2 md:px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1 cursor-pointer"
                   title="Remove last day from trip duration"
                 >
-                  <span>- Remove Day</span>
+                  <span className="hidden sm:inline">- Remove Day</span>
+                  <span className="sm:hidden">- Day</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleAdjustDuration(totalDays + 1)}
-                  className="text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 transition-colors flex items-center gap-1 cursor-pointer shadow-2xs"
+                  className="text-[10px] md:text-xs font-semibold px-2 md:px-3.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 transition-colors flex items-center gap-1 cursor-pointer shadow-2xs"
                   title="Add 1 more day to planning stage"
                 >
-                  <Plus className="w-3.5 h-3.5 text-sky-600" />
-                  <span>Add Day</span>
+                  <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 text-sky-600" />
+                  <span className="hidden sm:inline">Add Day</span>
+                  <span className="sm:hidden">Add</span>
                 </button>
               </div>
             </div>
@@ -460,7 +464,7 @@ export default function ItineraryBuilderPage() {
                   <button
                     key={dayNum}
                     onClick={() => setActiveDay(dayNum)}
-                    className={`px-5 py-3 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer flex flex-col items-center gap-1 ${
+                    className={`px-3 md:px-5 py-2 md:py-3 rounded-xl text-[10px] md:text-xs font-semibold transition-all shrink-0 cursor-pointer flex flex-col items-center gap-1 ${
                       activeDay === dayNum
                         ? 'bg-slate-900 text-white shadow-md scale-[1.02]'
                         : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200/80'
@@ -468,7 +472,7 @@ export default function ItineraryBuilderPage() {
                   >
                     <span>Day {dayNum}</span>
                     <span
-                      className={`text-[10px] px-2 py-0.2 rounded-full font-medium ${
+                      className={`text-[9px] md:text-[10px] px-2 py-0.2 rounded-full font-medium ${
                         activeDay === dayNum ? 'bg-sky-500 text-slate-950 font-bold' : 'bg-slate-200 text-slate-600'
                       }`}
                     >
@@ -481,99 +485,99 @@ export default function ItineraryBuilderPage() {
           </div>
 
           {/* Timeline & Activities List */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white rounded-3xl border border-slate-200 p-4 md:p-8 shadow-xs">
+            <div className="flex justify-between items-center mb-4 md:mb-6 pb-4 border-b border-slate-100">
+              <h2 className="text-base md:text-xl font-bold text-slate-900 flex items-center gap-2">
                 <span>Day {activeDay} Schedule Timeline</span>
-                <span className="text-xs font-normal text-slate-400">
+                <span className="text-[10px] md:text-xs font-normal text-slate-400">
                   ({dayActivities.length} activity item{dayActivities.length !== 1 ? 's' : ''})
                 </span>
               </h2>
 
               <button
                 onClick={() => setShowModal(true)}
-                className="text-sky-600 font-semibold text-xs hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-sky-600 font-semibold text-[10px] md:text-xs hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <Plus className="w-4 h-4" /> Add Item
+                <Plus className="w-3.5 h-3.5 md:w-4 md:h-4" /> Add Item
               </button>
             </div>
 
             {dayActivities.length === 0 ? (
-              <div className="py-16 text-center border-2 border-dashed border-slate-200 rounded-2xl my-4">
-                <Calendar className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                <h3 className="font-bold text-slate-800 text-base mb-1">No activities for Day {activeDay} yet</h3>
-                <p className="text-xs text-slate-400 mb-4 max-w-sm mx-auto">
+              <div className="py-12 md:py-16 text-center border-2 border-dashed border-slate-200 rounded-2xl my-4">
+                <Calendar className="w-8 h-8 md:w-10 md:h-10 text-slate-300 mx-auto mb-3" />
+                <h3 className="font-bold text-slate-800 text-sm md:text-base mb-1">No activities for Day {activeDay} yet</h3>
+                <p className="text-[10px] md:text-xs text-slate-400 mb-4 max-w-sm mx-auto">
                   Click below to add sightseeing tours, food stops, transport, or hotel check-in items.
                 </p>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="bg-sky-500 text-slate-950 font-semibold px-6 py-2.5 rounded-full text-xs hover:bg-sky-400 transition-all"
+                  className="bg-sky-500 text-slate-950 font-semibold px-4 md:px-6 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs hover:bg-sky-400 transition-all"
                 >
                   + Add First Activity
                 </button>
               </div>
             ) : (
-              <div className="relative pl-8 space-y-6">
-                <div className="absolute left-3.5 top-3 bottom-3 w-0.5 bg-slate-200"></div>
+              <div className="relative pl-6 md:pl-8 space-y-4 md:space-y-6">
+                <div className="absolute left-2.5 md:left-3.5 top-3 bottom-3 w-0.5 bg-slate-200"></div>
 
                 {dayActivities.map((act) => (
                   <div
                     key={act.id}
-                    className={`relative bg-slate-50 border rounded-2xl p-5 transition-all hover:shadow-md ${
+                    className={`relative bg-slate-50 border rounded-2xl p-4 md:p-5 transition-all hover:shadow-md ${
                       act.completed ? 'opacity-70 bg-slate-100 border-slate-200' : 'border-slate-200'
                     }`}
                   >
-                    <div className="absolute -left-8 top-5 w-7 h-7 rounded-full bg-white border-2 border-sky-500 text-sky-600 flex items-center justify-center text-xs font-bold ring-4 ring-slate-50">
-                      <Clock className="w-3.5 h-3.5" />
+                    <div className="absolute -left-6 md:-left-8 top-4 md:top-5 w-6 h-6 md:w-7 md:h-7 rounded-full bg-white border-2 border-sky-500 text-sky-600 flex items-center justify-center text-[10px] md:text-xs font-bold ring-4 ring-slate-50">
+                      <Clock className="w-3 h-3 md:w-3.5 md:h-3.5" />
                     </div>
 
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1.5">
-                          <span className="bg-sky-100 text-sky-800 font-semibold text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    <div className="flex items-start justify-between gap-3 md:gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 md:gap-3 mb-1.5 flex-wrap">
+                          <span className="bg-sky-100 text-sky-800 font-semibold text-[9px] md:text-[10px] px-2 md:px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                             {act.category}
                           </span>
-                          <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-slate-400" /> {act.time} ({act.durationMinutes} mins)
+                          <span className="text-[10px] md:text-xs text-slate-500 font-medium flex items-center gap-1">
+                            <Clock className="w-2.5 h-2.5 md:w-3 md:h-3 text-slate-400" /> {act.time} ({act.durationMinutes} mins)
                           </span>
                         </div>
 
-                        <h3 className={`font-bold text-lg text-slate-900 mb-1 ${act.completed ? 'line-through' : ''}`}>
+                        <h3 className={`font-bold text-sm md:text-lg text-slate-900 mb-1 ${act.completed ? 'line-through' : ''}`}>
                           {act.title}
                         </h3>
 
-                        <p className="text-xs text-slate-600 flex items-center gap-1.5 mb-2">
-                          <MapPin className="w-3.5 h-3.5 text-slate-400" /> {act.location}
+                        <p className="text-[10px] md:text-xs text-slate-600 flex items-center gap-1.5 mb-2">
+                          <MapPin className="w-3 h-3 md:w-3.5 md:h-3.5 text-slate-400" /> {act.location}
                         </p>
 
                         {act.notes && (
-                          <p className="text-xs text-slate-500 bg-white p-2.5 rounded-lg border border-slate-100 mt-2 italic">
+                          <p className="text-[10px] md:text-xs text-slate-500 bg-white p-2 md:p-2.5 rounded-lg border border-slate-100 mt-2 italic">
                             &quot;{act.notes}&quot;
                           </p>
                         )}
                       </div>
 
-                      <div className="flex flex-col items-end gap-2">
-                        <span className="font-bold text-slate-900 text-sm">
+                      <div className="flex flex-col items-end gap-2 shrink-0">
+                        <span className="font-bold text-slate-900 text-xs md:text-sm">
                           ₹{act.cost.toLocaleString()}
                         </span>
 
                         <div className="flex items-center gap-2 mt-2">
                           <button
                             onClick={() => toggleActivityCompleted(trip.id, act.id)}
-                            className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors ${
+                            className={`p-1 md:p-1.5 rounded-lg text-[10px] md:text-xs font-semibold flex items-center gap-1 transition-colors ${
                               act.completed
                                 ? 'bg-emerald-100 text-emerald-700'
                                 : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
                             }`}
                           >
-                            <CheckCircle className="w-4 h-4" />
+                            <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
                           </button>
                           <button
                             onClick={() => handleDeleteActivity(act.id, act.title)}
-                            className="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors cursor-pointer"
+                            className="p-1 md:p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors cursor-pointer"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
                           </button>
                         </div>
                       </div>
@@ -587,23 +591,23 @@ export default function ItineraryBuilderPage() {
 
         {/* Add Activity Modal Drawer */}
         {showModal && (
-          <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl border border-slate-200 animate-fade-in max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-6">
+          <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-2 md:p-4">
+            <div className="bg-white rounded-2xl md:rounded-3xl max-w-2xl w-full p-4 md:p-8 shadow-2xl border border-slate-200 animate-fade-in max-h-[90vh] overflow-y-auto mx-2 md:mx-0">
+              <div className="flex justify-between items-center mb-4 md:mb-6">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900">Add Activity to Day {activeDay}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Create a custom item or pick from our curated activity catalog</p>
+                  <h3 className="text-base md:text-xl font-bold text-slate-900">Add Activity to Day {activeDay}</h3>
+                  <p className="text-[10px] md:text-xs text-slate-500 mt-0.5">Create a custom item or pick from our curated activity catalog</p>
                 </div>
-                <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 font-bold">
+                <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 font-bold text-lg md:text-xl">
                   ✕
                 </button>
               </div>
 
               {/* Modal Tabs */}
-              <div className="flex border-b border-slate-200 mb-6 gap-6">
+              <div className="flex border-b border-slate-200 mb-4 md:mb-6 gap-4 md:gap-6 overflow-x-auto">
                 <button
                   onClick={() => setModalTab('custom')}
-                  className={`pb-3 text-xs font-bold border-b-2 transition-all cursor-pointer ${
+                  className={`pb-3 text-[10px] md:text-xs font-bold border-b-2 transition-all cursor-pointer shrink-0 ${
                     modalTab === 'custom' ? 'border-sky-600 text-sky-600' : 'border-transparent text-slate-400 hover:text-slate-600'
                   }`}
                 >
@@ -611,11 +615,11 @@ export default function ItineraryBuilderPage() {
                 </button>
                 <button
                   onClick={() => setModalTab('catalog')}
-                  className={`pb-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                  className={`pb-3 text-[10px] md:text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     modalTab === 'catalog' ? 'border-sky-600 text-sky-600' : 'border-transparent text-slate-400 hover:text-slate-600'
                   }`}
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Sparkles className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   <span>Browse Activity Catalog</span>
                 </button>
               </div>
@@ -633,9 +637,9 @@ export default function ItineraryBuilderPage() {
                   onClose={() => setShowModal(false)}
                 />
               ) : (
-                <form onSubmit={handleAddActivity} className="space-y-4">
+                <form onSubmit={handleAddActivity} className="space-y-3 md:space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                       Activity Title
                     </label>
                     <input
@@ -643,20 +647,20 @@ export default function ItineraryBuilderPage() {
                       value={activityForm.title}
                       onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })}
                       placeholder="e.g. Parasailing at Calangute Beach"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:border-sky-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium outline-none focus:border-sky-500"
                     />
-                    {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title}</p>}
+                    {errors.title && <p className="text-[10px] md:text-xs text-red-500 mt-1">{errors.title}</p>}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                      <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                         Category
                       </label>
                       <select
                         value={activityForm.category}
                         onChange={(e) => setActivityForm({ ...activityForm, category: e.target.value as ActivityCategory })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:border-sky-500"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium outline-none focus:border-sky-500"
                       >
                         {categories.map((cat) => (
                           <option key={cat} value={cat}>
@@ -667,7 +671,7 @@ export default function ItineraryBuilderPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                      <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                         Start Time
                       </label>
                       <input
@@ -675,13 +679,13 @@ export default function ItineraryBuilderPage() {
                         value={activityForm.time}
                         onChange={(e) => setActivityForm({ ...activityForm, time: e.target.value })}
                         placeholder="e.g. 10:30 AM"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:border-sky-500"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium outline-none focus:border-sky-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                       Location
                     </label>
                     <input
@@ -689,14 +693,14 @@ export default function ItineraryBuilderPage() {
                       value={activityForm.location}
                       onChange={(e) => setActivityForm({ ...activityForm, location: e.target.value })}
                       placeholder="e.g. Panaji, Goa"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:border-sky-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium outline-none focus:border-sky-500"
                     />
-                    {errors.location && <p className="text-xs text-red-500 mt-1">{errors.location}</p>}
+                    {errors.location && <p className="text-[10px] md:text-xs text-red-500 mt-1">{errors.location}</p>}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                      <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                         Duration (Minutes)
                       </label>
                       <input
@@ -707,12 +711,12 @@ export default function ItineraryBuilderPage() {
                           setActivityForm({ ...activityForm, durationMinutes: val === '' ? 0 : Number(val) });
                         }}
                         placeholder="90"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:border-sky-500"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium outline-none focus:border-sky-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                      <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                         Est. Cost (₹)
                       </label>
                       <input
@@ -723,13 +727,13 @@ export default function ItineraryBuilderPage() {
                           setActivityForm({ ...activityForm, cost: val === '' ? 0 : Number(val) });
                         }}
                         placeholder="0"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:border-sky-500"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium outline-none focus:border-sky-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                       Notes & Special Guidance
                     </label>
                     <textarea
@@ -737,30 +741,30 @@ export default function ItineraryBuilderPage() {
                       value={activityForm.notes}
                       onChange={(e) => setActivityForm({ ...activityForm, notes: e.target.value })}
                       placeholder="e.g. Remember to bring sunscreen and entry pass"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs outline-none focus:border-sky-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 text-[10px] md:text-xs outline-none focus:border-sky-500"
                     />
                   </div>
 
-                  <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                  <div className="flex justify-end gap-2 md:gap-3 pt-4 border-t border-slate-100">
                     <button
                       type="button"
                       onClick={() => setShowModal(false)}
-                      className="bg-slate-100 text-slate-700 font-semibold px-5 py-2.5 rounded-full text-xs"
+                      className="bg-slate-100 text-slate-700 font-semibold px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isAddingActivity}
-                      className="bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md inline-flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+                      className="bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white font-bold px-4 md:px-6 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs shadow-md inline-flex items-center gap-1.5 md:gap-2 cursor-pointer disabled:cursor-not-allowed"
                     >
                       {isAddingActivity ? (
                         <>
-                          <Loader2 className="w-3.5 h-3.5 text-sky-400 animate-spin" />
-                          <span>Saving Activity...</span>
+                          <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-sky-400 animate-spin" />
+                          <span>Adding...</span>
                         </>
                       ) : (
-                        <span>Save Activity</span>
+                        <span>Add Activity</span>
                       )}
                     </button>
                   </div>

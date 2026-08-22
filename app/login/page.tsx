@@ -74,7 +74,7 @@ export default function LoginPage() {
           (window as any).google.accounts.id.renderButton(btnDiv, {
             theme: 'outline',
             size: 'large',
-            width: 400,
+            width: window.innerWidth < 768 ? 300 : 400,
             text: 'continue_with',
             shape: 'rectangular',
           });
@@ -173,6 +173,16 @@ export default function LoginPage() {
         .animate-fade-in-up {
           animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
+        @media (max-width: 768px) {
+          .hero-section { display: flex !important; grid-column: span 12 !important; }
+          .login-card-section { grid-column: span 12 !important; }
+          .main-grid { display: flex !important; flex-direction: column !important; gap: 32px !important; }
+        }
+        @media (min-width: 769px) {
+          .hero-section { display: flex !important; grid-column: span 6 !important; }
+          .login-card-section { grid-column: 8 / span 5 !important; }
+        }
       `}</style>
 
       <main style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
@@ -206,31 +216,16 @@ export default function LoginPage() {
           {/* Top Navigation Bar */}
           <header style={{
             position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20,
-            padding: '24px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             maxWidth: '1280px', margin: '0 auto', width: '100%', pointerEvents: 'auto'
           }}>
             <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', cursor: 'pointer' }}>
-              <span className="material-symbols-outlined" style={{ color: '#006591', fontSize: '28px' }}>explore</span>
-              <span style={{ fontSize: '20px', fontWeight: 700, color: '#191c1e', letterSpacing: '-0.02em' }}>GlobeTrotter</span>
+              <span className="material-symbols-outlined" style={{ color: '#006591', fontSize: '24px' }}>explore</span>
+              <span style={{ fontSize: '18px', fontWeight: 700, color: '#191c1e', letterSpacing: '-0.02em' }}>GlobeTrotter</span>
             </Link>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <button
-                type="button"
-                onClick={() => {
-                  const emailEl = document.getElementById('email');
-                  if (emailEl) emailEl.focus();
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                style={{
-                  padding: '8px 16px', borderRadius: '8px', fontSize: '14px', fontWeight: 600,
-                  color: '#006591', textDecoration: 'none', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)',
-                  border: '1px solid #006591', cursor: 'pointer', transition: 'all 0.2s',
-                }}
-              >
-                Sign In
-              </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Link href="/register" style={{
-                padding: '8px 20px', borderRadius: '8px', fontSize: '14px', fontWeight: 600,
+                padding: '8px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
                 color: '#ffffff', textDecoration: 'none', background: '#006591',
                 boxShadow: '0 2px 8px rgba(0,101,145,0.25)', transition: 'all 0.2s', cursor: 'pointer', display: 'inline-block'
               }}>Sign Up</Link>
@@ -240,18 +235,18 @@ export default function LoginPage() {
           {/* Main content grid */}
           <div style={{
             position: 'relative', zIndex: 10, width: '100%', maxWidth: '1280px',
-            margin: '0 auto', padding: '96px 16px 32px 16px', minHeight: '100vh',
+            margin: '0 auto', padding: '80px 16px 32px 16px', minHeight: '100vh',
             display: 'flex', alignItems: 'center',
           }}>
-            <div style={{
+            <div className="main-grid" style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(12, 1fr)',
               gap: '24px',
               width: '100%',
             }}>
 
-              {/* Left: Hero copy */}
-              <div className="animate-fade-in-up" style={{ gridColumn: 'span 6', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              {/* Left: Hero copy - Shows first on mobile */}
+              <div className="animate-fade-in-up hero-section" style={{ gridColumn: 'span 6', flexDirection: 'column', justifyContent: 'center' }}>
                 {/* Badge */}
                 <div style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -267,7 +262,7 @@ export default function LoginPage() {
 
                 {/* Headline */}
                 <h1 style={{
-                  fontSize: '48px', lineHeight: '56px', fontWeight: 700, letterSpacing: '-0.02em',
+                  fontSize: 'clamp(28px, 5vw, 48px)', lineHeight: 'clamp(32px, 6vw, 56px)', fontWeight: 700, letterSpacing: '-0.02em',
                   color: '#191c1e', marginBottom: '16px', maxWidth: '560px',
                 }}>
                   Plan your perfect{' '}
@@ -279,7 +274,7 @@ export default function LoginPage() {
 
                 {/* Subtext */}
                 <p style={{
-                  fontSize: '18px', lineHeight: '28px', color: '#45464d',
+                  fontSize: 'clamp(14px, 2.5vw, 18px)', lineHeight: 'clamp(20px, 4vw, 28px)', color: '#45464d',
                   marginBottom: '32px', maxWidth: '448px',
                 }}>
                   The expert concierge for complex itineraries. Seamlessly synchronize flights, stays, and budgets without the cognitive overload.
@@ -318,11 +313,11 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Right: Login card */}
-              <div style={{ gridColumn: '8 / span 5', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              {/* Right: Login card - Full width on mobile */}
+              <div className="login-card-section" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <div style={{
                   background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(24px)',
-                  borderRadius: '16px', padding: '32px', boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
+                  borderRadius: '16px', padding: '24px', boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
                   position: 'relative', overflow: 'hidden',
                 }}>
                   <div style={{ marginBottom: '8px' }}>

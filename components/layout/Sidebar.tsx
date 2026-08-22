@@ -73,6 +73,9 @@ export const Sidebar: React.FC = () => {
         <Menu className="w-5 h-5" />
       </button>
 
+      {/* Desktop spacer for header */}
+      <div className="hidden md:block h-20" />
+
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <div

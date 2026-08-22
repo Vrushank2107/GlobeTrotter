@@ -113,27 +113,27 @@ export default function CalendarPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className="pl-72 flex-1 flex flex-col min-w-0">
+      <div className="pl-0 md:pl-72 flex-1 flex flex-col min-w-0">
         <Header />
 
-        <main className="pt-24 pb-16 px-10 min-h-screen">
+        <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">
           {/* Header Bar */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
             <div>
-              <span className="text-sky-600 font-semibold text-xs tracking-widest uppercase flex items-center gap-1.5 mb-1">
-                <CalendarIcon className="w-3.5 h-3.5" /> Interactive Schedule
+              <span className="text-sky-600 font-semibold text-[10px] md:text-xs tracking-widest uppercase flex items-center gap-1.5 mb-1">
+                <CalendarIcon className="w-3 h-3 md:w-3.5 md:h-3.5" /> Interactive Schedule
               </span>
-              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Calendar Schedule</h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Calendar Schedule</h1>
+              <p className="text-[10px] md:text-sm text-slate-500 mt-1 hidden sm:block">
                 Visual timeline overview of multi-day itineraries, destinations, and activities.
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <select
                 value={selectedTripFilter}
                 onChange={(e) => setSelectedTripFilter(e.target.value)}
-                className="bg-white border border-slate-200 text-xs font-semibold px-4 py-2.5 rounded-full outline-none shadow-xs cursor-pointer hover:border-slate-300 transition-colors"
+                className="bg-white border border-slate-200 text-[10px] md:text-xs font-semibold px-3 md:px-4 py-2 md:py-2.5 rounded-full outline-none shadow-xs cursor-pointer hover:border-slate-300 transition-colors"
               >
                 <option value="All">All Trips ({trips.length})</option>
                 {trips.map((t) => (
@@ -145,24 +145,25 @@ export default function CalendarPage() {
 
               <Link
                 href="/trips/new"
-                className="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all cursor-pointer"
+                className="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-[10px] md:text-xs font-semibold px-3 md:px-4 py-2 md:py-2.5 rounded-full shadow-md hover:shadow-lg transition-all cursor-pointer"
               >
-                <Plus className="w-4 h-4" />
-                <span>Plan Trip</span>
+                <Plus className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">Plan Trip</span>
+                <span className="sm:hidden">Plan</span>
               </Link>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
             {/* Calendar Grid Container */}
-            <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-8 shadow-xs">
+            <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-4 md:p-8 shadow-xs">
               {/* Calendar Controls */}
-              <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-                <div className="flex items-center gap-3">
-                  <h2 className="text-2xl font-bold text-slate-900">
+              <div className="flex justify-between items-center mb-4 md:mb-6 pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <h2 className="text-lg md:text-2xl font-bold text-slate-900">
                     {MONTH_NAMES[currentMonth]} {currentYear}
                   </h2>
-                  <span className="bg-sky-50 text-sky-700 text-xs font-semibold px-3 py-1 rounded-full border border-sky-100">
+                  <span className="bg-sky-50 text-sky-700 text-[10px] md:text-xs font-semibold px-2 md:px-3 py-1 rounded-full border border-sky-100">
                     Active Month
                   </span>
                 </div>
@@ -173,20 +174,20 @@ export default function CalendarPage() {
                     title="Previous Month"
                     className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
                   >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   </button>
                   <button
                     onClick={handleNextMonth}
                     title="Next Month"
                     className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
                   >
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   </button>
                 </div>
               </div>
 
               {/* Days of Week Header */}
-              <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
+              <div className="grid grid-cols-7 gap-1 md:gap-2 text-center text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
                 <div>Sun</div>
                 <div>Mon</div>
                 <div>Tue</div>
@@ -197,10 +198,10 @@ export default function CalendarPage() {
               </div>
 
               {/* Calendar Days Grid */}
-              <div className="grid grid-cols-7 gap-2">
+              <div className="grid grid-cols-7 gap-1 md:gap-2">
                 {/* Empty cells for leading days of previous month */}
                 {Array.from({ length: firstDayOfWeek }).map((_, idx) => (
-                  <div key={`empty-${idx}`} className="min-h-[100px] p-2 bg-slate-50/40 rounded-2xl border border-slate-100/50 pointer-events-none" />
+                  <div key={`empty-${idx}`} className="min-h-[60px] md:min-h-[100px] p-2 bg-slate-50/40 rounded-2xl border border-slate-100/50 pointer-events-none" />
                 ))}
 
                 {/* Actual Month Days */}
@@ -214,7 +215,7 @@ export default function CalendarPage() {
                     <div
                       key={dayNum}
                       onClick={() => setSelectedDate(dayNum)}
-                      className={`min-h-[105px] p-2.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between group ${
+                      className={`min-h-[65px] md:min-h-[105px] p-1.5 md:p-2.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between group ${
                         isSelected
                           ? 'border-sky-500 ring-2 ring-sky-200 shadow-md bg-sky-50/40'
                           : hasTrip
@@ -224,7 +225,7 @@ export default function CalendarPage() {
                     >
                       <div className="flex justify-between items-start">
                         <span
-                          className={`text-xs font-bold ${
+                          className={`text-[10px] md:text-xs font-bold ${
                             isSelected
                               ? 'text-sky-600'
                               : hasTrip
@@ -236,24 +237,24 @@ export default function CalendarPage() {
                         </span>
 
                         {hasTrip && (
-                          <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" title="Active Trip" />
+                          <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-sky-500 animate-pulse" title="Active Trip" />
                         )}
                       </div>
 
                       {/* Event Snippets */}
-                      <div className="space-y-1 my-1">
+                      <div className="space-y-0.5 md:space-y-1 my-0.5 md:my-1 hidden sm:block">
                         {activities.slice(0, 2).map((item, idx) => (
                           <div
                             key={idx}
-                            className="bg-white border border-sky-100 p-1 rounded text-[10px] truncate font-semibold text-slate-800 shadow-2xs"
+                            className="bg-white border border-sky-100 p-0.5 md:p-1 rounded text-[9px] md:text-[10px] truncate font-semibold text-slate-800 shadow-2xs"
                           >
-                            <span className="text-sky-600 block text-[9px] truncate">{item.activity.time}</span>
+                            <span className="text-sky-600 block text-[8px] md:text-[9px] truncate">{item.activity.time}</span>
                             {item.activity.title}
                           </div>
                         ))}
 
                         {activities.length > 2 && (
-                          <span className="text-[9px] text-slate-400 font-semibold block text-right">
+                          <span className="text-[8px] md:text-[9px] text-slate-400 font-semibold block text-right">
                             +{activities.length - 2} more
                           </span>
                         )}
@@ -261,7 +262,7 @@ export default function CalendarPage() {
 
                       {/* Trip Badge Snippet */}
                       {dayTrips.length > 0 && (
-                        <span className="text-[9px] font-bold text-sky-700 uppercase tracking-wider block truncate">
+                        <span className="text-[8px] md:text-[9px] font-bold text-sky-700 uppercase tracking-wider block truncate">
                           {dayTrips[0].title}
                         </span>
                       )}
@@ -272,7 +273,7 @@ export default function CalendarPage() {
             </div>
 
             {/* Selected Date Details Drawer */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between">
+            <div className="bg-white rounded-3xl border border-slate-200 p-4 md:p-6 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
                   <div>
