@@ -342,20 +342,41 @@ globetrotter/
 |
 ├── lib/
 │   ├── db/
+│   │   ├── prisma.ts
+│   │   └── index.ts
 │   ├── auth/
 │   ├── validations/
 │   └── utils/
 |
 ├── prisma/
-│   └── schema.prisma
+│   ├── schema.prisma
+│   ├── seed.ts
+│   └── migrations/
+│       └── 20260822000000_init/
+│           └── migration.sql
+||
+├── scripts/
+│   ├── setup-db.sh
+│   └── verify-db.ts
 |
 ├── public/
 │   └── images/
 |
 ├── types/
+│   ├── user.ts
+│   ├── trip.ts
+│   ├── destination.ts
+│   ├── activity.ts
+│   ├── expense.ts
+│   ├── itinerary.ts
+│   ├── community.ts
+│   └── api.ts
 |
 ├── .env.example
+├── docker-compose.yml
 ├── package.json
+├── DATABASE_SETUP.md
+├── DATABASE_IMPLEMENTATION_SUMMARY.md
 └── README.md
 ```
 
@@ -368,7 +389,7 @@ Make sure you have installed:
 
 - Node.js 18+
 - npm / pnpm / yarn
-- PostgreSQL
+- Docker and Docker Compose (recommended for local development)
 - Git
 
 
@@ -389,24 +410,60 @@ npm install
 
 ### 3. Configure Environment Variables
 
-Create a `.env` file.
+Create a `.env` file (copy from `.env.example`):
+
+```bash
+cp .env.example .env
+```
 
 **Example:**
 
 ```env
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/globetrotter"
-AUTH_SECRET="your-secret"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/globetrotter"
+AUTH_SECRET="your-secret-key-here-change-in-production"
 NEXTAUTH_URL="http://localhost:3000"
 ```
 
 Add any additional API keys required by the project.
 
 
-### 4. Set Up the Database
+### 4. Start the Database
+
+**Option 1: Using Docker Compose (recommended):**
+
+```bash
+docker-compose up -d
+```
+
+This will start a PostgreSQL container with the default credentials:
+- Username: `postgres`
+- Password: `postgres`
+- Database: `globetrotter`
+- Port: `5432`
+
+**Option 2: Using your own PostgreSQL instance:**
+
+1. Make sure PostgreSQL is installed and running
+2. Run the setup script:
+   ```bash
+   ./scripts/setup-db.sh
+   ```
+3. Or manually create the database:
+   ```bash
+   createdb globetrotter
+   ```
+4. Update the `DATABASE_URL` in your `.env` file with your PostgreSQL connection string
+
+**Option 3: Using a cloud PostgreSQL service:**
+
+Update the `DATABASE_URL` in your `.env` file with your cloud provider's connection string (e.g., Supabase, Neon, Railway).
+
+
+### 5. Set Up the Database
 
 ```bash
 npx prisma generate
-npx prisma migrate dev
+npx prisma migrate dev --name init
 ```
 
 If seed data is available:
@@ -415,8 +472,36 @@ If seed data is available:
 npm run seed
 ```
 
+### 6. Verify Database Setup (Optional)
 
-### 5. Start the Development Server
+```bash
+npm run verify-db
+```
+
+This will verify:
+- Database connection
+- Table structure
+- Constraints and indexes
+- CRUD operations
+- Seed data presence
+- Relationship integrity
+
+### 7. View Database (Optional)
+
+**Using Prisma Studio (Recommended):**
+```bash
+npx prisma studio
+```
+
+This opens a visual database browser at `http://localhost:5555`
+
+**Using psql:**
+```bash
+docker exec -it globetrotter-db psql -U postgres -d globetrotter
+```
+
+
+### 8. Start the Development Server
 
 ```bash
 npm run dev
@@ -425,7 +510,42 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 
-## 🔐 Environment Variables
+## �️ Database Status
+
+✅ **Database implementation is complete and verified**
+
+### Database Schema
+- **8 Models**: User, Destination, Activity, Trip, TripStop, ItineraryItem, Expense, TripShare
+- **3 Enums**: TripStatus, ActivityCategory, ExpenseCategory
+- **20+ Indexes**: Optimized for performance
+- **Foreign Key Constraints**: CASCADE and RESTRICT rules
+- **Unique Constraints**: Email, share codes, ordering
+
+### Seed Data
+- **1 Demo User**: demo@globetrotter.com / demo123
+- **5 Destinations**: Mumbai, Goa, Bengaluru, Delhi, Jaipur
+- **12 Activities**: Across all categories
+- **1 Sample Trip**: "Western India Adventure" with 3 destinations
+- **5 Itinerary Items**: Scheduled activities
+- **3 Expenses**: Budget tracking
+- **1 Trip Share**: Public sharing enabled
+
+### Database Features
+- ✅ Multi-city trip planning support
+- ✅ Day-by-day itinerary scheduling
+- ✅ Budget tracking with categories
+- ✅ Activity discovery and categorization
+- ✅ Trip sharing with access tracking
+- ✅ Password hashing (bcryptjs)
+- ✅ Proper relationship integrity
+- ✅ Performance optimization
+
+For detailed database documentation, see:
+- [DATABASE_SETUP.md](DATABASE_SETUP.md) - Setup and troubleshooting guide
+- [DATABASE_IMPLEMENTATION_SUMMARY.md](DATABASE_IMPLEMENTATION_SUMMARY.md) - Complete implementation details
+
+
+## �🔐 Environment Variables
 
 **Required:**
 
