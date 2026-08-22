@@ -15,6 +15,17 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetSent, setResetSent] = useState(false);
+
+  const handleResetPassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (resetEmail) {
+      setResetSent(true);
+    }
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -241,6 +252,20 @@ export default function LoginPage() {
                         <label htmlFor="password" style={{ fontSize: '12px', fontWeight: 500, color: '#45464d' }}>
                           Password
                         </label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setResetEmail(email);
+                            setResetSent(false);
+                            setShowForgotModal(true);
+                          }}
+                          style={{
+                            background: 'none', border: 'none', cursor: 'pointer',
+                            fontSize: '12px', fontWeight: 500, color: '#006591',
+                          }}
+                        >
+                          Forgot Password?
+                        </button>
                       </div>
                       <div style={{ position: 'relative' }}>
                         <span className="material-symbols-outlined" style={{
@@ -362,6 +387,95 @@ export default function LoginPage() {
               Patagonia, Argentina
             </span>
           </div>
+
+          {/* Forgot Password Modal */}
+          {showForgotModal && (
+            <div style={{
+              position: 'fixed', inset: 0, zIndex: 100, backgroundColor: 'rgba(15, 23, 42, 0.6)',
+              backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+            }}>
+              <div style={{
+                background: '#ffffff', borderRadius: '16px', maxWidth: '440px', width: '100%',
+                padding: '32px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', position: 'relative',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#191c1e' }}>Reset Your Password</h3>
+                  <button
+                    onClick={() => setShowForgotModal(false)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px', color: '#45464d' }}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {resetSent ? (
+                  <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#006591', marginBottom: '12px' }}>
+                      mark_email_read
+                    </span>
+                    <h4 style={{ fontSize: '16px', fontWeight: 600, color: '#191c1e', marginBottom: '8px' }}>Password Reset Link Sent</h4>
+                    <p style={{ fontSize: '13px', color: '#45464d', lineHeight: '20px', marginBottom: '20px' }}>
+                      We have sent password reset instructions to <strong>{resetEmail}</strong>. Please check your inbox.
+                    </p>
+                    <button
+                      onClick={() => setShowForgotModal(false)}
+                      style={{
+                        width: '100%', background: '#006591', color: '#fff', border: 'none',
+                        borderRadius: '8px', padding: '10px 16px', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+                      }}
+                    >
+                      Back to Sign In
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <p style={{ fontSize: '13px', color: '#45464d', lineHeight: '20px' }}>
+                      Enter your account email address below and we will send you a link to reset your password.
+                    </p>
+                    <div>
+                      <label htmlFor="reset-email" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#45464d', marginBottom: '6px' }}>
+                        Email address
+                      </label>
+                      <input
+                        id="reset-email"
+                        type="email"
+                        required
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        placeholder="nirmal@globetrotter.io"
+                        style={{
+                          width: '100%', background: '#eceef0', border: 'none', borderRadius: '8px',
+                          padding: '12px', fontSize: '14px', color: '#191c1e', outline: 'none',
+                          fontFamily: 'Inter, sans-serif',
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                      <button
+                        type="button"
+                        onClick={() => setShowForgotModal(false)}
+                        style={{
+                          flex: 1, background: '#eceef0', color: '#191c1e', border: 'none',
+                          borderRadius: '8px', padding: '10px', fontSize: '14px', fontWeight: 500, cursor: 'pointer',
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        style={{
+                          flex: 1, background: '#006591', color: '#fff', border: 'none',
+                          borderRadius: '8px', padding: '10px', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+                        }}
+                      >
+                        Send Link
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </div>
+          )}
 
         </div>
       </main>

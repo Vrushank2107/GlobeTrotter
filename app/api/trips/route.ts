@@ -75,16 +75,26 @@ export async function POST(req: Request) {
       for (let i = 0; i < body.destinations.length; i++) {
         const dest = body.destinations[i];
         let dbDest = null;
-        if (dest.id) {
-          dbDest = await prisma.destination.findUnique({ where: { id: dest.id } });
+
+        const targetId = dest.destinationId || (dest.id && !dest.id.startsWith('stop_') ? dest.id : null);
+        if (targetId) {
+          dbDest = await prisma.destination.findUnique({ where: { id: targetId } });
         }
         if (!dbDest && dest.cityName) {
           dbDest = await prisma.destination.findFirst({
             where: { name: { contains: dest.cityName, mode: 'insensitive' } },
           });
         }
-        if (!dbDest) {
-          dbDest = await prisma.destination.findFirst();
+        if (!dbDest && dest.cityName) {
+          dbDest = await prisma.destination.create({
+            data: {
+              name: dest.cityName,
+              country: dest.country || 'India',
+              description: `Explore the vibrant landmarks and culture of ${dest.cityName}.`,
+              imageUrl: dest.image || 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800',
+              averageCost: dest.estimatedCost ? Math.round(dest.estimatedCost / 3) : 3500,
+            },
+          });
         }
 
         if (dbDest) {
@@ -98,19 +108,6 @@ export async function POST(req: Request) {
             },
           });
         }
-      }
-    } else {
-      const firstDest = await prisma.destination.findFirst();
-      if (firstDest) {
-        await prisma.tripStop.create({
-          data: {
-            tripId: createdTrip.id,
-            destinationId: firstDest.id,
-            startDate,
-            endDate,
-            orderIndex: 0,
-          },
-        });
       }
     }
 

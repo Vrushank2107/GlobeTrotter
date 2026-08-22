@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useTripContext } from '@/context/TripContext';
 import {
   LayoutDashboard,
@@ -13,90 +13,171 @@ import {
   Globe2,
   MoreVertical,
   Luggage,
+  Compass,
+  ChevronLeft,
+  ChevronRight,
   LogOut,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, refreshData } = useTripContext();
-
-  const handleLogout = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    await fetch('/api/auth/logout', { method: 'POST' });
-    await refreshData();
-    router.push('/login');
-  };
+  const { user, isSidebarCollapsed: isCollapsed, toggleSidebar } = useTripContext();
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { label: 'My Trips', path: '/trips', icon: Luggage },
-    { label: 'Explore & Community', path: '/community', icon: Users },
+    { label: 'Explore Destinations', path: '/explore', icon: Compass },
+    { label: 'Community Showcase', path: '/community', icon: Users },
     { label: 'Calendar View', path: '/calendar', icon: CalendarDays },
     { label: 'Profile', path: '/profile', icon: User },
     { label: 'Admin Panel', path: '/admin', icon: ShieldAlert },
-    { label: 'Sign Out / Login', path: '/login', icon: LogOut, onClick: handleLogout },
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-72 bg-white z-50 flex flex-col border-r border-slate-200 shadow-xs">
-      {/* Brand Header */}
-      <Link href="/dashboard" className="p-6 flex items-center gap-3 border-b border-slate-100">
-        <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-md">
-          <Globe2 className="w-6 h-6 text-sky-400" />
-        </div>
-        <div className="flex flex-col">
-          <span className="font-bold text-xl text-slate-900 tracking-tight flex items-center gap-1">
-            GlobeTrotter
-          </span>
-          <span className="text-xs text-sky-600 font-medium tracking-wider uppercase">
-            Travel Planner
-          </span>
-        </div>
-      </Link>
+    <>
+      <style>{`
+        body.sidebar-collapsed .pl-72 {
+          padding-left: 5rem !important;
+          transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .pl-72 {
+          transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.sidebar-collapsed .left-72 {
+          left: 5rem !important;
+          transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .left-72 {
+          transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+      `}</style>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-        <div className="px-3 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-          Planning Hub
-        </div>
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.path || (item.path !== '/dashboard' && pathname.startsWith(item.path));
+      <aside
+        className={`fixed left-0 top-0 h-screen bg-white z-50 flex flex-col border-r border-slate-200/90 shadow-sm transition-all duration-300 select-none ${
+          isCollapsed ? 'w-20' : 'w-72'
+        }`}
+      >
+        {/* Floating Redesigned Toggle Button on Edge */}
+        <button
+          onClick={toggleSidebar}
+          title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+          className="absolute -right-3.5 top-6 z-50 bg-white border border-slate-200 text-slate-600 hover:text-sky-600 hover:border-sky-300 hover:scale-110 flex items-center justify-center w-7 h-7 rounded-full shadow-md transition-all cursor-pointer group"
+        >
+          {isCollapsed ? (
+            <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          ) : (
+            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+          )}
+        </button>
 
-          return (
+        {/* Brand Header */}
+        <div className={`p-4 flex items-center border-b border-slate-100 min-h-[73px] ${isCollapsed ? 'justify-center' : 'px-6'}`}>
+          <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden group">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0">
+              <Globe2 className="w-6 h-6 text-sky-400" />
+            </div>
+
+            {!isCollapsed && (
+              <div className="flex flex-col whitespace-nowrap animate-fade-in">
+                <span className="font-bold text-xl text-slate-900 tracking-tight flex items-center gap-1">
+                  GlobeTrotter
+                </span>
+                <span className="text-[10px] text-sky-600 font-bold tracking-widest uppercase">
+                  Travel Planner
+                </span>
+              </div>
+            )}
+          </Link>
+        </div>
+
+        {/* Navigation Section */}
+        <nav className="flex-1 px-3 py-6 space-y-2 overflow-y-auto overflow-x-hidden">
+          {!isCollapsed && (
+            <div className="px-3 mb-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+              Planning Hub
+            </div>
+          )}
+
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.path || (item.path !== '/dashboard' && pathname.startsWith(item.path));
+
+            return (
+              <div key={item.path} className="relative group">
+                <Link
+                  href={item.path}
+                  className={`flex items-center rounded-xl transition-all font-medium text-sm ${
+                    isCollapsed
+                      ? 'justify-center w-12 h-12 mx-auto'
+                      : 'px-4 py-3 gap-3.5'
+                  } ${
+                    isActive
+                      ? isCollapsed
+                        ? 'bg-slate-900 text-white shadow-md'
+                        : 'bg-sky-50 text-sky-700 font-semibold shadow-xs border border-sky-100'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  }`}
+                >
+                  <Icon
+                    className={`w-5 h-5 shrink-0 ${
+                      isActive
+                        ? isCollapsed
+                          ? 'text-sky-400'
+                          : 'text-sky-600'
+                        : 'text-slate-400 group-hover:text-slate-700'
+                    }`}
+                  />
+                  {!isCollapsed && <span className="truncate">{item.label}</span>}
+                </Link>
+
+                {/* Floating Tooltip Label in Collapsed Mode */}
+                {isCollapsed && (
+                  <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-slate-900 text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all z-50 transform translate-x-1 group-hover:translate-x-0 flex items-center gap-1.5">
+                    <span>{item.label}</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+
+        {/* User Profile Card */}
+        <div className="p-3 border-t border-slate-100 bg-slate-50/50">
+          <div className="relative group">
             <Link
-              key={item.path}
-              href={item.path}
-              onClick={item.onClick}
-              className={`flex items-center px-4 py-3 rounded-xl transition-all gap-3.5 text-sm font-medium ${
-                isActive
-                  ? 'bg-sky-50 text-sky-700 font-semibold shadow-xs border border-sky-100'
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              href="/profile"
+              className={`flex items-center gap-3 p-2.5 bg-white rounded-xl hover:shadow-xs transition-all border border-slate-200/80 cursor-pointer ${
+                isCollapsed ? 'justify-center p-2' : ''
               }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'text-sky-600' : 'text-slate-400'}`} />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
+              <div className="relative shrink-0">
+                <img
+                  src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
+                  alt={user.name || 'User Avatar'}
+                  className="w-9 h-9 rounded-full object-cover ring-2 ring-sky-100"
+                />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+              </div>
 
-      {/* User Profile Card */}
-      <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-        <Link href="/profile" className="flex items-center gap-3 p-3 bg-white rounded-xl hover:shadow-xs transition-all border border-slate-200/80 cursor-pointer">
-          <img
-            src={user.avatar}
-            alt={user.name}
-            className="w-10 h-10 rounded-full object-cover ring-2 ring-sky-100"
-          />
-          <div className="flex flex-col min-w-0 flex-1">
-            <span className="font-semibold text-sm text-slate-900 truncate">{user.name}</span>
-            <span className="text-xs text-sky-600 font-medium truncate">{user.memberType}</span>
+              {!isCollapsed && (
+                <div className="flex flex-col min-w-0 flex-1">
+                  <span className="font-semibold text-xs text-slate-900 truncate">{user.name}</span>
+                  <span className="text-[10px] text-sky-600 font-medium truncate">{user.memberType}</span>
+                </div>
+              )}
+              {!isCollapsed && <MoreVertical className="w-4 h-4 text-slate-400 shrink-0" />}
+            </Link>
+
+            {/* User Profile Floating Tooltip when Collapsed */}
+            {isCollapsed && (
+              <div className="absolute left-full ml-3 bottom-2 px-3 py-2 bg-slate-900 text-white text-xs font-semibold rounded-xl shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all z-50 transform translate-x-1 group-hover:translate-x-0">
+                <p className="font-bold text-white">{user.name}</p>
+                <p className="text-[10px] text-sky-400 font-normal">{user.memberType}</p>
+              </div>
+            )}
           </div>
-          <MoreVertical className="w-4 h-4 text-slate-400 shrink-0" />
-        </Link>
-      </div>
-    </aside>
+        </div>
+      </aside>
+    </>
   );
 };

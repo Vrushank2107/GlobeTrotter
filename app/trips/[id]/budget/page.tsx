@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
+import { useConfirmDialog } from '@/context/ConfirmDialogContext';
 import { Expense } from '@/types';
 import { expenseSchema } from '@/lib/validations/trip';
 import {
@@ -39,7 +40,21 @@ export default function TripBudgetPage() {
   const tripId = params.id as string;
 
   const { trips, addExpense, deleteExpense, updateTrip } = useTripContext();
+  const { confirm } = useConfirmDialog();
   const trip = trips.find((t) => t.id === tripId) || trips[0];
+
+  const handleDeleteExpense = async (expenseId: string, title: string) => {
+    const isConfirmed = await confirm({
+      title: 'Delete Expense',
+      message: `Are you sure you want to delete "${title}" from expenses?`,
+      confirmText: 'Yes, Delete',
+      cancelText: 'Cancel',
+      variant: 'danger',
+    });
+    if (isConfirmed) {
+      deleteExpense(trip.id, expenseId);
+    }
+  };
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showBudgetModal, setShowBudgetModal] = useState<boolean>(false);
@@ -146,8 +161,9 @@ export default function TripBudgetPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Link href={`/trips/${trip.id}`} className="text-xs text-sky-600 hover:underline font-semibold flex items-center gap-1">
-                  <ArrowLeft className="w-3.5 h-3.5" /> Back to Trip Details
+                <Link href={`/trips/${trip.id}`} className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs px-3.5 py-1.5 rounded-full transition-all inline-flex items-center gap-1.5 shadow-2xs hover:shadow-xs cursor-pointer border border-slate-200/80">
+                  <ArrowLeft className="w-3.5 h-3.5 text-sky-600" />
+                  <span>Back to Trip Details</span>
                 </Link>
                 <span className="text-slate-300">•</span>
                 <span className="text-xs text-slate-500 font-medium">Recharts Analytics</span>
@@ -291,8 +307,8 @@ export default function TripBudgetPage() {
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <button
-                          onClick={() => deleteExpense(trip.id, exp.id)}
-                          className="text-red-600 hover:text-red-800 p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                          onClick={() => handleDeleteExpense(exp.id, exp.title)}
+                          className="text-red-600 hover:text-red-800 p-1.5 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

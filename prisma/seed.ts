@@ -77,6 +77,51 @@ async function main() {
         averageCost: 1800,
       },
     }),
+    prisma.destination.create({
+      data: {
+        name: 'Tokyo',
+        country: 'Japan',
+        description: 'Ultramodern metropolis combining neon skyscrapers with historic temples and world-class cuisine.',
+        imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=800',
+        averageCost: 9500,
+      },
+    }),
+    prisma.destination.create({
+      data: {
+        name: 'Paris',
+        country: 'France',
+        description: 'The City of Light, famous for fashion, gastronomy, art museums like the Louvre, and iconic Eiffel Tower.',
+        imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800',
+        averageCost: 12000,
+      },
+    }),
+    prisma.destination.create({
+      data: {
+        name: 'Zurich',
+        country: 'Switzerland',
+        description: 'Alpine lakeside city offering scenic lake views, luxury shopping, and gateway to Swiss Alps.',
+        imageUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800',
+        averageCost: 14000,
+      },
+    }),
+    prisma.destination.create({
+      data: {
+        name: 'Dubai',
+        country: 'United Arab Emirates',
+        description: 'Futuristic city in the desert known for luxury shopping, modern architecture like Burj Khalifa, and nightlife.',
+        imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800',
+        averageCost: 11000,
+      },
+    }),
+    prisma.destination.create({
+      data: {
+        name: 'New York',
+        country: 'United States',
+        description: 'The Big Apple, featuring Central Park, Broadway shows, Times Square, and iconic skyscrapers.',
+        imageUrl: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800',
+        averageCost: 13500,
+      },
+    }),
   ]);
   console.log(`Created ${destinations.length} destinations`);
 

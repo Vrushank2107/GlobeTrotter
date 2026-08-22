@@ -188,6 +188,85 @@ export default function DashboardPage() {
                     </div>
                   )}
                 </div>
+
+                {/* Recommended Destinations Section */}
+                <div className="flex flex-col gap-4 mt-8">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold text-slate-900">Recommended Destinations</h2>
+                      <p className="text-xs text-slate-500 mt-0.5">Explore top-rated travel stops with estimated budgets & ratings</p>
+                    </div>
+                    <Link
+                      href="/explore"
+                      className="text-sky-600 font-semibold text-xs hover:text-sky-700 flex items-center gap-1 group"
+                    >
+                      <span>Explore all</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      {
+                        name: 'Goa',
+                        country: 'India',
+                        avgCost: '₹3,500/day',
+                        rating: 4.8,
+                        image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=600&q=80',
+                        tag: 'Beach & Culture',
+                      },
+                      {
+                        name: 'Mumbai',
+                        country: 'India',
+                        avgCost: '₹4,200/day',
+                        rating: 4.7,
+                        image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=600&q=80',
+                        tag: 'City & Food',
+                      },
+                      {
+                        name: 'Jaipur',
+                        country: 'India',
+                        avgCost: '₹3,200/day',
+                        rating: 4.9,
+                        image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=600&q=80',
+                        tag: 'Heritage & Forts',
+                      },
+                    ].map((dest) => (
+                      <div
+                        key={dest.name}
+                        className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-xs hover:shadow-lg transition-all group flex flex-col"
+                      >
+                        <div
+                          className="h-32 bg-cover bg-center relative"
+                          style={{ backgroundImage: `url('${dest.image}')` }}
+                        >
+                          <div className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] font-bold text-amber-600 flex items-center gap-1 shadow-xs">
+                            ★ {dest.rating}
+                          </div>
+                        </div>
+                        <div className="p-3.5 flex flex-col flex-1">
+                          <div className="flex justify-between items-start mb-1">
+                            <h4 className="font-bold text-sm text-slate-900 group-hover:text-sky-600 transition-colors">{dest.name}</h4>
+                            <span className="text-[10px] text-slate-400 font-semibold">{dest.country}</span>
+                          </div>
+                          <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full w-fit mb-3">
+                            {dest.tag}
+                          </span>
+                          <div className="mt-auto pt-2 border-t border-slate-100 flex items-center justify-between">
+                            <span className="text-[11px] font-bold text-slate-900">{dest.avgCost}</span>
+                            <Link
+                              href="/trips/new"
+                              className="text-[11px] font-semibold text-sky-600 hover:text-sky-700 flex items-center gap-0.5"
+                            >
+                              <span>Plan</span>
+                              <ArrowRight className="w-3 h-3" />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Sidebar Recent Activity */}

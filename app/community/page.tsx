@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
+import { useConfirmDialog } from '@/context/ConfirmDialogContext';
 import { Trip } from '@/types';
 import { Compass, Copy, Heart, Calendar, MapPin, Sparkles, Search } from 'lucide-react';
 
 export default function CommunityPage() {
   const router = useRouter();
   const { communityTrips, cloneCommunityTrip } = useTripContext();
+  const { showAlert } = useConfirmDialog();
   const [filterTag, setFilterTag] = useState<string>('All');
   const [search, setSearch] = useState<string>('');
 
@@ -26,7 +28,11 @@ export default function CommunityPage() {
   const handleCopyTrip = async (trip: Trip) => {
     const newTripId = await cloneCommunityTrip(trip);
     if (newTripId) {
-      alert(`"${trip.title}" copied to your trips! Redirecting to builder...`);
+      await showAlert({
+        title: 'Trip Cloned',
+        message: `"${trip.title}" copied to your trips! Redirecting to builder...`,
+        variant: 'success',
+      });
       router.push(`/trips/${newTripId}/builder`);
     }
   };

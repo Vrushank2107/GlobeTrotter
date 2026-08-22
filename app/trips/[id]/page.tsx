@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
+import { useConfirmDialog } from '@/context/ConfirmDialogContext';
 import {
   Calendar,
   MapPin,
@@ -27,6 +28,7 @@ export default function TripOverviewPage() {
   const tripId = params.id as string;
 
   const { trips, updateTrip } = useTripContext();
+  const { showAlert } = useConfirmDialog();
   const trip = trips.find((t) => t.id === tripId) || trips[0];
 
   const [showBudgetModal, setShowBudgetModal] = useState<boolean>(false);
@@ -85,7 +87,7 @@ export default function TripOverviewPage() {
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
-                    alert('Shareable trip link copied to clipboard!');
+                    showAlert({ title: 'Link Copied', message: 'Shareable trip link copied to clipboard!', variant: 'success' });
                   }}
                   className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-xs font-semibold px-4 py-2.5 rounded-full transition-all flex items-center gap-2 cursor-pointer border border-white/20"
                 >

@@ -5,12 +5,27 @@ import Link from 'next/link';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
+import { useConfirmDialog } from '@/context/ConfirmDialogContext';
 import { TripStatus } from '@/types';
 import { Plus, Calendar, MapPin, Users, Wallet, Trash2, Edit3, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function MyTripsPage() {
   const { trips, searchQuery, deleteTrip, setActiveTripId } = useTripContext();
+  const { confirm } = useConfirmDialog();
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
+
+  const handleDeleteTrip = async (tripId: string, tripTitle: string) => {
+    const isConfirmed = await confirm({
+      title: 'Delete Trip',
+      message: `Are you sure you want to delete "${tripTitle}"? All associated itinerary items and expenses will be permanently removed.`,
+      confirmText: 'Yes, Delete Trip',
+      cancelText: 'Cancel',
+      variant: 'danger',
+    });
+    if (isConfirmed) {
+      deleteTrip(tripId);
+    }
+  };
 
   const filteredTrips = trips.filter((t) => {
     const matchesSearch = searchQuery
@@ -106,7 +121,7 @@ export default function MyTripsPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (confirm(`Delete "${trip.title}"?`)) deleteTrip(trip.id);
+                            handleDeleteTrip(trip.id, trip.title);
                           }}
                           className="w-8 h-8 rounded-full bg-white/90 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all shadow-xs"
                         >

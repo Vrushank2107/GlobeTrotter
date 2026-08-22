@@ -4,12 +4,12 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTripContext } from '@/context/TripContext';
-import { Bell, LogOut, Plus, Zap, MapPin } from 'lucide-react';
+import { LogOut, Plus, Zap, MapPin } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { trips, refreshData } = useTripContext();
+  const { trips, refreshData, isSidebarCollapsed } = useTripContext();
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -26,13 +26,18 @@ export const Header: React.FC = () => {
     if (pathname.startsWith('/trips/')) return 'Trip Details';
     if (pathname === '/calendar') return 'Calendar Schedule';
     if (pathname === '/community') return 'Community Showcase';
+    if (pathname === '/explore') return 'Explore Destinations';
     if (pathname === '/profile') return 'User Profile';
     if (pathname === '/admin') return 'Admin Dashboard';
     return 'Overview';
   };
 
   return (
-    <header className="fixed top-0 left-72 right-0 h-20 bg-slate-50/80 backdrop-blur-xl z-40 px-8 flex items-center justify-between border-b border-slate-200/50">
+    <header
+      className={`fixed top-0 right-0 h-20 bg-slate-50/80 backdrop-blur-xl z-40 px-8 flex items-center justify-between border-b border-slate-200/50 transition-all duration-300 ${
+        isSidebarCollapsed ? 'left-20' : 'left-72'
+      }`}
+    >
       {/* Left side: Quick Action Pills */}
       <div className="flex items-center gap-3">
         {/* Page Title Pill */}
@@ -62,12 +67,6 @@ export const Header: React.FC = () => {
 
       {/* Right side: Action Controls */}
       <div className="flex items-center gap-4">
-        {/* Notifications Bell */}
-        <button className="p-2.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 relative shadow-xs transition-all cursor-pointer">
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-        </button>
-
         {/* Sign Out Button */}
         <button
           onClick={handleLogout}

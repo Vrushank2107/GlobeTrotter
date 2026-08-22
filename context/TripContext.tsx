@@ -24,6 +24,8 @@ interface TripContextType {
   cloneCommunityTrip: (communityTrip: Trip) => Promise<string>;
   calculateSmartInsights: (activities: Activity[], totalBudget: number, spentBudget: number) => SmartInsight[];
   refreshData: () => Promise<void>;
+  isSidebarCollapsed: boolean;
+  toggleSidebar: () => void;
 }
 
 const DEFAULT_USER: UserProfile = {
@@ -49,6 +51,38 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [activeTripId, setActiveTripId] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sidebar_collapsed') === 'true';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sidebar_collapsed');
+      if (saved === 'true') {
+        document.body.classList.add('sidebar-collapsed');
+      } else {
+        document.body.classList.remove('sidebar-collapsed');
+      }
+    }
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sidebar_collapsed', String(next));
+        if (next) {
+          document.body.classList.add('sidebar-collapsed');
+        } else {
+          document.body.classList.remove('sidebar-collapsed');
+        }
+      }
+      return next;
+    });
+  };
 
   const safeFetchJson = async (res: Response) => {
     try {
@@ -178,6 +212,9 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateTrip = async (id: string, updated: Partial<Trip>) => {
+    // Optimistic local update for instant UI feedback (e.g. reordering stops)
+    setTrips((prev) => prev.map((t) => (t.id === id ? { ...t, ...updated } : t)));
+
     try {
       const res = await fetch(`/api/trips/${id}`, {
         method: 'PUT',
@@ -186,7 +223,16 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       const data = await safeFetchJson(res);
       if (data?.success && data.data) {
-        setTrips((prev) => prev.map((t) => (t.id === id ? data.data : t)));
+        setTrips((prev) =>
+          prev.map((t) =>
+            t.id === id
+              ? {
+                  ...data.data,
+                  destinations: updated.destinations || data.data.destinations,
+                }
+              : t
+          )
+        );
       }
     } catch (err) {
       console.error('Failed to update trip via API:', err);
@@ -320,6 +366,8 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
         cloneCommunityTrip,
         calculateSmartInsights,
         refreshData,
+        isSidebarCollapsed,
+        toggleSidebar,
       }}
     >
       {children}

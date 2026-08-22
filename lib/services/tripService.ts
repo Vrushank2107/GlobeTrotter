@@ -119,17 +119,67 @@ export function mapPrismaDestinationToDestination(prismaDest: any): Destination 
     estCost: Number(act.estimatedCost || 0),
   }));
 
+  const c = (prismaDest.country || '').toLowerCase();
+  const n = (prismaDest.name || '').toLowerCase();
+
+  let region = 'South Asia';
+  if (
+    c.includes('japan') || n.includes('tokyo') || n.includes('kyoto') || n.includes('osaka') ||
+    c.includes('thailand') || n.includes('bangkok') || n.includes('phuket') ||
+    c.includes('singapore') || c.includes('indonesia') || n.includes('bali') ||
+    c.includes('china') || n.includes('shanghai') || c.includes('korea') || n.includes('seoul')
+  ) {
+    region = 'East & Southeast Asia';
+  } else if (
+    c.includes('france') || n.includes('paris') ||
+    c.includes('switzerland') || n.includes('zurich') || n.includes('interlaken') || n.includes('zermatt') ||
+    c.includes('italy') || n.includes('rome') || n.includes('venice') ||
+    c.includes('spain') || n.includes('barcelona') ||
+    c.includes('uk') || c.includes('united kingdom') || n.includes('london') ||
+    c.includes('germany') || n.includes('berlin') ||
+    c.includes('greece') || n.includes('santorini')
+  ) {
+    region = 'Europe';
+  } else if (
+    c.includes('usa') || c.includes('united states') || c.includes('america') || n.includes('new york') || n.includes('los angeles') ||
+    c.includes('canada') || n.includes('toronto') || n.includes('vancouver') ||
+    c.includes('mexico') || n.includes('cancun')
+  ) {
+    region = 'North America';
+  } else if (
+    c.includes('uae') || c.includes('united arab emirates') || c.includes('dubai') || n.includes('dubai') || n.includes('abu dhabi') ||
+    c.includes('egypt') || n.includes('cairo') || c.includes('qatar')
+  ) {
+    region = 'Middle East';
+  } else if (
+    c.includes('australia') || n.includes('sydney') || n.includes('melbourne') ||
+    c.includes('zealand') || n.includes('auckland')
+  ) {
+    region = 'Oceania';
+  }
+
+  const tags: string[] = ['Sightseeing'];
+  if (n.includes('goa') || n.includes('bali') || n.includes('phuket') || n.includes('cancun')) {
+    tags.push('Beach', 'Nature', 'Relaxation');
+  } else if (n.includes('paris') || n.includes('kyoto') || n.includes('jaipur') || n.includes('rome') || n.includes('delhi')) {
+    tags.push('Culture', 'History', 'Food');
+  } else if (n.includes('tokyo') || n.includes('bengaluru') || n.includes('new york') || n.includes('singapore') || n.includes('mumbai')) {
+    tags.push('City', 'Technology', 'Shopping', 'Food');
+  } else {
+    tags.push('Culture', 'City');
+  }
+
   return {
     id: prismaDest.id,
     name: prismaDest.name,
     country: prismaDest.country,
-    region: 'South Asia',
+    region,
     coverImage: prismaDest.imageUrl || 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80',
     description: prismaDest.description || '',
     popularActivities,
     avgCostPerDay: prismaDest.averageCost ? Number(prismaDest.averageCost) : 2500,
     rating: 4.8,
-    tags: ['Culture', 'Sightseeing', 'Travel'],
+    tags,
   };
 }
 

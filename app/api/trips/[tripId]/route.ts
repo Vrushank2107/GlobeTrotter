@@ -39,6 +39,45 @@ export async function PUT(req: Request, { params }: { params: Promise<{ tripId: 
       data: updateData,
     });
 
+    if (Array.isArray(body.destinations)) {
+      await prisma.tripStop.deleteMany({ where: { tripId } });
+      for (let i = 0; i < body.destinations.length; i++) {
+        const dest = body.destinations[i];
+        let dbDest = null;
+        const targetDestId = dest.destinationId || (dest.id && !dest.id.startsWith('stop_') ? dest.id : null);
+        if (targetDestId) {
+          dbDest = await prisma.destination.findUnique({ where: { id: targetDestId } });
+        }
+        if (!dbDest && dest.cityName) {
+          dbDest = await prisma.destination.findFirst({
+            where: { name: { contains: dest.cityName, mode: 'insensitive' } },
+          });
+        }
+        if (!dbDest && dest.cityName) {
+          dbDest = await prisma.destination.create({
+            data: {
+              name: dest.cityName,
+              country: dest.country || 'India',
+              description: `Explore ${dest.cityName}.`,
+              imageUrl: dest.image || 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800',
+              averageCost: 3500,
+            },
+          });
+        }
+        if (dbDest) {
+          await prisma.tripStop.create({
+            data: {
+              tripId,
+              destinationId: dbDest.id,
+              startDate: dest.startDate ? new Date(dest.startDate) : (updateData.startDate || new Date()),
+              endDate: dest.endDate ? new Date(dest.endDate) : (updateData.endDate || new Date()),
+              orderIndex: i,
+            },
+          });
+        }
+      }
+    }
+
     const updatedTrip = await getTrip(tripId);
 
     return NextResponse.json({

@@ -36,6 +36,16 @@ export default function PublicTripPage() {
     if (shareCode) fetchPublicTrip();
   }, [shareCode]);
 
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleCopyLink = () => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 3000);
+    }
+  };
+
   const handleCopyTrip = async () => {
     if (!trip) return;
     const newId = await cloneCommunityTrip(trip);
@@ -43,6 +53,9 @@ export default function PublicTripPage() {
       router.push(`/trips/${newId}/builder`);
     }
   };
+
+  const shareText = `Check out this multi-city travel itinerary for ${trip?.title || 'GlobeTrotter'}!`;
+  const currentUrl = typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : '';
 
   if (loading) {
     return (
@@ -99,16 +112,42 @@ export default function PublicTripPage() {
 
             <div className="p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-slate-100">
               <div>
-                <h3 className="font-bold text-slate-900 text-lg mb-1">Copy this itinerary</h3>
+                <h3 className="font-bold text-slate-900 text-lg mb-1">Share & Copy Itinerary</h3>
                 <p className="text-xs text-slate-500">
-                  Use this public trip as a starting template for your own multi-city trip plan.
+                  Use this public trip as a starting template or share it with fellow travelers.
                 </p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-2 items-center">
+                <button
+                  onClick={handleCopyLink}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs px-4 py-2.5 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Copy className="w-3.5 h-3.5 text-slate-600" />
+                  <span>{copiedLink ? 'Link Copied!' : 'Copy Link'}</span>
+                </button>
+
+                <a
+                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ')}${currentUrl}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold text-xs px-4 py-2.5 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>WhatsApp</span>
+                </a>
+
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${currentUrl}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-sky-50 hover:bg-sky-100 text-sky-800 font-semibold text-xs px-4 py-2.5 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>X / Twitter</span>
+                </a>
+
                 <button
                   onClick={handleCopyTrip}
-                  className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-6 py-3 rounded-full shadow-md transition-all flex items-center gap-2 cursor-pointer"
+                  className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-6 py-2.5 rounded-full shadow-md transition-all flex items-center gap-2 cursor-pointer ml-1"
                 >
                   <Copy className="w-4 h-4 text-sky-400" />
                   <span>Copy This Trip</span>

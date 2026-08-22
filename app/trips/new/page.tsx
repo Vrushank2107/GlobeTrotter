@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
+import { useConfirmDialog } from '@/context/ConfirmDialogContext';
 import { tripDetailsSchema } from '@/lib/validations/trip';
 import { MapPin, Calendar, DollarSign, Users, Tag, Check, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 
 export default function NewTripPage() {
   const router = useRouter();
   const { destinations, addTrip } = useTripContext();
+  const { showAlert } = useConfirmDialog();
 
   const [step, setStep] = useState<number>(1);
   const [selectedDestIds, setSelectedDestIds] = useState<string[]>([]);
@@ -55,9 +57,13 @@ export default function NewTripPage() {
     );
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (selectedDestIds.length === 0) {
-      alert('Please select at least 1 destination for your trip.');
+      await showAlert({
+        title: 'Select Destination',
+        message: 'Please select at least 1 destination for your trip before proceeding.',
+        variant: 'warning',
+      });
       return;
     }
     setStep(2);
@@ -89,7 +95,7 @@ export default function NewTripPage() {
       .filter(Boolean);
 
     const tripStops = selectedDests.map((d, index) => ({
-      id: `stop_${index}_${Date.now()}`,
+      id: d!.id,
       cityName: d!.name,
       country: d!.country,
       startDate: formData.startDate,
@@ -117,6 +123,24 @@ export default function NewTripPage() {
   };
 
   const availableTags = ['Beach', 'Culture', 'Food', 'Adventure', 'Nature', 'City', 'Romance', 'Relaxation'];
+
+  const handleDaysChange = (daysCount: number) => {
+    if (!formData.startDate) return;
+    const start = new Date(formData.startDate);
+    if (isNaN(start.getTime())) return;
+    start.setDate(start.getDate() + (daysCount - 1));
+    const newEndDate = start.toISOString().split('T')[0];
+    setFormData((prev) => ({ ...prev, endDate: newEndDate }));
+  };
+
+  const getPlannedDaysCount = () => {
+    if (!formData.startDate || !formData.endDate) return 7;
+    const start = new Date(formData.startDate);
+    const end = new Date(formData.endDate);
+    const diffMs = end.getTime() - start.getTime();
+    if (isNaN(diffMs) || diffMs < 0) return 1;
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -226,7 +250,7 @@ export default function NewTripPage() {
                 </span>
                 <h1 className="text-3xl font-bold text-slate-900 mb-2">Trip Specifications</h1>
                 <p className="text-xs text-slate-500">
-                  Set dates, budget targets, traveler details, and travel tags for Zod validation.
+                  Set planned duration, dates, budget targets, and traveler details for your trip.
                 </p>
               </div>
 
@@ -245,6 +269,57 @@ export default function NewTripPage() {
                   {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title}</p>}
                 </div>
 
+                {/* Duration Choice: How many days are you planning? */}
+                <div className="bg-sky-50/60 border border-sky-200/80 p-5 rounded-2xl">
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-xs font-bold text-sky-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <Calendar className="w-4 h-4 text-sky-600" />
+                      How many days are you planning?
+                    </label>
+                    <span className="bg-sky-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-xs">
+                      {getPlannedDaysCount()} {getPlannedDaysCount() === 1 ? 'Day' : 'Days'} Planned
+                    </span>
+                  </div>
+
+                  {/* Preset Chips */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {[1, 3, 5, 7, 10, 14].map((num) => {
+                      const isSelected = getPlannedDaysCount() === num;
+                      return (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => handleDaysChange(num)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-sky-600 text-white shadow-md scale-105'
+                              : 'bg-white text-slate-700 hover:bg-sky-100/80 border border-slate-200'
+                          }`}
+                        >
+                          {num} {num === 1 ? 'Day' : 'Days'}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Days Input */}
+                  <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-sky-200/60">
+                    <span className="text-xs text-slate-600 font-semibold pl-2">Custom Duration:</span>
+                    <input
+                      type="number"
+                      min={1}
+                      max={60}
+                      value={getPlannedDaysCount()}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        if (val > 0) handleDaysChange(val);
+                      }}
+                      className="w-20 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-900 text-center outline-none focus:border-sky-500"
+                    />
+                    <span className="text-xs text-slate-500 font-medium">days in planning stage</span>
+                  </div>
+                </div>
+
                 {/* Dates */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -254,7 +329,18 @@ export default function NewTripPage() {
                     <input
                       type="date"
                       value={formData.startDate}
-                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                      onChange={(e) => {
+                        const newStart = e.target.value;
+                        const currentDays = getPlannedDaysCount();
+                        setFormData((prev) => ({ ...prev, startDate: newStart }));
+                        if (newStart) {
+                          const start = new Date(newStart);
+                          if (!isNaN(start.getTime())) {
+                            start.setDate(start.getDate() + (currentDays - 1));
+                            setFormData((prev) => ({ ...prev, startDate: newStart, endDate: start.toISOString().split('T')[0] }));
+                          }
+                        }
+                      }}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all"
                     />
                     {errors.startDate && <p className="text-xs text-red-500 mt-1">{errors.startDate}</p>}
