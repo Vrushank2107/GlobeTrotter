@@ -155,10 +155,10 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className={`pl-72 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
+      <div className={`pl-0 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
-        <main className="pt-24 pb-16 px-10 min-h-screen max-w-5xl mx-auto w-full space-y-8">
+        <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen max-w-5xl mx-auto w-full space-y-6 md:space-y-8">
           {/* Hidden File Input for Image Upload */}
           <input
             type="file"
@@ -170,7 +170,7 @@ export default function ProfilePage() {
           />
 
           {/* Profile Header Card */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs flex flex-col md:flex-row items-center gap-8">
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-xs flex flex-col md:flex-row items-center gap-6 md:gap-8">
             <div
               onClick={() => fileInputRef.current?.click()}
               className="relative group cursor-pointer"
@@ -179,10 +179,10 @@ export default function ProfilePage() {
               <img
                 src={profileForm.avatar || user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
                 alt={profileForm.name}
-                className="w-28 h-28 rounded-full object-cover ring-4 ring-sky-100 shadow-md group-hover:opacity-80 transition-opacity"
+                className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-4 ring-sky-100 shadow-md group-hover:opacity-80 transition-opacity"
               />
               <div className="absolute inset-0 bg-slate-950/40 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                <Camera className="w-6 h-6 text-sky-400 mb-0.5" />
+                <Camera className="w-5 h-5 md:w-6 md:h-6 text-sky-400 mb-0.5" />
                 <span className="text-[10px] font-bold">Edit Photo</span>
               </div>
               <span className="absolute bottom-1 right-1 bg-sky-500 text-slate-950 p-1.5 rounded-full border-2 border-white z-10">
@@ -193,44 +193,45 @@ export default function ProfilePage() {
             <div className="flex-1 text-center md:text-left">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                 <div>
-                  <h1 className="text-3xl font-bold text-slate-900">{profileForm.name}</h1>
-                  <span className="text-sky-600 font-semibold text-xs uppercase tracking-wider">
+                  <h1 className="text-2xl md:text-3xl font-bold text-slate-900">{profileForm.name}</h1>
+                  <span className="text-sky-600 font-semibold text-[10px] md:text-xs uppercase tracking-wider block md:inline">
                     {user.memberType} • {profileForm.email}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 md:gap-3 justify-center md:justify-start">
                   <button
                     onClick={() => setShowEditModal(true)}
-                    className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-5 py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer shadow-xs"
+                    className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-[10px] md:text-xs px-4 md:px-5 py-2 md:py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer shadow-xs"
                   >
-                    <Edit3 className="w-3.5 h-3.5 text-sky-400" />
+                    <Edit3 className="w-3 h-3 md:w-3.5 md:h-3.5 text-sky-400" />
                     <span>Edit Profile</span>
                   </button>
                   <button
                     onClick={handleLogout}
                     disabled={loggingOut}
-                    className="bg-red-50 hover:bg-red-100 disabled:opacity-60 text-red-700 border border-red-200 font-semibold text-xs px-5 py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+                    className="bg-red-50 hover:bg-red-100 disabled:opacity-60 text-red-700 border border-red-200 font-semibold text-[10px] md:text-xs px-4 md:px-5 py-2 md:py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                   >
                     {loggingOut ? (
-                      <Loader2 className="w-3.5 h-3.5 text-red-600 animate-spin" />
+                      <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 text-red-600 animate-spin" />
                     ) : (
-                      <LogOut className="w-3.5 h-3.5 text-red-600" />
+                      <LogOut className="w-3 h-3 md:w-3.5 md:h-3.5 text-red-600" />
                     )}
-                    <span>{loggingOut ? 'Signing Out...' : 'Sign Out'}</span>
+                    <span className="hidden md:inline">{loggingOut ? 'Signing Out...' : 'Sign Out'}</span>
+                    <span className="md:hidden">{loggingOut ? '...' : 'Out'}</span>
                   </button>
                 </div>
               </div>
 
-              <p className="text-xs text-slate-500 leading-relaxed max-w-xl mb-4">{profileForm.bio}</p>
+              <p className="text-[10px] md:text-xs text-slate-500 leading-relaxed max-w-xl mb-4">{profileForm.bio}</p>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                 {savedDests.map((dest) => (
                   <span
                     key={dest}
-                    className="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1"
+                    className="bg-slate-100 text-slate-700 text-[10px] md:text-xs font-semibold px-2 md:px-3 py-1 rounded-full flex items-center gap-1"
                   >
-                    <MapPin className="w-3 h-3 text-sky-600" />
+                    <MapPin className="w-2.5 h-2.5 md:w-3 md:h-3 text-sky-600" />
                     {dest}
                   </span>
                 ))}
@@ -239,57 +240,57 @@ export default function ProfilePage() {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs text-center">
-              <div className="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mx-auto mb-3">
-                <Globe2 className="w-6 h-6" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-xs text-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <Globe2 className="w-5 h-5 md:w-6 md:h-6" />
               </div>
-              <span className="text-3xl font-bold text-slate-900 block">{user.countriesVisited}</span>
-              <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+              <span className="text-2xl md:text-3xl font-bold text-slate-900 block">{user.countriesVisited}</span>
+              <span className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">
                 Countries Visited
               </span>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs text-center">
-              <div className="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center mx-auto mb-3">
-                <Calendar className="w-6 h-6" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-xs text-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <Calendar className="w-5 h-5 md:w-6 md:h-6" />
               </div>
-              <span className="text-3xl font-bold text-slate-900 block">{trips.length}</span>
-              <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+              <span className="text-2xl md:text-3xl font-bold text-slate-900 block">{trips.length}</span>
+              <span className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">
                 Trips Planned
               </span>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs text-center">
-              <div className="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-3">
-                <Wallet className="w-6 h-6" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-xs text-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <Wallet className="w-5 h-5 md:w-6 md:h-6" />
               </div>
-              <span className="text-3xl font-bold text-slate-900 block">
+              <span className="text-2xl md:text-3xl font-bold text-slate-900 block">
                 ₹{(user.totalBudgetSpent / 100000).toFixed(2)}L
               </span>
-              <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+              <span className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">
                 Total Lifetime Spend
               </span>
             </div>
           </div>
 
           {/* Preferences & Saved Destinations Settings Card */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs space-y-6">
-            <h2 className="text-xl font-bold text-slate-900">Preferences & Saved Destinations</h2>
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-xs space-y-4 md:space-y-6">
+            <h2 className="text-lg md:text-xl font-bold text-slate-900">Preferences & Saved Destinations</h2>
 
             {/* Language Preference */}
-            <div className="border-b border-slate-100 pb-6 flex items-center justify-between">
+            <div className="border-b border-slate-100 pb-4 md:pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-sky-600" /> Language Preference
+                <h3 className="font-bold text-xs md:text-sm text-slate-900 flex items-center gap-2">
+                  <Globe className="w-3.5 h-3.5 md:w-4 md:h-4 text-sky-600" /> Language Preference
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">Select your preferred system interface language</p>
+                <p className="text-[10px] md:text-xs text-slate-500 mt-0.5">Select your preferred system interface language</p>
               </div>
 
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-semibold outline-none focus:border-sky-500"
+                className="bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 text-[10px] md:text-xs font-semibold outline-none focus:border-sky-500 w-full sm:w-auto"
               >
                 <option value="English">English (US)</option>
                 <option value="Spanish">Spanish (Español)</option>
@@ -301,16 +302,16 @@ export default function ProfilePage() {
 
             {/* Saved Destinations Manager */}
             <div>
-              <h3 className="font-bold text-sm text-slate-900 mb-1 flex items-center gap-2">
-                <Heart className="w-4 h-4 text-rose-500" /> Saved Destinations List
+              <h3 className="font-bold text-xs md:text-sm text-slate-900 mb-1 flex items-center gap-2">
+                <Heart className="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-500" /> Saved Destinations List
               </h3>
-              <p className="text-xs text-slate-500 mb-4">Manage your bookmarked cities of interest for future itineraries</p>
+              <p className="text-[10px] md:text-xs text-slate-500 mb-3 md:mb-4">Manage your bookmarked cities of interest for future itineraries</p>
 
-              <div className="flex flex-wrap gap-2 mb-4">
+              <div className="flex flex-wrap gap-2 mb-3 md:mb-4">
                 {savedDests.map((dest) => (
                   <span
                     key={dest}
-                    className="bg-slate-100 text-slate-800 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-2"
+                    className="bg-slate-100 text-slate-800 text-[10px] md:text-xs font-semibold px-2 md:px-3 py-1 md:py-1.5 rounded-full flex items-center gap-2"
                   >
                     <span>{dest}</span>
                     <button
@@ -329,33 +330,33 @@ export default function ProfilePage() {
                   value={newDestInput}
                   onChange={(e) => setNewDestInput(e.target.value)}
                   placeholder="e.g. Kyoto, Japan"
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-medium outline-none focus:border-sky-500"
+                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 text-[10px] md:text-xs font-medium outline-none focus:border-sky-500"
                 />
                 <button
                   type="button"
                   onClick={handleAddSavedDest}
-                  className="bg-slate-900 text-white font-semibold text-xs px-4 py-2 rounded-xl hover:bg-slate-800 transition-all flex items-center gap-1 cursor-pointer"
+                  className="bg-slate-900 text-white font-semibold text-[10px] md:text-xs px-3 md:px-4 py-2 rounded-xl hover:bg-slate-800 transition-all flex items-center gap-1 cursor-pointer shrink-0"
                 >
-                  <Plus className="w-3.5 h-3.5" /> Add
+                  <Plus className="w-3 h-3 md:w-3.5 md:h-3.5" /> Add
                 </button>
               </div>
             </div>
           </div>
 
           {/* Danger Zone: Delete Account */}
-          <div className="bg-red-50/50 border border-red-200 rounded-3xl p-8 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="bg-red-50/50 border border-red-200 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h3 className="font-bold text-red-900 text-base flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-red-600" /> Danger Zone: Delete Account
+              <h3 className="font-bold text-red-900 text-sm md:text-base flex items-center gap-2">
+                <AlertTriangle className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-600" /> Danger Zone: Delete Account
               </h3>
-              <p className="text-xs text-red-700 mt-1">
+              <p className="text-[10px] md:text-xs text-red-700 mt-1">
                 Permanently remove your account, saved itineraries, expense history, and profile data.
               </p>
             </div>
 
             <button
               onClick={() => setShowDeleteModal(true)}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-6 py-3 rounded-full transition-all shrink-0 cursor-pointer shadow-xs"
+              className="bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] md:text-xs px-4 md:px-6 py-2 md:py-3 rounded-full transition-all shrink-0 cursor-pointer shadow-xs w-full md:w-auto"
             >
               Delete Account
             </button>
@@ -365,71 +366,71 @@ export default function ProfilePage() {
         {/* Edit Profile Modal */}
         {showEditModal && (
           <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl border border-slate-200 animate-fade-in">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-slate-900">Edit Profile Details</h3>
-                <button onClick={() => setShowEditModal(false)} className="text-slate-400 hover:text-slate-600 font-bold">
+            <div className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-slate-200 animate-fade-in">
+              <div className="flex justify-between items-center mb-4 md:mb-6">
+                <h3 className="text-lg md:text-xl font-bold text-slate-900">Edit Profile Details</h3>
+                <button onClick={() => setShowEditModal(false)} className="text-slate-400 hover:text-slate-600 font-bold text-lg">
                   ✕
                 </button>
               </div>
 
               <form onSubmit={handleSaveProfile} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Full Name
                   </label>
                   <input
                     type="text"
                     value={profileForm.name}
                     onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-sky-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 text-[10px] md:text-xs font-medium outline-none focus:border-sky-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Email Address
                   </label>
                   <input
                     type="email"
                     value={profileForm.email}
                     onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-sky-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 text-[10px] md:text-xs font-medium outline-none focus:border-sky-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
+                  <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
                     Profile Photo
                   </label>
                   <div className="flex items-center gap-3">
                     <img
                       src={profileForm.avatar || user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
                       alt="Preview"
-                      className="w-14 h-14 rounded-full object-cover ring-2 ring-sky-100 shrink-0 shadow-xs"
+                      className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover ring-2 ring-sky-100 shrink-0 shadow-xs"
                     />
                     <div className="flex-1">
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer border border-slate-200"
+                        className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] md:text-xs font-semibold px-3 md:px-4 py-2 md:py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer border border-slate-200"
                       >
-                        <Upload className="w-3.5 h-3.5 text-sky-600" />
-                        <span>Upload Image File...</span>
+                        <Upload className="w-3 h-3 md:w-3.5 md:h-3.5 text-sky-600" />
+                        <span>Upload Image...</span>
                       </button>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-[10px] md:text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Traveler Bio
                   </label>
                   <textarea
                     rows={3}
                     value={profileForm.bio}
                     onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-medium outline-none focus:border-sky-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 text-[10px] md:text-xs font-medium outline-none focus:border-sky-500"
                   />
                 </div>
 
@@ -437,18 +438,18 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={() => setShowEditModal(false)}
-                    className="bg-slate-100 text-slate-700 font-semibold px-5 py-2.5 rounded-full text-xs"
+                    className="bg-slate-100 text-slate-700 font-semibold px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={savingProfile}
-                    className="bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md inline-flex items-center gap-2 disabled:cursor-not-allowed"
+                    className="bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white font-bold px-4 md:px-6 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs shadow-md inline-flex items-center gap-2 disabled:cursor-not-allowed"
                   >
                     {savingProfile ? (
                       <>
-                        <Loader2 className="w-3.5 h-3.5 text-sky-400 animate-spin" />
+                        <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 text-sky-400 animate-spin" />
                         <span>Saving...</span>
                       </>
                     ) : (
@@ -464,13 +465,13 @@ export default function ProfilePage() {
         {/* Delete Account Modal */}
         {showDeleteModal && (
           <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-200 animate-fade-in text-center">
-              <div className="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="w-7 h-7" />
+            <div className="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-slate-200 animate-fade-in text-center">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-3 md:mb-4">
+                <AlertTriangle className="w-6 h-6 md:w-7 md:h-7" />
               </div>
 
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Delete Account Permanently</h3>
-              <p className="text-xs text-slate-500 mb-6">
+              <h3 className="text-lg md:text-xl font-bold text-slate-900 mb-2">Delete Account Permanently</h3>
+              <p className="text-[10px] md:text-xs text-slate-500 mb-4 md:mb-6">
                 Are you sure you want to delete your account? Type <strong>DELETE</strong> below to confirm.
               </p>
 
@@ -479,14 +480,14 @@ export default function ProfilePage() {
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
                 placeholder="Type DELETE"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-center font-bold tracking-widest outline-none focus:border-red-500 mb-6"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 md:py-2.5 text-[10px] md:text-xs text-center font-bold tracking-widest outline-none focus:border-red-500 mb-4 md:mb-6"
               />
 
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setShowDeleteModal(false)}
-                  className="flex-1 bg-slate-100 text-slate-700 font-semibold py-2.5 rounded-full text-xs"
+                  className="flex-1 bg-slate-100 text-slate-700 font-semibold py-2 md:py-2.5 rounded-full text-[10px] md:text-xs"
                 >
                   Cancel
                 </button>
@@ -494,11 +495,11 @@ export default function ProfilePage() {
                   type="button"
                   onClick={handleDeleteAccount}
                   disabled={deletingAccount}
-                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold py-2.5 rounded-full text-xs shadow-md inline-flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold py-2 md:py-2.5 rounded-full text-[10px] md:text-xs shadow-md inline-flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                 >
                   {deletingAccount ? (
                     <>
-                      <Loader2 className="w-3.5 h-3.5 text-white animate-spin" />
+                      <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 text-white animate-spin" />
                       <span>Deleting...</span>
                     </>
                   ) : (
