@@ -8,15 +8,17 @@ import { Header } from '@/components/layout/Header';
 import { Trip } from '@/types';
 import { Calendar, Copy, ArrowLeft } from 'lucide-react';
 import { useTripContext } from '@/context/TripContext';
+import { Loader2 } from 'lucide-react';
 
 export default function PublicTripPage() {
   const params = useParams();
   const router = useRouter();
   const shareCode = params.shareCode as string;
-  const { cloneCommunityTrip, isSidebarCollapsed } = useTripContext();
+  const { cloneCommunityTrip, isSidebarCollapsed, user, loading: authLoading } = useTripContext();
 
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [copying, setCopying] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchPublicTrip() {
@@ -55,9 +57,42 @@ export default function PublicTripPage() {
 
   const handleCopyTrip = async () => {
     if (!trip) return;
-    const newId = await cloneCommunityTrip(trip);
-    if (newId) {
-      router.push(`/trips/${newId}/builder`);
+    
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    setCopying(true);
+    try {
+      // Try the new share code clone endpoint first
+      const res = await fetch(`/api/public-trip/${shareCode}/clone`, {
+        method: 'POST',
+      });
+      const data = await res.json();
+      
+      if (data.success && data.data) {
+        router.push(`/trips/${data.data.id}/builder`);
+      } else {
+        // Fallback to the community trip clone
+        const newId = await cloneCommunityTrip(trip);
+        if (newId) {
+          router.push(`/trips/${newId}/builder`);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to copy trip:', error);
+      // Fallback to the community trip clone
+      try {
+        const newId = await cloneCommunityTrip(trip);
+        if (newId) {
+          router.push(`/trips/${newId}/builder`);
+        }
+      } catch (fallbackError) {
+        console.error('Fallback clone also failed:', fallbackError);
+      }
+    } finally {
+      setCopying(false);
     }
   };
 
@@ -153,10 +188,20 @@ export default function PublicTripPage() {
 
                 <button
                   onClick={handleCopyTrip}
-                  className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-6 py-2.5 rounded-full shadow-md transition-all flex items-center gap-2 cursor-pointer ml-1"
+                  disabled={copying || authLoading}
+                  className="bg-slate-900 hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-xs px-6 py-2.5 rounded-full shadow-md transition-all flex items-center gap-2 cursor-pointer ml-1"
                 >
-                  <Copy className="w-4 h-4 text-sky-400" />
-                  <span>Copy This Trip</span>
+                  {copying ? (
+                    <>
+                      <Loader2 className="w-4 h-4 text-sky-400 animate-spin" />
+                      <span>Copying...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4 text-sky-400" />
+                      <span>{user ? 'Copy This Trip' : 'Sign In to Copy'}</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
