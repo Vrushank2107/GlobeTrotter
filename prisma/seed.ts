@@ -18,25 +18,13 @@ async function main() {
   console.log('Cleared all existing database data.');
 
   // 2. Create Users
-  const adminPassword = await bcrypt.hash('admin123', 10);
   const demoPassword = await bcrypt.hash('demo123', 10);
-
-  const adminUser = await prisma.user.create({
-    data: {
-      name: 'System Admin',
-      email: 'admin@globetrotter.com',
-      passwordHash: adminPassword,
-      role: 'ADMIN',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    },
-  });
 
   const demoUser = await prisma.user.create({
     data: {
       name: 'Demo User',
       email: 'demo@globetrotter.com',
       passwordHash: demoPassword,
-      role: 'USER',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=DemoUser',
     },
   });
@@ -46,7 +34,6 @@ async function main() {
       name: 'Sophia Chen',
       email: 'sophia@globetrotter.com',
       passwordHash: demoPassword,
-      role: 'USER',
       avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
     },
   });
@@ -56,7 +43,6 @@ async function main() {
       name: 'Mateo Rossi',
       email: 'mateo@globetrotter.com',
       passwordHash: demoPassword,
-      role: 'USER',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     },
   });
@@ -66,7 +52,6 @@ async function main() {
       name: 'Elena Rostova',
       email: 'elena@globetrotter.com',
       passwordHash: demoPassword,
-      role: 'USER',
       avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
     },
   });
@@ -76,7 +61,6 @@ async function main() {
       name: 'Aarav Sharma',
       email: 'aarav@globetrotter.com',
       passwordHash: demoPassword,
-      role: 'USER',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
     },
   });
@@ -86,12 +70,11 @@ async function main() {
       name: 'Chloe Dubois',
       email: 'chloe@globetrotter.com',
       passwordHash: demoPassword,
-      role: 'USER',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
     },
   });
 
-  console.log('Created 7 users (Admin, Demo User, 5 Community Creators)');
+  console.log('Created 6 users (Demo User, 5 Community Creators)');
 
   // 3. Create Curated World Destinations
   const destData = [
@@ -353,7 +336,7 @@ async function main() {
     }
   }
 
-  // 5. Seed Demo User Trips
+  // 5. Seed Demo User Trips (using demoUser as primary user)
   console.log('Seeding Demo User Trips...');
 
   // Trip 1: Grand European Odyssey
@@ -602,7 +585,6 @@ async function main() {
 
   console.log('Successfully seeded database with comprehensive data!');
   console.log('\n--- GlobeTrotter Login Credentials ---');
-  console.log('Admin Email: admin@globetrotter.com (Password: admin123)');
   console.log('Demo User Email: demo@globetrotter.com (Password: demo123)');
 }
 

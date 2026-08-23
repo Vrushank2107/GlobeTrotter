@@ -9,7 +9,6 @@ import {
   Users,
   CalendarDays,
   User,
-  ShieldAlert,
   Globe2,
   Luggage,
   Compass,
@@ -23,8 +22,6 @@ export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const { user, isSidebarCollapsed: isCollapsed, toggleSidebar } = useTripContext();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-
-  const isAdmin = user?.isAdmin || user?.role === 'ADMIN';
   
   // Don't show navigation if user is not authenticated
   if (!user) {
@@ -38,7 +35,6 @@ export const Sidebar: React.FC = () => {
     { label: 'Community Showcase', path: '/community', icon: Users },
     { label: 'Calendar View', path: '/calendar', icon: CalendarDays },
     { label: 'Profile', path: '/profile', icon: User },
-    ...(isAdmin ? [{ label: 'Admin Panel', path: '/admin', icon: ShieldAlert }] : []),
   ];
 
   const closeMobileMenu = () => setIsMobileOpen(false);

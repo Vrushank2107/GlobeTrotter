@@ -36,7 +36,6 @@ export const Header: React.FC = () => {
     if (pathname === '/community') return 'Community Showcase';
     if (pathname === '/explore') return 'Explore Destinations';
     if (pathname === '/profile') return 'User Profile';
-    if (pathname === '/admin') return 'Admin Dashboard';
     return 'Overview';
   };
 
@@ -47,7 +46,7 @@ export const Header: React.FC = () => {
       } right-0`}
     >
       {/* Left side: Quick Action Pills */}
-      <div className={`flex items-center gap-2 md:gap-3 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-0' : 'md:ml-4'}`}>
+      <div className={`flex items-center gap-2 md:gap-3 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-0' : 'md:ml-48'}`}>
         {/* Plan Trip Quick Pill - Hidden on small mobile */}
         <Link
           href="/trips/new"

@@ -49,9 +49,6 @@ export async function GET() {
       new Set(userStops.map((s) => `${s.destination?.name}, ${s.destination?.country}`).filter(Boolean))
     );
 
-    const userRole = (dbUser as any).role || 'USER';
-    const isAdmin = userRole === 'ADMIN';
-
     return NextResponse.json({
       success: true,
       data: {
@@ -59,15 +56,11 @@ export async function GET() {
         name: dbUser.name,
         email: dbUser.email,
         avatar: dbUser.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(dbUser.name)}`,
-        role: userRole,
-        isAdmin,
-        memberType: isAdmin ? 'Administrator' : 'Pro Member',
+        memberType: 'Pro Member',
         countriesVisited,
         tripsPlanned,
         totalBudgetSpent: Number(expensesSum._sum.amount || 0),
-        bio: isAdmin
-          ? 'System Administrator managing GlobeTrotter platform catalogs and user analytics.'
-          : 'Explorer & traveler planning multi-city adventures worldwide.',
+        bio: 'Explorer & traveler planning multi-city adventures worldwide.',
         favoriteDestinations,
       },
     });
