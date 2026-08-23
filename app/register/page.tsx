@@ -16,6 +16,48 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Forcefully hide mobile navigation on register page
+  useEffect(() => {
+    // Add class to body to globally hide nav
+    document.body.classList.add('hide-mobile-nav');
+    
+    const hideMobileNav = () => {
+      // Target all possible mobile nav selectors
+      const selectors = [
+        'nav.fixed.bottom-0',
+        '.md\\:hidden.fixed.bottom-0',
+        'nav[class*="bottom-0"]',
+        '[class*="mobile-nav"]',
+        '[class*="MobileNav"]'
+      ];
+      
+      selectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+          el.remove();
+        });
+      });
+    };
+    
+    hideMobileNav();
+    
+    // Also use MutationObserver to catch any dynamically added nav
+    const observer = new MutationObserver(() => {
+      hideMobileNav();
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    // Set up interval to periodically check and remove any nav that appears
+    const interval = setInterval(hideMobileNav, 100);
+    
+    return () => {
+      observer.disconnect();
+      clearInterval(interval);
+      document.body.classList.remove('hide-mobile-nav');
+    };
+  }, []);
+
   useEffect(() => {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '419997250020-qu70plcjrmcfkhdchr6qrj3ptcs3sdgi.apps.googleusercontent.com';
 
@@ -134,6 +176,15 @@ export default function RegisterPage() {
           background-color: #f7f9fb;
           color: #191c1e;
           min-height: 100vh;
+        }
+
+        /* Hide mobile bottom navigation on auth pages */
+        nav.fixed.bottom-0,
+        .md\\:hidden.fixed.bottom-0,
+        nav[class*="bottom-0"] {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
         }
 
         .material-symbols-outlined {
