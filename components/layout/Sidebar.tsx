@@ -20,11 +20,11 @@ import {
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
-  const { user, isSidebarCollapsed: isCollapsed, toggleSidebar } = useTripContext();
+  const { user, isSidebarCollapsed: isCollapsed, toggleSidebar, isMounted } = useTripContext();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  
-  // Don't show navigation if user is not authenticated
-  if (!user) {
+
+  // Don't render sidebar until mounted to prevent hydration mismatch
+  if (!isMounted) {
     return null;
   }
 
@@ -41,30 +41,7 @@ export const Sidebar: React.FC = () => {
 
   return (
     <>
-      <style>{`
-        body.sidebar-collapsed .pl-72 {
-          padding-left: 5rem !important;
-          transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .pl-72 {
-          transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        body.sidebar-collapsed .left-72 {
-          left: 5rem !important;
-          transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .left-72 {
-          transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        @media (max-width: 768px) {
-          .pl-72 {
-            padding-left: 0 !important;
-          }
-          .left-72 {
-            left: 0 !important;
-          }
-        }
-      `}</style>
+
 
       {/* Mobile Menu Button */}
       <button

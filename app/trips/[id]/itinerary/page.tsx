@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   Edit3,
 } from 'lucide-react';
+import { PageSkeleton } from '@/components/ui/skeleton';
 
 export default function ItineraryViewPage() {
   const params = useParams();
@@ -35,11 +36,7 @@ export default function ItineraryViewPage() {
   }, [user, loading, router]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-slate-500">Loading...</div>
-      </div>
-    );
+    return <PageSkeleton />;
   }
 
   if (!user) {
@@ -75,10 +72,14 @@ export default function ItineraryViewPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className={`pl-72 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
+      <div className={`pl-0 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-24 pb-16 px-10 min-h-screen">
+          {loading ? (
+            <PageSkeleton />
+          ) : user && trip ? (
+            <>
           {/* Header Action Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
             <div>
@@ -256,6 +257,8 @@ export default function ItineraryViewPage() {
               })}
             </div>
           )}
+            </>
+          ) : null}
         </main>
       </div>
     </div>

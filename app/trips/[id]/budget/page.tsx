@@ -28,9 +28,12 @@ import {
   AlertTriangle,
   ArrowLeft,
   DollarSign,
+} from 'lucide-react';
+import { PageSkeleton } from '@/components/ui/skeleton';
+import {
   TrendingUp,
   CreditCard,
-  PieChartIcon,
+  PieChart as PieChartIcon,
   CheckCircle2,
   Edit3,
 } from 'lucide-react';
@@ -50,17 +53,7 @@ export default function TripBudgetPage() {
     }
   }, [user, loading, router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-slate-500">Loading...</div>
-      </div>
-    );
-  }
 
-  if (!user) {
-    return null; // Will redirect to login
-  }
 
   const handleDeleteExpense = async (expenseId: string, title: string) => {
     const isConfirmed = await confirm({
@@ -96,13 +89,7 @@ export default function TripBudgetPage() {
     }
   };
 
-  if (!trip) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <p className="text-sm text-slate-500">Trip not found.</p>
-      </div>
-    );
-  }
+
 
   // Calculate totals by category for Recharts
   const categoriesList = ['Accommodation', 'Transport', 'Activities', 'Food', 'Misc'];
@@ -215,6 +202,12 @@ export default function TripBudgetPage() {
         <Header />
 
         <main className="pt-20 pb-20 md:pt-24 md:pb-16 px-4 md:px-10 min-h-screen">
+          {loading ? (
+            <PageSkeleton />
+          ) : user ? (
+            <>
+          {trip ? (
+            <>
           {/* Header Action Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-xs">
             <div>
@@ -498,10 +491,12 @@ export default function TripBudgetPage() {
               </table>
             </div>
           </div>
+            </>
+          ) : null}
         </main>
 
         {/* Expense Modal Drawer */}
-        {showModal && (
+        {showModal && user && (
           <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-slate-200 animate-fade-in max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-6">
@@ -634,6 +629,14 @@ export default function TripBudgetPage() {
               </form>
             </div>
           </div>
+            </>
+          ) : (
+            <div className="px-10 py-20 text-center">
+              <p className="text-sm text-slate-500">Trip not found.</p>
+            </div>
+          )}
+            </>
+          ) : null}
         )}
       </div>
     </div>

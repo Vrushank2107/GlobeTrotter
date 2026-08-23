@@ -29,6 +29,7 @@ import {
   Compass,
   Loader2,
 } from 'lucide-react';
+import { PageSkeleton } from '@/components/ui/skeleton';
 
 export default function ItineraryBuilderPage() {
   const params = useParams();
@@ -39,27 +40,10 @@ export default function ItineraryBuilderPage() {
   const { confirm, showAlert } = useConfirmDialog();
   const trip = trips.find((t) => t.id === tripId) || trips[0];
 
+  // ALL useState hooks must be called before any conditional returns
   const [activeDay, setActiveDay] = useState<number>(1);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalTab, setModalTab] = useState<'custom' | 'catalog'>('custom');
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-    }
-  }, [user, loading, router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-slate-500">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect to login
-  }
   const [showAddStopModal, setShowAddStopModal] = useState<boolean>(false);
   const [selectedCityId, setSelectedCityId] = useState<string>('');
   const [isAddingStop, setIsAddingStop] = useState<boolean>(false);
@@ -78,13 +62,7 @@ export default function ItineraryBuilderPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  if (!trip) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <p className="text-sm text-slate-500">Trip not found.</p>
-      </div>
-    );
-  }
+
 
   const getTripDaysCount = (tripObj: typeof trip) => {
     if (!tripObj) return 7;
@@ -280,6 +258,10 @@ export default function ItineraryBuilderPage() {
         <Header />
 
         <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">
+          {loading ? (
+            <PageSkeleton />
+          ) : user && trip ? (
+            <>
           {/* Header Action Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8 bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-xs">
             <div>
@@ -605,10 +587,12 @@ export default function ItineraryBuilderPage() {
               </div>
             )}
           </div>
+            </>
+          ) : null}
         </main>
 
         {/* Add Activity Modal Drawer */}
-        {showModal && (
+        {showModal && user && (
           <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-2 md:p-4">
             <div className="bg-white rounded-2xl md:rounded-3xl max-w-2xl w-full p-4 md:p-8 shadow-2xl border border-slate-200 animate-fade-in max-h-[90vh] overflow-y-auto mx-2 md:mx-0">
               <div className="flex justify-between items-center mb-4 md:mb-6">

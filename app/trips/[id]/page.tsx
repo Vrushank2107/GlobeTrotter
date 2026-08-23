@@ -21,6 +21,7 @@ import {
   AlertCircle,
   Copy,
 } from 'lucide-react';
+import { PageSkeleton } from '@/components/ui/skeleton';
 
 export default function TripOverviewPage() {
   const params = useParams();
@@ -31,7 +32,9 @@ export default function TripOverviewPage() {
   const { showAlert } = useConfirmDialog();
   const trip = trips.find((t) => t.id === tripId) || trips[0];
 
+  // ALL useState hooks must be called before any conditional returns
   const [showBudgetModal, setShowBudgetModal] = useState<boolean>(false);
+  const [newBudget, setNewBudget] = useState<number | ''>(trip?.totalBudget || 50000);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -40,17 +43,12 @@ export default function TripOverviewPage() {
   }, [user, loading, router]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-slate-500">Loading...</div>
-      </div>
-    );
+    return <PageSkeleton />;
   }
 
   if (!user) {
     return null; // Will redirect to login
   }
-  const [newBudget, setNewBudget] = useState<number | ''>(trip?.totalBudget || 50000);
 
   const handleSaveBudget = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +76,10 @@ export default function TripOverviewPage() {
         <Header />
 
         <main className="pt-20 md:pt-20 pb-24 md:pb-16 min-h-screen">
+          {loading ? (
+            <PageSkeleton />
+          ) : user && trip ? (
+            <>
           {/* Hero Banner */}
           <div
             className="relative w-full h-56 md:h-80 mb-6 md:mb-8 flex items-end px-4 md:px-10 bg-cover bg-center shadow-sm"
@@ -244,10 +246,12 @@ export default function TripOverviewPage() {
               </div>
             </div>
           </div>
+            </>
+          ) : null}
         </main>
 
         {/* Edit Total Budget Modal Drawer */}
-        {showBudgetModal && (
+        {showBudgetModal && user && (
           <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-2 md:p-4">
             <div className="bg-white rounded-2xl md:rounded-3xl max-w-md w-full p-4 md:p-8 shadow-2xl border border-slate-200 animate-fade-in mx-2 md:mx-0">
               <div className="flex justify-between items-center mb-6">

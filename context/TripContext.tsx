@@ -26,6 +26,7 @@ interface TripContextType {
   refreshData: () => Promise<void>;
   isSidebarCollapsed: boolean;
   toggleSidebar: () => void;
+  isMounted: boolean;
 }
 
 const DEFAULT_USER: UserProfile = {
@@ -52,8 +53,10 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
+    setIsMounted(true);
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('sidebar_collapsed');
       if (saved === 'true') {
@@ -369,6 +372,7 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({ children
         refreshData,
         isSidebarCollapsed,
         toggleSidebar,
+        isMounted,
       }}
     >
       {children}

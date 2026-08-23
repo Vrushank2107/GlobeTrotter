@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
 import { useConfirmDialog } from '@/context/ConfirmDialogContext';
+import { PageSkeleton, TripCardSkeleton } from '@/components/ui/skeleton';
+import { Plus, Calendar, MapPin, Users, Wallet, Trash2, Edit3, ArrowRight, CheckCircle2, Filter, Search } from 'lucide-react';
 import { TripStatus } from '@/types';
-import { Plus, Calendar, MapPin, Users, Wallet, Trash2, Edit3, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function MyTripsPage() {
   const router = useRouter();
@@ -21,18 +22,6 @@ export default function MyTripsPage() {
       router.push('/login');
     }
   }, [user, loading, router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-slate-500">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect to login
-  }
 
   const handleDeleteTrip = async (tripId: string, tripTitle: string) => {
     const isConfirmed = await confirm({
@@ -63,6 +52,10 @@ export default function MyTripsPage() {
         <Header />
 
         <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">
+          {loading ? (
+            <PageSkeleton />
+          ) : user ? (
+            <>
           {/* Header Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
             <div>
@@ -235,6 +228,8 @@ export default function MyTripsPage() {
               })}
             </div>
           )}
+            </>
+          ) : null}
         </main>
       </div>
     </div>

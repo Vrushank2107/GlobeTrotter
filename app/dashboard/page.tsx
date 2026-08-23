@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
+import { PageSkeleton } from '@/components/ui/skeleton';
 import { Globe2, Calendar, Wallet, PlaneTakeoff, ArrowRight, MapPin, DollarSign, Sparkles } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -17,18 +18,6 @@ export default function DashboardPage() {
       router.push('/login');
     }
   }, [user, loading, router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-slate-500">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect to login
-  }
 
   const filteredTrips = trips.filter((t) =>
     searchQuery
@@ -46,6 +35,10 @@ export default function DashboardPage() {
         <Header />
 
         <main className="pt-20 md:pt-20 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">
+          {loading ? (
+            <PageSkeleton />
+          ) : user ? (
+            <>
           {/* Cinematic Header */}
           <div
             className="relative w-full h-48 sm:h-64 md:h-80 mb-6 md:mb-10 flex items-center px-4 md:px-10 parallax-bg overflow-hidden shadow-sm"
@@ -403,6 +396,8 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+            </>
+          ) : null}
         </main>
       </div>
     </div>

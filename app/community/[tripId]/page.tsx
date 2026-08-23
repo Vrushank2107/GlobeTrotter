@@ -18,13 +18,7 @@ export default function CommunityTripDetailPage() {
   const { showAlert } = useConfirmDialog();
   const trip = communityTrips.find((t) => t.id === tripId) || communityTrips[0];
 
-  if (!trip) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <p className="text-sm text-slate-500">Community trip not found.</p>
-      </div>
-    );
-  }
+
 
   const handleCopyTrip = async () => {
     const newTripId = await cloneCommunityTrip(trip);
@@ -41,10 +35,12 @@ export default function CommunityTripDetailPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className={`pl-72 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
+      <div className={`pl-0 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-20 pb-16 min-h-screen">
+          {trip ? (
+            <>
           <div
             className="relative w-full h-80 mb-8 flex items-end p-10 bg-cover bg-center shadow-sm"
             style={{
@@ -97,6 +93,12 @@ export default function CommunityTripDetailPage() {
               </div>
             </div>
           </div>
+            </>
+          ) : (
+            <div className="px-10 py-20 text-center">
+              <p className="text-sm text-slate-500">Community trip not found.</p>
+            </div>
+          )}
         </main>
       </div>
     </div>

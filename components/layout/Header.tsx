@@ -4,15 +4,15 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTripContext } from '@/context/TripContext';
-import { LogOut, Plus, Zap, MapPin, Loader2, LogIn, UserPlus } from 'lucide-react';
+import { LogOut, Plus, Zap, MapPin, Loader2, LogIn, UserPlus, LayoutDashboard, Luggage, Compass, Users, CalendarDays, User as UserIcon } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, trips, refreshData, isSidebarCollapsed } = useTripContext();
+  const { user, trips, refreshData, isSidebarCollapsed, loading } = useTripContext();
   const [loggingOut, setLoggingOut] = React.useState(false);
 
-  const isGuest = !user; // Show guest UI when user is not authenticated
+  const isGuest = !user && !loading; // Show guest UI only when user is not authenticated AND not loading
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -25,28 +25,34 @@ export const Header: React.FC = () => {
     }
   };
 
-  const getPageTitle = () => {
-    if (pathname === '/dashboard') return 'Dashboard';
-    if (pathname === '/trips') return 'My Trips';
-    if (pathname === '/trips/new') return 'Plan New Trip';
-    if (pathname.includes('/builder')) return 'Itinerary Builder';
-    if (pathname.includes('/budget')) return 'Trip Budget';
-    if (pathname.startsWith('/trips/')) return 'Trip Details';
-    if (pathname === '/calendar') return 'Calendar Schedule';
-    if (pathname === '/community') return 'Community Showcase';
-    if (pathname === '/explore') return 'Explore Destinations';
-    if (pathname === '/profile') return 'User Profile';
-    return 'Overview';
+  const getPageInfo = () => {
+    if (pathname === '/dashboard') return { title: 'Dashboard', icon: LayoutDashboard };
+    if (pathname === '/trips') return { title: 'My Trips', icon: Luggage };
+    if (pathname === '/trips/new') return { title: 'Plan New Trip', icon: Plus };
+    if (pathname.includes('/builder')) return { title: 'Itinerary Builder', icon: MapPin };
+    if (pathname.includes('/budget')) return { title: 'Trip Budget', icon: Zap };
+    if (pathname.startsWith('/trips/')) return { title: 'Trip Details', icon: Luggage };
+    if (pathname === '/calendar') return { title: 'Calendar Schedule', icon: CalendarDays };
+    if (pathname === '/community') return { title: 'Community Showcase', icon: Users };
+    if (pathname === '/explore') return { title: 'Explore Destinations', icon: Compass };
+    if (pathname === '/profile') return { title: 'User Profile', icon: UserIcon };
+    return { title: 'Overview', icon: LayoutDashboard };
   };
+
+  const pageInfo = getPageInfo();
 
   return (
     <header
-      className={`fixed top-0 h-16 md:h-20 bg-slate-50/80 backdrop-blur-xl z-40 px-3 md:px-8 flex items-center justify-between border-b border-slate-200/50 transition-all duration-300 left-0 md:${
-        isSidebarCollapsed ? 'left-20' : 'left-72'
-      } right-0`}
+      className="fixed top-0 left-0 right-0 h-16 md:h-20 bg-slate-50/80 backdrop-blur-xl z-40 px-3 md:px-8 flex items-center justify-between border-b border-slate-200/50 transition-all duration-300"
     >
       {/* Left side: Quick Action Pills */}
-      <div className={`flex items-center gap-2 md:gap-3 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-0' : 'md:ml-48'}`}>
+      <div className={`flex items-center gap-2 md:gap-3 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
+        {/* Current Page Indicator - Hidden on small mobile */}
+        <div className="hidden sm:flex items-center gap-1.5 bg-slate-100/80 border border-slate-200/80 px-3.5 py-1.5 rounded-full text-xs font-semibold shadow-xs">
+          {React.createElement(pageInfo.icon, { className: "w-3.5 h-3.5 text-slate-600" })}
+          <span className="text-slate-700">{pageInfo.title}</span>
+        </div>
+
         {/* Plan Trip Quick Pill - Hidden on small mobile */}
         <Link
           href="/trips/new"

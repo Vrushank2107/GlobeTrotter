@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   DollarSign,
 } from 'lucide-react';
+import { PageSkeleton } from '@/components/ui/skeleton';
 
 const MONTH_NAMES = [
   'January',
@@ -49,17 +50,7 @@ export default function CalendarPage() {
     }
   }, [user, loading, router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-slate-500">Loading...</div>
-      </div>
-    );
-  }
 
-  if (!user) {
-    return null; // Will redirect to login
-  }
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfWeek = new Date(currentYear, currentMonth, 1).getDay();
@@ -93,7 +84,7 @@ export default function CalendarPage() {
   // Get trips active on specific day
   const getTripsForDay = (dayNum: number) => {
     const dayStr = formatDateStr(dayNum);
-    return trips.filter((t) => {
+    return trips?.filter((t) => {
       if (selectedTripFilter !== 'All' && t.id !== selectedTripFilter) return false;
       if (!t.startDate || !t.endDate) return false;
       return dayStr >= t.startDate && dayStr <= t.endDate;
@@ -105,7 +96,7 @@ export default function CalendarPage() {
     const dayStr = formatDateStr(dayNum);
     const results: { tripId: string; tripTitle: string; activity: any }[] = [];
 
-    trips.forEach((t) => {
+    trips?.forEach((t) => {
       if (selectedTripFilter !== 'All' && t.id !== selectedTripFilter) return;
       (t.activities || []).forEach((act) => {
         let matches = act.dateStr === dayStr;
@@ -137,6 +128,10 @@ export default function CalendarPage() {
         <Header />
 
         <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen">
+          {loading ? (
+            <PageSkeleton />
+          ) : user ? (
+            <>
           {/* Header Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
             <div>
@@ -156,7 +151,7 @@ export default function CalendarPage() {
                 className="bg-white border border-slate-200 text-[10px] md:text-xs font-semibold px-3 md:px-4 py-2 md:py-2.5 rounded-full outline-none shadow-xs cursor-pointer hover:border-slate-300 transition-colors"
               >
                 <option value="All">All Trips ({trips.length})</option>
-                {trips.map((t) => (
+                {trips?.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.title}
                   </option>
@@ -413,6 +408,8 @@ export default function CalendarPage() {
               )}
             </div>
           </div>
+            </>
+          ) : null}
         </main>
       </div>
     </div>

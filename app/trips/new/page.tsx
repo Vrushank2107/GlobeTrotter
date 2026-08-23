@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
 import { useConfirmDialog } from '@/context/ConfirmDialogContext';
+import { PageSkeleton } from '@/components/ui/skeleton';
 import { tripDetailsSchema } from '@/lib/validations/trip';
 import { MapPin, Calendar, DollarSign, Users, Tag, Check, ArrowRight, ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
 
@@ -14,27 +15,10 @@ export default function NewTripPage() {
   const { user, destinations, addTrip, loading, isSidebarCollapsed } = useTripContext();
   const { showAlert } = useConfirmDialog();
 
+  // ALL useState hooks must be called before any conditional returns
   const [step, setStep] = useState<number>(1);
   const [selectedDestIds, setSelectedDestIds] = useState<string[]>([]);
   const [isCreatingTrip, setIsCreatingTrip] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-    }
-  }, [user, loading, router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-slate-500">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect to login
-  }
 
   // Form State
   const [formData, setFormData] = useState({
@@ -49,6 +33,20 @@ export default function NewTripPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <PageSkeleton />;
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
 
   // Generate trip title based on selected destinations
   const generateTripTitle = (selectedIds: string[]) => {
@@ -169,10 +167,14 @@ export default function NewTripPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <div className={`pl-72 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
+      <div className={`pl-0 flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <Header />
 
         <main className="pt-24 pb-16 px-10 max-w-5xl mx-auto w-full min-h-screen">
+          {loading ? (
+            <PageSkeleton />
+          ) : user ? (
+            <>
           {/* Progress Indicator */}
           <div className="mb-8 flex items-center justify-center gap-4">
             <div className={`flex items-center gap-2 ${step >= 1 ? 'text-sky-600 font-bold' : 'text-slate-400'}`}>
@@ -490,6 +492,8 @@ export default function NewTripPage() {
               </form>
             </div>
           )}
+            </>
+          ) : null}
         </main>
       </div>
     </div>

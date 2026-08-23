@@ -7,6 +7,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useTripContext } from '@/context/TripContext';
 import { useConfirmDialog } from '@/context/ConfirmDialogContext';
+import { ProfileSkeleton } from '@/components/ui/skeleton';
 import {
   User as UserIcon,
   MapPin,
@@ -33,10 +34,27 @@ export default function ProfilePage() {
   const { showAlert } = useConfirmDialog();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+  // ALL useState hooks must be called before any conditional returns
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [currency, setCurrency] = useState('INR (₹)');
+  const [language, setLanguage] = useState('English');
+  const [newDestInput, setNewDestInput] = useState('');
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+
+  // Profile Form state - initialize with default values, will be updated when user loads
+  const [profileForm, setProfileForm] = useState({
+    name: '',
+    email: '',
+    avatar: '',
+    bio: '',
+  });
+
+  // Saved destinations - initialize with empty array, will be updated when user loads
+  const [savedDests, setSavedDests] = useState<string[]>([]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -44,33 +62,25 @@ export default function ProfilePage() {
     }
   }, [user, loading, router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-slate-500">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect to login
-  }
-  const [deletingAccount, setDeletingAccount] = useState(false);
-
-  // Profile Form state
-  const [profileForm, setProfileForm] = useState({
-    name: user.name,
-    email: user.email,
-    avatar: user.avatar,
-    bio: user.bio,
-  });
+  // Update profile form and saved destinations when user data loads
+  useEffect(() => {
+    if (user) {
+      setProfileForm({
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        bio: user.bio,
+      });
+      setSavedDests(user.favoriteDestinations);
+    }
+  }, [user]);
 
   const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = async (event) => {
-        if (event.target?.result) {
+        if (event.target?.result && user) {
           const dataUrl = event.target.result as string;
           setProfileForm((prev) => ({ ...prev, avatar: dataUrl }));
           user.avatar = dataUrl;
@@ -85,14 +95,10 @@ export default function ProfilePage() {
     }
   };
 
-  const [currency, setCurrency] = useState('INR (₹)');
-  const [language, setLanguage] = useState('English');
-  const [savedDests, setSavedDests] = useState<string[]>(user.favoriteDestinations);
-  const [newDestInput, setNewDestInput] = useState('');
-  const [deleteConfirmText, setDeleteConfirmText] = useState('');
-
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+    
     setSavingProfile(true);
     try {
       user.name = profileForm.name;
@@ -159,212 +165,218 @@ export default function ProfilePage() {
         <Header />
 
         <main className="pt-20 md:pt-24 pb-24 md:pb-16 px-4 md:px-10 min-h-screen max-w-5xl mx-auto w-full space-y-6 md:space-y-8">
-          {/* Hidden File Input for Image Upload */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            accept="image/*"
-            onChange={handleImageFileUpload}
-            className="hidden"
-            id="global-profile-image-upload"
-          />
-
-          {/* Profile Header Card */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-xs flex flex-col md:flex-row items-center gap-6 md:gap-8">
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="relative group cursor-pointer"
-              title="Click to change profile photo"
-            >
-              <img
-                src={profileForm.avatar || user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
-                alt={profileForm.name}
-                className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-4 ring-sky-100 shadow-md group-hover:opacity-80 transition-opacity"
+          {loading ? (
+            <ProfileSkeleton />
+          ) : user ? (
+            <>
+              {/* Hidden File Input for Image Upload */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handleImageFileUpload}
+                className="hidden"
+                id="global-profile-image-upload"
               />
-              <div className="absolute inset-0 bg-slate-950/40 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                <Camera className="w-5 h-5 md:w-6 md:h-6 text-sky-400 mb-0.5" />
-                <span className="text-[10px] font-bold">Edit Photo</span>
-              </div>
-              <span className="absolute bottom-1 right-1 bg-sky-500 text-slate-950 p-1.5 rounded-full border-2 border-white z-10">
-                <Award className="w-4 h-4" />
-              </span>
-            </div>
 
-            <div className="flex-1 text-center md:text-left">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-slate-900">{profileForm.name}</h1>
-                  <span className="text-sky-600 font-semibold text-[10px] md:text-xs uppercase tracking-wider block md:inline">
-                    {user.memberType} • {profileForm.email}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2 md:gap-3 justify-center md:justify-start">
-                  <button
-                    onClick={() => setShowEditModal(true)}
-                    className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-[10px] md:text-xs px-4 md:px-5 py-2 md:py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer shadow-xs"
-                  >
-                    <Edit3 className="w-3 h-3 md:w-3.5 md:h-3.5 text-sky-400" />
-                    <span>Edit Profile</span>
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    disabled={loggingOut}
-                    className="bg-red-50 hover:bg-red-100 disabled:opacity-60 text-red-700 border border-red-200 font-semibold text-[10px] md:text-xs px-4 md:px-5 py-2 md:py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
-                  >
-                    {loggingOut ? (
-                      <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 text-red-600 animate-spin" />
-                    ) : (
-                      <LogOut className="w-3 h-3 md:w-3.5 md:h-3.5 text-red-600" />
-                    )}
-                    <span className="hidden md:inline">{loggingOut ? 'Signing Out...' : 'Sign Out'}</span>
-                    <span className="md:hidden">{loggingOut ? '...' : 'Out'}</span>
-                  </button>
-                </div>
-              </div>
-
-              <p className="text-[10px] md:text-xs text-slate-500 leading-relaxed max-w-xl mb-4">{profileForm.bio}</p>
-
-              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                {savedDests.map((dest) => (
-                  <span
-                    key={dest}
-                    className="bg-slate-100 text-slate-700 text-[10px] md:text-xs font-semibold px-2 md:px-3 py-1 rounded-full flex items-center gap-1"
-                  >
-                    <MapPin className="w-2.5 h-2.5 md:w-3 md:h-3 text-sky-600" />
-                    {dest}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-xs text-center">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mx-auto mb-2 md:mb-3">
-                <Globe2 className="w-5 h-5 md:w-6 md:h-6" />
-              </div>
-              <span className="text-2xl md:text-3xl font-bold text-slate-900 block">{user.countriesVisited}</span>
-              <span className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">
-                Countries Visited
-              </span>
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-xs text-center">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center mx-auto mb-2 md:mb-3">
-                <Calendar className="w-5 h-5 md:w-6 md:h-6" />
-              </div>
-              <span className="text-2xl md:text-3xl font-bold text-slate-900 block">{trips.length}</span>
-              <span className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">
-                Trips Planned
-              </span>
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-xs text-center">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-2 md:mb-3">
-                <Wallet className="w-5 h-5 md:w-6 md:h-6" />
-              </div>
-              <span className="text-2xl md:text-3xl font-bold text-slate-900 block">
-                ₹{(user.totalBudgetSpent / 100000).toFixed(2)}L
-              </span>
-              <span className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">
-                Total Lifetime Spend
-              </span>
-            </div>
-          </div>
-
-          {/* Preferences & Saved Destinations Settings Card */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-xs space-y-4 md:space-y-6">
-            <h2 className="text-lg md:text-xl font-bold text-slate-900">Preferences & Saved Destinations</h2>
-
-            {/* Language Preference */}
-            <div className="border-b border-slate-100 pb-4 md:pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h3 className="font-bold text-xs md:text-sm text-slate-900 flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5 md:w-4 md:h-4 text-sky-600" /> Language Preference
-                </h3>
-                <p className="text-[10px] md:text-xs text-slate-500 mt-0.5">Select your preferred system interface language</p>
-              </div>
-
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 text-[10px] md:text-xs font-semibold outline-none focus:border-sky-500 w-full sm:w-auto"
-              >
-                <option value="English">English (US)</option>
-                <option value="Spanish">Spanish (Español)</option>
-                <option value="French">French (Français)</option>
-                <option value="German">German (Deutsch)</option>
-                <option value="Hindi">Hindi (हिंदी)</option>
-              </select>
-            </div>
-
-            {/* Saved Destinations Manager */}
-            <div>
-              <h3 className="font-bold text-xs md:text-sm text-slate-900 mb-1 flex items-center gap-2">
-                <Heart className="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-500" /> Saved Destinations List
-              </h3>
-              <p className="text-[10px] md:text-xs text-slate-500 mb-3 md:mb-4">Manage your bookmarked cities of interest for future itineraries</p>
-
-              <div className="flex flex-wrap gap-2 mb-3 md:mb-4">
-                {savedDests.map((dest) => (
-                  <span
-                    key={dest}
-                    className="bg-slate-100 text-slate-800 text-[10px] md:text-xs font-semibold px-2 md:px-3 py-1 md:py-1.5 rounded-full flex items-center gap-2"
-                  >
-                    <span>{dest}</span>
-                    <button
-                      onClick={() => handleRemoveSavedDest(dest)}
-                      className="text-slate-400 hover:text-red-600 font-bold"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                ))}
-              </div>
-
-              <div className="flex gap-2 max-w-md">
-                <input
-                  type="text"
-                  value={newDestInput}
-                  onChange={(e) => setNewDestInput(e.target.value)}
-                  placeholder="e.g. Kyoto, Japan"
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 text-[10px] md:text-xs font-medium outline-none focus:border-sky-500"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddSavedDest}
-                  className="bg-slate-900 text-white font-semibold text-[10px] md:text-xs px-3 md:px-4 py-2 rounded-xl hover:bg-slate-800 transition-all flex items-center gap-1 cursor-pointer shrink-0"
+              {/* Profile Header Card */}
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-xs flex flex-col md:flex-row items-center gap-6 md:gap-8">
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="relative group cursor-pointer"
+                  title="Click to change profile photo"
                 >
-                  <Plus className="w-3 h-3 md:w-3.5 md:h-3.5" /> Add
+                  <img
+                    src={profileForm.avatar || (user?.avatar) || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
+                    alt={profileForm.name}
+                    className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-4 ring-sky-100 shadow-md group-hover:opacity-80 transition-opacity"
+                  />
+                  <div className="absolute inset-0 bg-slate-950/40 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Camera className="w-5 h-5 md:w-6 md:h-6 text-sky-400 mb-0.5" />
+                    <span className="text-[10px] font-bold">Edit Photo</span>
+                  </div>
+                  <span className="absolute bottom-1 right-1 bg-sky-500 text-slate-950 p-1.5 rounded-full border-2 border-white z-10">
+                    <Award className="w-4 h-4" />
+                  </span>
+                </div>
+
+                <div className="flex-1 text-center md:text-left">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+                    <div>
+                      <h1 className="text-2xl md:text-3xl font-bold text-slate-900">{profileForm.name}</h1>
+                      <span className="text-sky-600 font-semibold text-[10px] md:text-xs uppercase tracking-wider block md:inline">
+                        {user?.memberType} • {profileForm.email}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 md:gap-3 justify-center md:justify-start">
+                      <button
+                        onClick={() => setShowEditModal(true)}
+                        className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-[10px] md:text-xs px-4 md:px-5 py-2 md:py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer shadow-xs"
+                      >
+                        <Edit3 className="w-3 h-3 md:w-3.5 md:h-3.5 text-sky-400" />
+                        <span>Edit Profile</span>
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        disabled={loggingOut}
+                        className="bg-red-50 hover:bg-red-100 disabled:opacity-60 text-red-700 border border-red-200 font-semibold text-[10px] md:text-xs px-4 md:px-5 py-2 md:py-2.5 rounded-full transition-all inline-flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+                      >
+                        {loggingOut ? (
+                          <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 text-red-600 animate-spin" />
+                        ) : (
+                          <LogOut className="w-3 h-3 md:w-3.5 md:h-3.5 text-red-600" />
+                        )}
+                        <span className="hidden md:inline">{loggingOut ? 'Signing Out...' : 'Sign Out'}</span>
+                        <span className="md:hidden">{loggingOut ? '...' : 'Out'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <p className="text-[10px] md:text-xs text-slate-500 leading-relaxed max-w-xl mb-4">{profileForm.bio}</p>
+
+                  <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                    {savedDests.map((dest) => (
+                      <span
+                        key={dest}
+                        className="bg-slate-100 text-slate-700 text-[10px] md:text-xs font-semibold px-2 md:px-3 py-1 rounded-full flex items-center gap-1"
+                      >
+                        <MapPin className="w-2.5 h-2.5 md:w-3 md:h-3 text-sky-600" />
+                        {dest}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+                <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-xs text-center">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mx-auto mb-2 md:mb-3">
+                    <Globe2 className="w-5 h-5 md:w-6 md:h-6" />
+                  </div>
+                  <span className="text-2xl md:text-3xl font-bold text-slate-900 block">{user?.countriesVisited}</span>
+                  <span className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                    Countries Visited
+                  </span>
+                </div>
+
+                <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-xs text-center">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center mx-auto mb-2 md:mb-3">
+                    <Calendar className="w-5 h-5 md:w-6 md:h-6" />
+                  </div>
+                  <span className="text-2xl md:text-3xl font-bold text-slate-900 block">{trips.length}</span>
+                  <span className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                    Trips Planned
+                  </span>
+                </div>
+
+                <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-xs text-center">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-2 md:mb-3">
+                    <Wallet className="w-5 h-5 md:w-6 md:h-6" />
+                  </div>
+                  <span className="text-2xl md:text-3xl font-bold text-slate-900 block">
+                    ₹{(user?.totalBudgetSpent / 100000).toFixed(2)}L
+                  </span>
+                  <span className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                    Total Lifetime Spend
+                  </span>
+                </div>
+              </div>
+
+              {/* Preferences & Saved Destinations Settings Card */}
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-xs space-y-4 md:space-y-6">
+                <h2 className="text-lg md:text-xl font-bold text-slate-900">Preferences & Saved Destinations</h2>
+
+                {/* Language Preference */}
+                <div className="border-b border-slate-100 pb-4 md:pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-bold text-xs md:text-sm text-slate-900 flex items-center gap-2">
+                      <Globe className="w-3.5 h-3.5 md:w-4 md:h-4 text-sky-600" /> Language Preference
+                    </h3>
+                    <p className="text-[10px] md:text-xs text-slate-500 mt-0.5">Select your preferred system interface language</p>
+                  </div>
+
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 text-[10px] md:text-xs font-semibold outline-none focus:border-sky-500 w-full sm:w-auto"
+                  >
+                    <option value="English">English (US)</option>
+                    <option value="Spanish">Spanish (Español)</option>
+                    <option value="French">French (Français)</option>
+                    <option value="German">German (Deutsch)</option>
+                    <option value="Hindi">Hindi (हिंदी)</option>
+                  </select>
+                </div>
+
+                {/* Saved Destinations Manager */}
+                <div>
+                  <h3 className="font-bold text-xs md:text-sm text-slate-900 mb-1 flex items-center gap-2">
+                    <Heart className="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-500" /> Saved Destinations List
+                  </h3>
+                  <p className="text-[10px] md:text-xs text-slate-500 mb-3 md:mb-4">Manage your bookmarked cities of interest for future itineraries</p>
+
+                  <div className="flex flex-wrap gap-2 mb-3 md:mb-4">
+                    {savedDests.map((dest) => (
+                      <span
+                        key={dest}
+                        className="bg-slate-100 text-slate-800 text-[10px] md:text-xs font-semibold px-2 md:px-3 py-1 md:py-1.5 rounded-full flex items-center gap-2"
+                      >
+                        <span>{dest}</span>
+                        <button
+                          onClick={() => handleRemoveSavedDest(dest)}
+                          className="text-slate-400 hover:text-red-600 font-bold"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex gap-2 max-w-md">
+                    <input
+                      type="text"
+                      value={newDestInput}
+                      onChange={(e) => setNewDestInput(e.target.value)}
+                      placeholder="e.g. Kyoto, Japan"
+                      className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 md:px-4 py-2 text-[10px] md:text-xs font-medium outline-none focus:border-sky-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddSavedDest}
+                      className="bg-slate-900 text-white font-semibold text-[10px] md:text-xs px-3 md:px-4 py-2 rounded-xl hover:bg-slate-800 transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                    >
+                      <Plus className="w-3 h-3 md:w-3.5 md:h-3.5" /> Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Danger Zone: Delete Account */}
+              <div className="bg-red-50/50 border border-red-200 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                  <h3 className="font-bold text-red-900 text-sm md:text-base flex items-center gap-2">
+                    <AlertTriangle className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-600" /> Danger Zone: Delete Account
+                  </h3>
+                  <p className="text-[10px] md:text-xs text-red-700 mt-1">
+                    Permanently remove your account, saved itineraries, expense history, and profile data.
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] md:text-xs px-4 md:px-6 py-2 md:py-3 rounded-full transition-all shrink-0 cursor-pointer shadow-xs w-full md:w-auto"
+                >
+                  Delete Account
                 </button>
               </div>
-            </div>
-          </div>
-
-          {/* Danger Zone: Delete Account */}
-          <div className="bg-red-50/50 border border-red-200 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h3 className="font-bold text-red-900 text-sm md:text-base flex items-center gap-2">
-                <AlertTriangle className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-600" /> Danger Zone: Delete Account
-              </h3>
-              <p className="text-[10px] md:text-xs text-red-700 mt-1">
-                Permanently remove your account, saved itineraries, expense history, and profile data.
-              </p>
-            </div>
-
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] md:text-xs px-4 md:px-6 py-2 md:py-3 rounded-full transition-all shrink-0 cursor-pointer shadow-xs w-full md:w-auto"
-            >
-              Delete Account
-            </button>
-          </div>
+            </>
+          ) : null}
         </main>
 
         {/* Edit Profile Modal */}
-        {showEditModal && (
+        {showEditModal && user && (
           <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-slate-200 animate-fade-in">
               <div className="flex justify-between items-center mb-4 md:mb-6">
@@ -405,7 +417,7 @@ export default function ProfilePage() {
                   </label>
                   <div className="flex items-center gap-3">
                     <img
-                      src={profileForm.avatar || user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
+                      src={profileForm.avatar || (user?.avatar) || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
                       alt="Preview"
                       className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover ring-2 ring-sky-100 shrink-0 shadow-xs"
                     />
@@ -463,7 +475,7 @@ export default function ProfilePage() {
         )}
 
         {/* Delete Account Modal */}
-        {showDeleteModal && (
+        {showDeleteModal && user && (
           <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-slate-200 animate-fade-in text-center">
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-3 md:mb-4">
