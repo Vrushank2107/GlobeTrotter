@@ -492,6 +492,12 @@ export default function TripBudgetPage() {
             </div>
           </div>
             </>
+          ) : (
+            <div className="px-10 py-20 text-center">
+              <p className="text-sm text-slate-500">Trip not found.</p>
+            </div>
+          )}
+            </>
           ) : null}
         </main>
 
@@ -629,14 +635,6 @@ export default function TripBudgetPage() {
               </form>
             </div>
           </div>
-            </>
-          ) : (
-            <div className="px-10 py-20 text-center">
-              <p className="text-sm text-slate-500">Trip not found.</p>
-            </div>
-          )}
-            </>
-          ) : null}
         )}
       </div>
     </div>
