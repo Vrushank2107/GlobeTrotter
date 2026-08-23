@@ -68,7 +68,7 @@ export default function NewTripPage() {
       ...prev,
       title: generateTripTitle(selectedDestIds),
     }));
-  }, [selectedDestIds, destinations]);
+  }, [selectedDestIds]);
 
   const toggleDestination = (destId: string) => {
     setSelectedDestIds((prev) =>
